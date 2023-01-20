@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DownloadBinancedataRequest with the
+// Validate checks the field values on DownloadBinanceDataRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadBinancedataRequest) Validate() error {
+func (m *DownloadBinanceDataRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DownloadBinancedataRequest with the
+// ValidateAll checks the field values on DownloadBinanceDataRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DownloadBinancedataRequestMultiError, or nil if none found.
-func (m *DownloadBinancedataRequest) ValidateAll() error {
+// DownloadBinanceDataRequestMultiError, or nil if none found.
+func (m *DownloadBinanceDataRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DownloadBinancedataRequest) validate(all bool) error {
+func (m *DownloadBinanceDataRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -58,19 +58,19 @@ func (m *DownloadBinancedataRequest) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return DownloadBinancedataRequestMultiError(errors)
+		return DownloadBinanceDataRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DownloadBinancedataRequestMultiError is an error wrapping multiple
-// validation errors returned by DownloadBinancedataRequest.ValidateAll() if
+// DownloadBinanceDataRequestMultiError is an error wrapping multiple
+// validation errors returned by DownloadBinanceDataRequest.ValidateAll() if
 // the designated constraints aren't met.
-type DownloadBinancedataRequestMultiError []error
+type DownloadBinanceDataRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DownloadBinancedataRequestMultiError) Error() string {
+func (m DownloadBinanceDataRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -79,11 +79,11 @@ func (m DownloadBinancedataRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DownloadBinancedataRequestMultiError) AllErrors() []error { return m }
+func (m DownloadBinanceDataRequestMultiError) AllErrors() []error { return m }
 
-// DownloadBinancedataRequestValidationError is the validation error returned
-// by DownloadBinancedataRequest.Validate if the designated constraints aren't met.
-type DownloadBinancedataRequestValidationError struct {
+// DownloadBinanceDataRequestValidationError is the validation error returned
+// by DownloadBinanceDataRequest.Validate if the designated constraints aren't met.
+type DownloadBinanceDataRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -91,24 +91,24 @@ type DownloadBinancedataRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DownloadBinancedataRequestValidationError) Field() string { return e.field }
+func (e DownloadBinanceDataRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DownloadBinancedataRequestValidationError) Reason() string { return e.reason }
+func (e DownloadBinanceDataRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DownloadBinancedataRequestValidationError) Cause() error { return e.cause }
+func (e DownloadBinanceDataRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DownloadBinancedataRequestValidationError) Key() bool { return e.key }
+func (e DownloadBinanceDataRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DownloadBinancedataRequestValidationError) ErrorName() string {
-	return "DownloadBinancedataRequestValidationError"
+func (e DownloadBinanceDataRequestValidationError) ErrorName() string {
+	return "DownloadBinanceDataRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DownloadBinancedataRequestValidationError) Error() string {
+func (e DownloadBinanceDataRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -120,14 +120,14 @@ func (e DownloadBinancedataRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDownloadBinancedataRequest.%s: %s%s",
+		"invalid %sDownloadBinanceDataRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DownloadBinancedataRequestValidationError{}
+var _ error = DownloadBinanceDataRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -135,24 +135,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DownloadBinancedataRequestValidationError{}
+} = DownloadBinanceDataRequestValidationError{}
 
-// Validate checks the field values on DownloadBinancedataReply with the rules
+// Validate checks the field values on DownloadBinanceDataReply with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadBinancedataReply) Validate() error {
+func (m *DownloadBinanceDataReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DownloadBinancedataReply with the
+// ValidateAll checks the field values on DownloadBinanceDataReply with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DownloadBinancedataReplyMultiError, or nil if none found.
-func (m *DownloadBinancedataReply) ValidateAll() error {
+// DownloadBinanceDataReplyMultiError, or nil if none found.
+func (m *DownloadBinanceDataReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DownloadBinancedataReply) validate(all bool) error {
+func (m *DownloadBinanceDataReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -160,19 +160,19 @@ func (m *DownloadBinancedataReply) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return DownloadBinancedataReplyMultiError(errors)
+		return DownloadBinanceDataReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// DownloadBinancedataReplyMultiError is an error wrapping multiple validation
-// errors returned by DownloadBinancedataReply.ValidateAll() if the designated
+// DownloadBinanceDataReplyMultiError is an error wrapping multiple validation
+// errors returned by DownloadBinanceDataReply.ValidateAll() if the designated
 // constraints aren't met.
-type DownloadBinancedataReplyMultiError []error
+type DownloadBinanceDataReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DownloadBinancedataReplyMultiError) Error() string {
+func (m DownloadBinanceDataReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -181,11 +181,11 @@ func (m DownloadBinancedataReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DownloadBinancedataReplyMultiError) AllErrors() []error { return m }
+func (m DownloadBinanceDataReplyMultiError) AllErrors() []error { return m }
 
-// DownloadBinancedataReplyValidationError is the validation error returned by
-// DownloadBinancedataReply.Validate if the designated constraints aren't met.
-type DownloadBinancedataReplyValidationError struct {
+// DownloadBinanceDataReplyValidationError is the validation error returned by
+// DownloadBinanceDataReply.Validate if the designated constraints aren't met.
+type DownloadBinanceDataReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -193,24 +193,24 @@ type DownloadBinancedataReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e DownloadBinancedataReplyValidationError) Field() string { return e.field }
+func (e DownloadBinanceDataReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DownloadBinancedataReplyValidationError) Reason() string { return e.reason }
+func (e DownloadBinanceDataReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DownloadBinancedataReplyValidationError) Cause() error { return e.cause }
+func (e DownloadBinanceDataReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DownloadBinancedataReplyValidationError) Key() bool { return e.key }
+func (e DownloadBinanceDataReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DownloadBinancedataReplyValidationError) ErrorName() string {
-	return "DownloadBinancedataReplyValidationError"
+func (e DownloadBinanceDataReplyValidationError) ErrorName() string {
+	return "DownloadBinanceDataReplyValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DownloadBinancedataReplyValidationError) Error() string {
+func (e DownloadBinanceDataReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -222,14 +222,14 @@ func (e DownloadBinancedataReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDownloadBinancedataReply.%s: %s%s",
+		"invalid %sDownloadBinanceDataReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DownloadBinancedataReplyValidationError{}
+var _ error = DownloadBinanceDataReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -237,4 +237,532 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DownloadBinancedataReplyValidationError{}
+} = DownloadBinanceDataReplyValidationError{}
+
+// Validate checks the field values on IntervalMAvgEndPriceDataRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *IntervalMAvgEndPriceDataRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IntervalMAvgEndPriceDataRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// IntervalMAvgEndPriceDataRequestMultiError, or nil if none found.
+func (m *IntervalMAvgEndPriceDataRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IntervalMAvgEndPriceDataRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Start
+
+	// no validation rules for End
+
+	// no validation rules for M
+
+	// no validation rules for N
+
+	if len(errors) > 0 {
+		return IntervalMAvgEndPriceDataRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// IntervalMAvgEndPriceDataRequestMultiError is an error wrapping multiple
+// validation errors returned by IntervalMAvgEndPriceDataRequest.ValidateAll()
+// if the designated constraints aren't met.
+type IntervalMAvgEndPriceDataRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IntervalMAvgEndPriceDataRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IntervalMAvgEndPriceDataRequestMultiError) AllErrors() []error { return m }
+
+// IntervalMAvgEndPriceDataRequestValidationError is the validation error
+// returned by IntervalMAvgEndPriceDataRequest.Validate if the designated
+// constraints aren't met.
+type IntervalMAvgEndPriceDataRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IntervalMAvgEndPriceDataRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IntervalMAvgEndPriceDataRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IntervalMAvgEndPriceDataRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IntervalMAvgEndPriceDataRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IntervalMAvgEndPriceDataRequestValidationError) ErrorName() string {
+	return "IntervalMAvgEndPriceDataRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IntervalMAvgEndPriceDataRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIntervalMAvgEndPriceDataRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IntervalMAvgEndPriceDataRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IntervalMAvgEndPriceDataRequestValidationError{}
+
+// Validate checks the field values on IntervalMAvgEndPriceDataReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *IntervalMAvgEndPriceDataReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IntervalMAvgEndPriceDataReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// IntervalMAvgEndPriceDataReplyMultiError, or nil if none found.
+func (m *IntervalMAvgEndPriceDataReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IntervalMAvgEndPriceDataReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetData() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, IntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("Data[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, IntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("Data[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return IntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("Data[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetOperationData() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, IntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("OperationData[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, IntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("OperationData[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return IntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("OperationData[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for OperationOrderTotal
+
+	// no validation rules for OperationWinRate
+
+	// no validation rules for OperationWinAmount
+
+	if len(errors) > 0 {
+		return IntervalMAvgEndPriceDataReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// IntervalMAvgEndPriceDataReplyMultiError is an error wrapping multiple
+// validation errors returned by IntervalMAvgEndPriceDataReply.ValidateAll()
+// if the designated constraints aren't met.
+type IntervalMAvgEndPriceDataReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IntervalMAvgEndPriceDataReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IntervalMAvgEndPriceDataReplyMultiError) AllErrors() []error { return m }
+
+// IntervalMAvgEndPriceDataReplyValidationError is the validation error
+// returned by IntervalMAvgEndPriceDataReply.Validate if the designated
+// constraints aren't met.
+type IntervalMAvgEndPriceDataReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IntervalMAvgEndPriceDataReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IntervalMAvgEndPriceDataReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IntervalMAvgEndPriceDataReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IntervalMAvgEndPriceDataReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IntervalMAvgEndPriceDataReplyValidationError) ErrorName() string {
+	return "IntervalMAvgEndPriceDataReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IntervalMAvgEndPriceDataReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIntervalMAvgEndPriceDataReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IntervalMAvgEndPriceDataReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IntervalMAvgEndPriceDataReplyValidationError{}
+
+// Validate checks the field values on IntervalMAvgEndPriceDataReply_List with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *IntervalMAvgEndPriceDataReply_List) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IntervalMAvgEndPriceDataReply_List
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// IntervalMAvgEndPriceDataReply_ListMultiError, or nil if none found.
+func (m *IntervalMAvgEndPriceDataReply_List) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IntervalMAvgEndPriceDataReply_List) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StartPrice
+
+	// no validation rules for EndPrice
+
+	// no validation rules for TopPrice
+
+	// no validation rules for LowPrice
+
+	// no validation rules for WithBeforeAvgEndPrice
+
+	// no validation rules for Time
+
+	if len(errors) > 0 {
+		return IntervalMAvgEndPriceDataReply_ListMultiError(errors)
+	}
+
+	return nil
+}
+
+// IntervalMAvgEndPriceDataReply_ListMultiError is an error wrapping multiple
+// validation errors returned by
+// IntervalMAvgEndPriceDataReply_List.ValidateAll() if the designated
+// constraints aren't met.
+type IntervalMAvgEndPriceDataReply_ListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IntervalMAvgEndPriceDataReply_ListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IntervalMAvgEndPriceDataReply_ListMultiError) AllErrors() []error { return m }
+
+// IntervalMAvgEndPriceDataReply_ListValidationError is the validation error
+// returned by IntervalMAvgEndPriceDataReply_List.Validate if the designated
+// constraints aren't met.
+type IntervalMAvgEndPriceDataReply_ListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IntervalMAvgEndPriceDataReply_ListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IntervalMAvgEndPriceDataReply_ListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IntervalMAvgEndPriceDataReply_ListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IntervalMAvgEndPriceDataReply_ListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IntervalMAvgEndPriceDataReply_ListValidationError) ErrorName() string {
+	return "IntervalMAvgEndPriceDataReply_ListValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IntervalMAvgEndPriceDataReply_ListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIntervalMAvgEndPriceDataReply_List.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IntervalMAvgEndPriceDataReply_ListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IntervalMAvgEndPriceDataReply_ListValidationError{}
+
+// Validate checks the field values on IntervalMAvgEndPriceDataReply_List2 with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *IntervalMAvgEndPriceDataReply_List2) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IntervalMAvgEndPriceDataReply_List2
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// IntervalMAvgEndPriceDataReply_List2MultiError, or nil if none found.
+func (m *IntervalMAvgEndPriceDataReply_List2) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IntervalMAvgEndPriceDataReply_List2) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StartPrice
+
+	// no validation rules for EndPrice
+
+	// no validation rules for StartTime
+
+	// no validation rules for Time
+
+	// no validation rules for EndTime
+
+	// no validation rules for Type
+
+	// no validation rules for Status
+
+	// no validation rules for Rate
+
+	// no validation rules for CloseEndPrice
+
+	if len(errors) > 0 {
+		return IntervalMAvgEndPriceDataReply_List2MultiError(errors)
+	}
+
+	return nil
+}
+
+// IntervalMAvgEndPriceDataReply_List2MultiError is an error wrapping multiple
+// validation errors returned by
+// IntervalMAvgEndPriceDataReply_List2.ValidateAll() if the designated
+// constraints aren't met.
+type IntervalMAvgEndPriceDataReply_List2MultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IntervalMAvgEndPriceDataReply_List2MultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IntervalMAvgEndPriceDataReply_List2MultiError) AllErrors() []error { return m }
+
+// IntervalMAvgEndPriceDataReply_List2ValidationError is the validation error
+// returned by IntervalMAvgEndPriceDataReply_List2.Validate if the designated
+// constraints aren't met.
+type IntervalMAvgEndPriceDataReply_List2ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IntervalMAvgEndPriceDataReply_List2ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IntervalMAvgEndPriceDataReply_List2ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IntervalMAvgEndPriceDataReply_List2ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IntervalMAvgEndPriceDataReply_List2ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IntervalMAvgEndPriceDataReply_List2ValidationError) ErrorName() string {
+	return "IntervalMAvgEndPriceDataReply_List2ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IntervalMAvgEndPriceDataReply_List2ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIntervalMAvgEndPriceDataReply_List2.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IntervalMAvgEndPriceDataReply_List2ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IntervalMAvgEndPriceDataReply_List2ValidationError{}

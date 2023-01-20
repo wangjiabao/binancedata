@@ -27,6 +27,6 @@ func NewHTTPServer(c *conf.Server, binanceData *service.BinanceDataService, logg
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.RegisterBinancedataHTTPServer(srv, binanceData)
+	v1.RegisterBinanceDataHTTPServer(srv, binanceData)
 	return srv
 }

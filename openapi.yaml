@@ -3,21 +3,58 @@
 
 openapi: 3.0.3
 info:
-    title: Binancedata API
+    title: BinanceData API
     version: 0.0.1
 paths:
     /api/binancedata/download:
         get:
             tags:
-                - Binancedata
-            operationId: Binancedata_DownloadBinancedata
+                - BinanceData
+            operationId: BinanceData_DownloadBinanceData
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/DownloadBinancedataReply'
+                                $ref: '#/components/schemas/DownloadBinanceDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /api/binancedata/interval_m_avg_end_price_data:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_IntervalMAvgEndPriceData
+            parameters:
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+                - name: end
+                  in: query
+                  schema:
+                    type: string
+                - name: m
+                  in: query
+                  schema:
+                    type: integer
+                    format: int64
+                - name: n
+                  in: query
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IntervalMAvgEndPriceDataReply'
                 default:
                     description: Default error response
                     content:
@@ -26,7 +63,7 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        DownloadBinancedataReply:
+        DownloadBinanceDataReply:
             type: object
             properties: {}
         GoogleProtobufAny:
@@ -37,6 +74,60 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        IntervalMAvgEndPriceDataReply:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMAvgEndPriceDataReply_List'
+                operationData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMAvgEndPriceDataReply_List2'
+                operationOrderTotal:
+                    type: integer
+                    format: int64
+                operationWinRate:
+                    type: string
+                operationWinAmount:
+                    type: string
+        IntervalMAvgEndPriceDataReply_List:
+            type: object
+            properties:
+                startPrice:
+                    type: string
+                endPrice:
+                    type: string
+                topPrice:
+                    type: string
+                lowPrice:
+                    type: string
+                withBeforeAvgEndPrice:
+                    type: string
+                time:
+                    type: string
+        IntervalMAvgEndPriceDataReply_List2:
+            type: object
+            properties:
+                startPrice:
+                    type: string
+                endPrice:
+                    type: string
+                startTime:
+                    type: string
+                time:
+                    type: string
+                endTime:
+                    type: string
+                type:
+                    type: string
+                status:
+                    type: string
+                rate:
+                    type: string
+                CloseEndPrice:
+                    type: string
         Status:
             type: object
             properties:
@@ -54,4 +145,4 @@ components:
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
 tags:
-    - name: Binancedata
+    - name: BinanceData

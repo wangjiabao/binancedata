@@ -9,14 +9,56 @@ option go_package = "binancedata/api/binancedata/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.binancedata.v1";
 
-service Binancedata {
-	rpc DownloadBinancedata (DownloadBinancedataRequest) returns (DownloadBinancedataReply) {
+service BinanceData {
+	rpc DownloadBinanceData (DownloadBinanceDataRequest) returns (DownloadBinanceDataReply) {
 		option (google.api.http) = {
 			get: "/api/binancedata/download"
 		};
 	};
+
+	rpc IntervalMAvgEndPriceData (IntervalMAvgEndPriceDataRequest) returns (IntervalMAvgEndPriceDataReply) {
+		option (google.api.http) = {
+			get: "/api/binancedata/interval_m_avg_end_price_data"
+		};
+	};
 }
 
-message DownloadBinancedataRequest {}
+message DownloadBinanceDataRequest {}
 
-message DownloadBinancedataReply {}
+message DownloadBinanceDataReply {}
+
+message IntervalMAvgEndPriceDataRequest {
+	string start = 1;
+	string end = 2;
+	int64 m = 3;
+	int64 n = 4;
+}
+
+message IntervalMAvgEndPriceDataReply {
+	repeated List data = 1;
+	message List {
+		string start_price = 1;
+		string end_price = 2;
+		string top_price = 3;
+		string low_price = 4;
+		string with_before_avg_end_price = 5;
+		string time = 6;
+	}
+
+	repeated List2 operationData = 2;
+	message List2 {
+		string start_price = 1;
+		string end_price = 2;
+		string start_time = 3;
+		string time = 4;
+		string end_time = 6;
+		string type = 7;
+		string status = 8;
+		string rate = 9;
+		string CloseEndPrice = 10;
+	}
+
+	int64 operationOrderTotal = 3;
+	string operationWinRate = 4;
+	string operationWinAmount = 5;
+}

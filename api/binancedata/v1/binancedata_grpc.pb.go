@@ -18,86 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// BinancedataClient is the client API for Binancedata service.
+// BinanceDataClient is the client API for BinanceData service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BinancedataClient interface {
-	DownloadBinancedata(ctx context.Context, in *DownloadBinancedataRequest, opts ...grpc.CallOption) (*DownloadBinancedataReply, error)
+type BinanceDataClient interface {
+	DownloadBinanceData(ctx context.Context, in *DownloadBinanceDataRequest, opts ...grpc.CallOption) (*DownloadBinanceDataReply, error)
+	IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error)
 }
 
-type binancedataClient struct {
+type binanceDataClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewBinancedataClient(cc grpc.ClientConnInterface) BinancedataClient {
-	return &binancedataClient{cc}
+func NewBinanceDataClient(cc grpc.ClientConnInterface) BinanceDataClient {
+	return &binanceDataClient{cc}
 }
 
-func (c *binancedataClient) DownloadBinancedata(ctx context.Context, in *DownloadBinancedataRequest, opts ...grpc.CallOption) (*DownloadBinancedataReply, error) {
-	out := new(DownloadBinancedataReply)
-	err := c.cc.Invoke(ctx, "/api.binancedata.v1.Binancedata/DownloadBinancedata", in, out, opts...)
+func (c *binanceDataClient) DownloadBinanceData(ctx context.Context, in *DownloadBinanceDataRequest, opts ...grpc.CallOption) (*DownloadBinanceDataReply, error) {
+	out := new(DownloadBinanceDataReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/DownloadBinanceData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// BinancedataServer is the server API for Binancedata service.
-// All implementations must embed UnimplementedBinancedataServer
+func (c *binanceDataClient) IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error) {
+	out := new(IntervalMAvgEndPriceDataReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/IntervalMAvgEndPriceData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BinanceDataServer is the server API for BinanceData service.
+// All implementations must embed UnimplementedBinanceDataServer
 // for forward compatibility
-type BinancedataServer interface {
-	DownloadBinancedata(context.Context, *DownloadBinancedataRequest) (*DownloadBinancedataReply, error)
-	mustEmbedUnimplementedBinancedataServer()
+type BinanceDataServer interface {
+	DownloadBinanceData(context.Context, *DownloadBinanceDataRequest) (*DownloadBinanceDataReply, error)
+	IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error)
+	mustEmbedUnimplementedBinanceDataServer()
 }
 
-// UnimplementedBinancedataServer must be embedded to have forward compatible implementations.
-type UnimplementedBinancedataServer struct {
+// UnimplementedBinanceDataServer must be embedded to have forward compatible implementations.
+type UnimplementedBinanceDataServer struct {
 }
 
-func (UnimplementedBinancedataServer) DownloadBinancedata(context.Context, *DownloadBinancedataRequest) (*DownloadBinancedataReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadBinancedata not implemented")
+func (UnimplementedBinanceDataServer) DownloadBinanceData(context.Context, *DownloadBinanceDataRequest) (*DownloadBinanceDataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadBinanceData not implemented")
 }
-func (UnimplementedBinancedataServer) mustEmbedUnimplementedBinancedataServer() {}
+func (UnimplementedBinanceDataServer) IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IntervalMAvgEndPriceData not implemented")
+}
+func (UnimplementedBinanceDataServer) mustEmbedUnimplementedBinanceDataServer() {}
 
-// UnsafeBinancedataServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BinancedataServer will
+// UnsafeBinanceDataServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BinanceDataServer will
 // result in compilation errors.
-type UnsafeBinancedataServer interface {
-	mustEmbedUnimplementedBinancedataServer()
+type UnsafeBinanceDataServer interface {
+	mustEmbedUnimplementedBinanceDataServer()
 }
 
-func RegisterBinancedataServer(s grpc.ServiceRegistrar, srv BinancedataServer) {
-	s.RegisterService(&Binancedata_ServiceDesc, srv)
+func RegisterBinanceDataServer(s grpc.ServiceRegistrar, srv BinanceDataServer) {
+	s.RegisterService(&BinanceData_ServiceDesc, srv)
 }
 
-func _Binancedata_DownloadBinancedata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadBinancedataRequest)
+func _BinanceData_DownloadBinanceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadBinanceDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BinancedataServer).DownloadBinancedata(ctx, in)
+		return srv.(BinanceDataServer).DownloadBinanceData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.binancedata.v1.Binancedata/DownloadBinancedata",
+		FullMethod: "/api.binancedata.v1.BinanceData/DownloadBinanceData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BinancedataServer).DownloadBinancedata(ctx, req.(*DownloadBinancedataRequest))
+		return srv.(BinanceDataServer).DownloadBinanceData(ctx, req.(*DownloadBinanceDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Binancedata_ServiceDesc is the grpc.ServiceDesc for Binancedata service.
+func _BinanceData_IntervalMAvgEndPriceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IntervalMAvgEndPriceDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinanceDataServer).IntervalMAvgEndPriceData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.binancedata.v1.BinanceData/IntervalMAvgEndPriceData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinanceDataServer).IntervalMAvgEndPriceData(ctx, req.(*IntervalMAvgEndPriceDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BinanceData_ServiceDesc is the grpc.ServiceDesc for BinanceData service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Binancedata_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.binancedata.v1.Binancedata",
-	HandlerType: (*BinancedataServer)(nil),
+var BinanceData_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.binancedata.v1.BinanceData",
+	HandlerType: (*BinanceDataServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "DownloadBinancedata",
-			Handler:    _Binancedata_DownloadBinancedata_Handler,
+			MethodName: "DownloadBinanceData",
+			Handler:    _BinanceData_DownloadBinanceData_Handler,
+		},
+		{
+			MethodName: "IntervalMAvgEndPriceData",
+			Handler:    _BinanceData_IntervalMAvgEndPriceData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
