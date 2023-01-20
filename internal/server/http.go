@@ -4,6 +4,7 @@ import (
 	v1 "binancedata/api/binancedata/v1"
 	"binancedata/internal/conf"
 	"binancedata/internal/service"
+	"github.com/gorilla/handlers"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -16,6 +17,12 @@ func NewHTTPServer(c *conf.Server, binanceData *service.BinanceDataService, logg
 		http.Middleware(
 			recovery.Recovery(),
 		),
+
+		http.Filter(handlers.CORS(
+			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"*"}),
+		)),
 	}
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
