@@ -31,7 +31,7 @@ Thumbs.db
 *.key
 *.log
 bin/
-configs/*.yaml
+.\configs/
 
 # Develop tools
 .vscode/
