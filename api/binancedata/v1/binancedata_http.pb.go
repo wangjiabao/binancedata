@@ -19,35 +19,35 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationBinanceDataDownloadBinanceData = "/api.binancedata.v1.BinanceData/DownloadBinanceData"
 const OperationBinanceDataIntervalMAvgEndPriceData = "/api.binancedata.v1.BinanceData/IntervalMAvgEndPriceData"
+const OperationBinanceDataPullBinanceData = "/api.binancedata.v1.BinanceData/PullBinanceData"
 
 type BinanceDataHTTPServer interface {
-	DownloadBinanceData(context.Context, *DownloadBinanceDataRequest) (*DownloadBinanceDataReply, error)
 	IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error)
+	PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error)
 }
 
 func RegisterBinanceDataHTTPServer(s *http.Server, srv BinanceDataHTTPServer) {
 	r := s.Route("/")
-	r.GET("/api/binancedata/download", _BinanceData_DownloadBinanceData0_HTTP_Handler(srv))
+	r.GET("/api/binancedata/pull", _BinanceData_PullBinanceData0_HTTP_Handler(srv))
 	r.GET("/api/binancedata/interval_m_avg_end_price_data", _BinanceData_IntervalMAvgEndPriceData0_HTTP_Handler(srv))
 }
 
-func _BinanceData_DownloadBinanceData0_HTTP_Handler(srv BinanceDataHTTPServer) func(ctx http.Context) error {
+func _BinanceData_PullBinanceData0_HTTP_Handler(srv BinanceDataHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in DownloadBinanceDataRequest
+		var in PullBinanceDataRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationBinanceDataDownloadBinanceData)
+		http.SetOperation(ctx, OperationBinanceDataPullBinanceData)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DownloadBinanceData(ctx, req.(*DownloadBinanceDataRequest))
+			return srv.PullBinanceData(ctx, req.(*PullBinanceDataRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*DownloadBinanceDataReply)
+		reply := out.(*PullBinanceDataReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -72,8 +72,8 @@ func _BinanceData_IntervalMAvgEndPriceData0_HTTP_Handler(srv BinanceDataHTTPServ
 }
 
 type BinanceDataHTTPClient interface {
-	DownloadBinanceData(ctx context.Context, req *DownloadBinanceDataRequest, opts ...http.CallOption) (rsp *DownloadBinanceDataReply, err error)
 	IntervalMAvgEndPriceData(ctx context.Context, req *IntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (rsp *IntervalMAvgEndPriceDataReply, err error)
+	PullBinanceData(ctx context.Context, req *PullBinanceDataRequest, opts ...http.CallOption) (rsp *PullBinanceDataReply, err error)
 }
 
 type BinanceDataHTTPClientImpl struct {
@@ -84,11 +84,11 @@ func NewBinanceDataHTTPClient(client *http.Client) BinanceDataHTTPClient {
 	return &BinanceDataHTTPClientImpl{client}
 }
 
-func (c *BinanceDataHTTPClientImpl) DownloadBinanceData(ctx context.Context, in *DownloadBinanceDataRequest, opts ...http.CallOption) (*DownloadBinanceDataReply, error) {
-	var out DownloadBinanceDataReply
-	pattern := "/api/binancedata/download"
+func (c *BinanceDataHTTPClientImpl) IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (*IntervalMAvgEndPriceDataReply, error) {
+	var out IntervalMAvgEndPriceDataReply
+	pattern := "/api/binancedata/interval_m_avg_end_price_data"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationBinanceDataDownloadBinanceData))
+	opts = append(opts, http.Operation(OperationBinanceDataIntervalMAvgEndPriceData))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -97,11 +97,11 @@ func (c *BinanceDataHTTPClientImpl) DownloadBinanceData(ctx context.Context, in 
 	return &out, err
 }
 
-func (c *BinanceDataHTTPClientImpl) IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (*IntervalMAvgEndPriceDataReply, error) {
-	var out IntervalMAvgEndPriceDataReply
-	pattern := "/api/binancedata/interval_m_avg_end_price_data"
+func (c *BinanceDataHTTPClientImpl) PullBinanceData(ctx context.Context, in *PullBinanceDataRequest, opts ...http.CallOption) (*PullBinanceDataReply, error) {
+	var out PullBinanceDataReply
+	pattern := "/api/binancedata/pull"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationBinanceDataIntervalMAvgEndPriceData))
+	opts = append(opts, http.Operation(OperationBinanceDataPullBinanceData))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

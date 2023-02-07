@@ -41,23 +41,114 @@ type OperationData struct {
 	Rate          float64
 }
 
+type KLineMOne struct {
+	ID                  int64
+	StartTime           int64
+	EndTime             int64
+	StartPrice          float64
+	TopPrice            float64
+	LowPrice            float64
+	EndPrice            float64
+	DealTotalAmount     float64
+	DealAmount          float64
+	DealTotal           int64
+	DealSelfTotalAmount float64
+	DealSelfAmount      float64
+}
+
 type BinanceDataRepo interface {
+}
+
+type KLineMOneRepo interface {
+	GetKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
+	InsertKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
+	RequestBinanceMinuteKLinesData(symbol string, startTime string, endTime string, interval string, limit string) ([]*KLineMOne, error)
 }
 
 // BinanceDataUsecase is a BinanceData usecase.
 type BinanceDataUsecase struct {
-	repo BinanceDataRepo
-	log  *log.Helper
+	klineMOneRepo KLineMOneRepo
+	repo          BinanceDataRepo
+	tx            Transaction
+	log           *log.Helper
 }
 
 // NewBinanceDataUsecase new a BinanceData usecase.
-func NewBinanceDataUsecase(repo BinanceDataRepo, logger log.Logger) *BinanceDataUsecase {
-	return &BinanceDataUsecase{repo: repo, log: log.NewHelper(logger)}
+func NewBinanceDataUsecase(repo BinanceDataRepo, klineMOneRepo KLineMOneRepo, tx Transaction, logger log.Logger) *BinanceDataUsecase {
+	return &BinanceDataUsecase{repo: repo, klineMOneRepo: klineMOneRepo, tx: tx, log: log.NewHelper(logger)}
 }
 
-func (b *BinanceDataUsecase) DownloadBinanceData(ctx context.Context, req *v1.DownloadBinanceDataRequest) (*v1.DownloadBinanceDataReply, error) {
+func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
+	var (
+		start                time.Time
+		end                  time.Time
+		tmpKlineMOne         []*KLineMOne
+		lastKlineMOne        *KLineMOne
+		lastKlineMOneEndTime time.Time
+		m                    = int64(1)
+		limit                = int64(1500)
+		err                  error
+	)
 
-	return &v1.DownloadBinanceDataReply{}, nil
+	start, err = time.Parse("2006-01-02 15:04:05", req.Start)       // 时间进行格式校验
+	end = time.Now().UTC().Add(8 * time.Hour).Add(-1 * time.Minute) // 上一分钟
+	end = time.Date(end.Year(), end.Month(), end.Day(), end.Hour(), end.Minute(), 59, 0, time.UTC)
+	if nil != err {
+		return nil, err
+	}
+	fmt.Println(start, end)
+
+	// 获取数据库最后一条数据的时间
+	lastKlineMOne, err = b.klineMOneRepo.GetKLineMOneOrderByEndTimeLast()
+	if nil != lastKlineMOne {
+		lastKlineMOneEndTime = time.UnixMilli(lastKlineMOne.EndTime).UTC().Add(8 * time.Hour).Add(1 * time.Millisecond)
+		if start.Before(lastKlineMOneEndTime) { // 置换时间，数据库中已有数据
+			start = lastKlineMOneEndTime
+		}
+	}
+
+	tmpStart := start
+	for {
+		var tmpEnd time.Time
+		if end.After(tmpStart.Add(time.Duration(m*limit) * time.Minute)) {
+			tmpEnd = tmpStart.Add(time.Duration(m*limit) * time.Minute).Add(-1 * time.Millisecond)
+		} else {
+			tmpEnd = end
+		}
+
+		if tmpEnd.Before(tmpStart) { // 健壮性
+			break
+		}
+
+		tmpKlineMOne, err = b.klineMOneRepo.RequestBinanceMinuteKLinesData("BTCUSDT",
+			strconv.FormatInt(tmpStart.Add(-8*time.Hour).UnixMilli(), 10),
+			strconv.FormatInt(tmpEnd.Add(-8*time.Hour).UnixMilli(), 10),
+			strconv.FormatInt(m, 10)+"m",
+			strconv.FormatInt(limit, 10))
+		if nil != err {
+			return nil, err
+		}
+
+		if err = b.tx.ExecTx(ctx, func(ctx context.Context) error { // 事务
+			_, err = b.klineMOneRepo.InsertKLineMOne(ctx, tmpKlineMOne)
+			if nil != err {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		tmpStart = tmpStart.Add(time.Duration(m*limit) * time.Minute)
+		fmt.Println(tmpStart, tmpEnd)
+		if end.Before(tmpStart) {
+			break
+		}
+	}
+
+	return &v1.PullBinanceDataReply{}, nil
 }
 
 func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *v1.IntervalMAvgEndPriceDataRequest) (*v1.IntervalMAvgEndPriceDataReply, error) {
@@ -100,10 +191,15 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 			end = reqEnd
 		}
 
-		tmpBinanceData, err = requestBinanceMinuteKLinesData(start.Add(-8*time.Hour).UnixMilli(), end.Add(-8*time.Hour).UnixMilli(), m, limit)
+		tmpBinanceData, err = requestBinanceMinuteKLinesData("BTCUSDT",
+			strconv.FormatInt(start.Add(-8*time.Hour).UnixMilli(), 10),
+			strconv.FormatInt(end.Add(-8*time.Hour).UnixMilli(), 10),
+			strconv.FormatInt(m, 10)+"m",
+			strconv.FormatInt(limit, 10))
 		if nil != err {
 			return nil, err
 		}
+
 		binanceData = append(binanceData, tmpBinanceData...)
 
 		start = start.Add(time.Duration(m*limit) * time.Minute)
@@ -115,7 +211,11 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 	// 前置数据
 	beforeEnd := reqStart.Add(-1 * time.Second)
 	beforeStart := reqStart.Add(-time.Duration(m*(n-1)) * time.Minute)
-	beforeBinanceData, err = requestBinanceMinuteKLinesData(beforeStart.Add(-8*time.Hour).UnixMilli(), beforeEnd.Add(-8*time.Hour).UnixMilli(), m, limit)
+	beforeBinanceData, err = requestBinanceMinuteKLinesData("BTCUSDT",
+		strconv.FormatInt(beforeStart.Add(-8*time.Hour).UnixMilli(), 10),
+		strconv.FormatInt(beforeEnd.Add(-8*time.Hour).UnixMilli(), 10),
+		strconv.FormatInt(m, 10)+"m",
+		strconv.FormatInt(limit, 10))
 	if nil != err {
 		return nil, err
 	}
@@ -324,16 +424,16 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 	return res, nil
 }
 
-func requestBinanceMinuteKLinesData(startTime int64, endTime int64, interval int64, limit int64) ([]*BinanceData, error) {
-	fmt.Println(startTime, endTime)
+func requestBinanceMinuteKLinesData(symbol string, startTime string, endTime string, interval string, limit string) ([]*BinanceData, error) {
+	fmt.Println(symbol, startTime, endTime, interval, limit)
 	apiUrl := "https://fapi.binance.com/fapi/v1/klines"
 	// URL param
 	data := url.Values{}
-	data.Set("symbol", "BTCUSDT")
-	data.Set("interval", strconv.FormatInt(interval, 10)+"m")
-	data.Set("startTime", strconv.FormatInt(startTime, 10))
-	data.Set("endTime", strconv.FormatInt(endTime, 10))
-	data.Set("limit", strconv.FormatInt(limit, 10))
+	data.Set("symbol", symbol)
+	data.Set("interval", interval)
+	data.Set("startTime", startTime)
+	data.Set("endTime", endTime)
+	data.Set("limit", limit)
 
 	u, err := url.ParseRequestURI(apiUrl)
 	if err != nil {
@@ -341,16 +441,17 @@ func requestBinanceMinuteKLinesData(startTime int64, endTime int64, interval int
 	}
 	u.RawQuery = data.Encode() // URL encode
 	client := http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 30 * time.Second,
 	}
 
+	fmt.Println(u.String())
 	resp, err := client.Get(u.String())
 	if err != nil {
 		return nil, err
 	}
 
 	defer func(Body io.ReadCloser) {
-		err := Body.Close()
+		err = Body.Close()
 		if err != nil {
 
 		}
@@ -368,7 +469,7 @@ func requestBinanceMinuteKLinesData(startTime int64, endTime int64, interval int
 
 	res := make([]*BinanceData, 0)
 	for _, v := range i {
-		tmp := &BinanceData{
+		res = append(res, &BinanceData{
 			StartTime:           strconv.FormatFloat(v[0].(float64), 'f', -1, 64),
 			StartPrice:          v[1].(string),
 			EndPrice:            v[4].(string),
@@ -380,8 +481,7 @@ func requestBinanceMinuteKLinesData(startTime int64, endTime int64, interval int
 			DealTotal:           strconv.FormatFloat(v[8].(float64), 'f', -1, 64),
 			DealSelfTotalAmount: v[9].(string),
 			DealSelfAmount:      v[10].(string),
-		}
-		res = append(res, tmp)
+		})
 	}
 
 	return res, err

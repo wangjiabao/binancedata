@@ -18,8 +18,8 @@ func NewBinanceDataService(uc *biz.BinanceDataUsecase) *BinanceDataService {
 	return &BinanceDataService{uc: uc}
 }
 
-func (b *BinanceDataService) DownloadBinanceData(ctx context.Context, req *v1.DownloadBinanceDataRequest) (*v1.DownloadBinanceDataReply, error) {
-	return b.uc.DownloadBinanceData(ctx, req)
+func (b *BinanceDataService) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
+	return b.uc.PullBinanceData(ctx, req)
 }
 
 func (b *BinanceDataService) IntervalMAvgEndPriceData(ctx context.Context, req *v1.IntervalMAvgEndPriceDataRequest) (*v1.IntervalMAvgEndPriceDataReply, error) {

@@ -35,144 +35,44 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DownloadBinanceDataRequest with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadBinanceDataRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DownloadBinanceDataRequest with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DownloadBinanceDataRequestMultiError, or nil if none found.
-func (m *DownloadBinanceDataRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DownloadBinanceDataRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return DownloadBinanceDataRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// DownloadBinanceDataRequestMultiError is an error wrapping multiple
-// validation errors returned by DownloadBinanceDataRequest.ValidateAll() if
-// the designated constraints aren't met.
-type DownloadBinanceDataRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DownloadBinanceDataRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DownloadBinanceDataRequestMultiError) AllErrors() []error { return m }
-
-// DownloadBinanceDataRequestValidationError is the validation error returned
-// by DownloadBinanceDataRequest.Validate if the designated constraints aren't met.
-type DownloadBinanceDataRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DownloadBinanceDataRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DownloadBinanceDataRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DownloadBinanceDataRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DownloadBinanceDataRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DownloadBinanceDataRequestValidationError) ErrorName() string {
-	return "DownloadBinanceDataRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DownloadBinanceDataRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDownloadBinanceDataRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DownloadBinanceDataRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DownloadBinanceDataRequestValidationError{}
-
-// Validate checks the field values on DownloadBinanceDataReply with the rules
+// Validate checks the field values on PullBinanceDataRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadBinanceDataReply) Validate() error {
+func (m *PullBinanceDataRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DownloadBinanceDataReply with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on PullBinanceDataRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DownloadBinanceDataReplyMultiError, or nil if none found.
-func (m *DownloadBinanceDataReply) ValidateAll() error {
+// PullBinanceDataRequestMultiError, or nil if none found.
+func (m *PullBinanceDataRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DownloadBinanceDataReply) validate(all bool) error {
+func (m *PullBinanceDataRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Start
+
 	if len(errors) > 0 {
-		return DownloadBinanceDataReplyMultiError(errors)
+		return PullBinanceDataRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DownloadBinanceDataReplyMultiError is an error wrapping multiple validation
-// errors returned by DownloadBinanceDataReply.ValidateAll() if the designated
+// PullBinanceDataRequestMultiError is an error wrapping multiple validation
+// errors returned by PullBinanceDataRequest.ValidateAll() if the designated
 // constraints aren't met.
-type DownloadBinanceDataReplyMultiError []error
+type PullBinanceDataRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DownloadBinanceDataReplyMultiError) Error() string {
+func (m PullBinanceDataRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -181,11 +81,11 @@ func (m DownloadBinanceDataReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DownloadBinanceDataReplyMultiError) AllErrors() []error { return m }
+func (m PullBinanceDataRequestMultiError) AllErrors() []error { return m }
 
-// DownloadBinanceDataReplyValidationError is the validation error returned by
-// DownloadBinanceDataReply.Validate if the designated constraints aren't met.
-type DownloadBinanceDataReplyValidationError struct {
+// PullBinanceDataRequestValidationError is the validation error returned by
+// PullBinanceDataRequest.Validate if the designated constraints aren't met.
+type PullBinanceDataRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -193,24 +93,24 @@ type DownloadBinanceDataReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e DownloadBinanceDataReplyValidationError) Field() string { return e.field }
+func (e PullBinanceDataRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DownloadBinanceDataReplyValidationError) Reason() string { return e.reason }
+func (e PullBinanceDataRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DownloadBinanceDataReplyValidationError) Cause() error { return e.cause }
+func (e PullBinanceDataRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DownloadBinanceDataReplyValidationError) Key() bool { return e.key }
+func (e PullBinanceDataRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DownloadBinanceDataReplyValidationError) ErrorName() string {
-	return "DownloadBinanceDataReplyValidationError"
+func (e PullBinanceDataRequestValidationError) ErrorName() string {
+	return "PullBinanceDataRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DownloadBinanceDataReplyValidationError) Error() string {
+func (e PullBinanceDataRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -222,14 +122,14 @@ func (e DownloadBinanceDataReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDownloadBinanceDataReply.%s: %s%s",
+		"invalid %sPullBinanceDataRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DownloadBinanceDataReplyValidationError{}
+var _ error = PullBinanceDataRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -237,7 +137,109 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DownloadBinanceDataReplyValidationError{}
+} = PullBinanceDataRequestValidationError{}
+
+// Validate checks the field values on PullBinanceDataReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PullBinanceDataReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PullBinanceDataReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PullBinanceDataReplyMultiError, or nil if none found.
+func (m *PullBinanceDataReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PullBinanceDataReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PullBinanceDataReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// PullBinanceDataReplyMultiError is an error wrapping multiple validation
+// errors returned by PullBinanceDataReply.ValidateAll() if the designated
+// constraints aren't met.
+type PullBinanceDataReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PullBinanceDataReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PullBinanceDataReplyMultiError) AllErrors() []error { return m }
+
+// PullBinanceDataReplyValidationError is the validation error returned by
+// PullBinanceDataReply.Validate if the designated constraints aren't met.
+type PullBinanceDataReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PullBinanceDataReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PullBinanceDataReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PullBinanceDataReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PullBinanceDataReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PullBinanceDataReplyValidationError) ErrorName() string {
+	return "PullBinanceDataReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PullBinanceDataReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPullBinanceDataReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PullBinanceDataReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PullBinanceDataReplyValidationError{}
 
 // Validate checks the field values on IntervalMAvgEndPriceDataRequest with the
 // rules defined in the proto definition for this message. If any rules are

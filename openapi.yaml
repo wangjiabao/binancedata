@@ -6,24 +6,6 @@ info:
     title: BinanceData API
     version: 0.0.1
 paths:
-    /api/binancedata/download:
-        get:
-            tags:
-                - BinanceData
-            operationId: BinanceData_DownloadBinanceData
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/DownloadBinanceDataReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /api/binancedata/interval_m_avg_end_price_data:
         get:
             tags:
@@ -61,11 +43,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/binancedata/pull:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_PullBinanceData
+            parameters:
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PullBinanceDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
-        DownloadBinanceDataReply:
-            type: object
-            properties: {}
         GoogleProtobufAny:
             type: object
             properties:
@@ -128,6 +130,9 @@ components:
                     type: string
                 CloseEndPrice:
                     type: string
+        PullBinanceDataReply:
+            type: object
+            properties: {}
         Status:
             type: object
             properties:

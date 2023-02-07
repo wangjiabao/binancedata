@@ -10,9 +10,9 @@ option java_multiple_files = true;
 option java_package = "api.binancedata.v1";
 
 service BinanceData {
-	rpc DownloadBinanceData (DownloadBinanceDataRequest) returns (DownloadBinanceDataReply) {
+	rpc PullBinanceData (PullBinanceDataRequest) returns (PullBinanceDataReply) {
 		option (google.api.http) = {
-			get: "/api/binancedata/download"
+			get: "/api/binancedata/pull"
 		};
 	};
 
@@ -23,9 +23,11 @@ service BinanceData {
 	};
 }
 
-message DownloadBinanceDataRequest {}
+message PullBinanceDataRequest {
+	string start = 1;
+}
 
-message DownloadBinanceDataReply {}
+message PullBinanceDataReply {}
 
 message IntervalMAvgEndPriceDataRequest {
 	string start = 1;

@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BinanceDataClient interface {
-	DownloadBinanceData(ctx context.Context, in *DownloadBinanceDataRequest, opts ...grpc.CallOption) (*DownloadBinanceDataReply, error)
+	PullBinanceData(ctx context.Context, in *PullBinanceDataRequest, opts ...grpc.CallOption) (*PullBinanceDataReply, error)
 	IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error)
 }
 
@@ -34,9 +34,9 @@ func NewBinanceDataClient(cc grpc.ClientConnInterface) BinanceDataClient {
 	return &binanceDataClient{cc}
 }
 
-func (c *binanceDataClient) DownloadBinanceData(ctx context.Context, in *DownloadBinanceDataRequest, opts ...grpc.CallOption) (*DownloadBinanceDataReply, error) {
-	out := new(DownloadBinanceDataReply)
-	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/DownloadBinanceData", in, out, opts...)
+func (c *binanceDataClient) PullBinanceData(ctx context.Context, in *PullBinanceDataRequest, opts ...grpc.CallOption) (*PullBinanceDataReply, error) {
+	out := new(PullBinanceDataReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/PullBinanceData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *binanceDataClient) IntervalMAvgEndPriceData(ctx context.Context, in *In
 // All implementations must embed UnimplementedBinanceDataServer
 // for forward compatibility
 type BinanceDataServer interface {
-	DownloadBinanceData(context.Context, *DownloadBinanceDataRequest) (*DownloadBinanceDataReply, error)
+	PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error)
 	IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error)
 	mustEmbedUnimplementedBinanceDataServer()
 }
@@ -65,8 +65,8 @@ type BinanceDataServer interface {
 type UnimplementedBinanceDataServer struct {
 }
 
-func (UnimplementedBinanceDataServer) DownloadBinanceData(context.Context, *DownloadBinanceDataRequest) (*DownloadBinanceDataReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadBinanceData not implemented")
+func (UnimplementedBinanceDataServer) PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PullBinanceData not implemented")
 }
 func (UnimplementedBinanceDataServer) IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IntervalMAvgEndPriceData not implemented")
@@ -84,20 +84,20 @@ func RegisterBinanceDataServer(s grpc.ServiceRegistrar, srv BinanceDataServer) {
 	s.RegisterService(&BinanceData_ServiceDesc, srv)
 }
 
-func _BinanceData_DownloadBinanceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadBinanceDataRequest)
+func _BinanceData_PullBinanceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PullBinanceDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BinanceDataServer).DownloadBinanceData(ctx, in)
+		return srv.(BinanceDataServer).PullBinanceData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.binancedata.v1.BinanceData/DownloadBinanceData",
+		FullMethod: "/api.binancedata.v1.BinanceData/PullBinanceData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BinanceDataServer).DownloadBinanceData(ctx, req.(*DownloadBinanceDataRequest))
+		return srv.(BinanceDataServer).PullBinanceData(ctx, req.(*PullBinanceDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -128,8 +128,8 @@ var BinanceData_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BinanceDataServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "DownloadBinanceData",
-			Handler:    _BinanceData_DownloadBinanceData_Handler,
+			MethodName: "PullBinanceData",
+			Handler:    _BinanceData_PullBinanceData_Handler,
 		},
 		{
 			MethodName: "IntervalMAvgEndPriceData",
