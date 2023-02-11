@@ -375,7 +375,6 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 				//fmt.Println("last2_ma10m15", last2Ma10M15)
 				if lastMa5M15.AvgEndPrice < lastMa10M15.AvgEndPrice { // 条件1
 					//if tmpMa5M60.AvgEndPrice > tmpMa10M60.AvgEndPrice { // 条件2
-					//if lastMa5M15.AvgEndPrice > last2Ma5M15.AvgEndPrice && lastMa10M15.AvgEndPrice > last2Ma10M15.AvgEndPrice {
 					// 本次开，下单逻辑判断上一单
 					tmpDo := false
 					if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
@@ -407,7 +406,6 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 						//fmt.Println(openActionTag)
 						operationData[tmpLastActionTag] = currentOperationData
 					}
-					//}
 
 					//}
 				}
@@ -481,7 +479,6 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 				//last2Ma10M15 := ma10M15[len(ma10M15)-3]               // 上一单
 				if lastMa5M15.AvgEndPrice > lastMa10M15.AvgEndPrice { // 条件1
 					//if tmpMa5M60.AvgEndPrice < tmpMa10M60.AvgEndPrice { // 条件2
-					//	if lastMa5M15.AvgEndPrice < last2Ma5M15.AvgEndPrice && lastMa10M15.AvgEndPrice < last2Ma10M15.AvgEndPrice {
 					// 本次开，下单逻辑判断上一单
 					tmpDo := false
 					if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
@@ -509,7 +506,6 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 						openActionTag = tmpLastActionTag
 						operationData[tmpLastActionTag] = currentOperationData
 					}
-					//	}
 					//}
 				}
 			}
