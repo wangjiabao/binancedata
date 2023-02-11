@@ -16,6 +16,13 @@ service BinanceData {
 		};
 	};
 
+	rpc XNIntervalMAvgEndPriceData (XNIntervalMAvgEndPriceDataRequest) returns (XNIntervalMAvgEndPriceDataReply) {
+		option (google.api.http) = {
+			post: "/api/binancedata/x_n_interval_m_avg_end_price_data"
+			body: "send_body"
+		};
+	};
+
 	rpc IntervalMAvgEndPriceData (IntervalMAvgEndPriceDataRequest) returns (IntervalMAvgEndPriceDataReply) {
 		option (google.api.http) = {
 			get: "/api/binancedata/interval_m_avg_end_price_data"
@@ -28,6 +35,111 @@ message PullBinanceDataRequest {
 }
 
 message PullBinanceDataReply {}
+
+message XNIntervalMAvgEndPriceDataRequest {
+	message SendBody{
+		string start = 1;
+		string end = 2;
+		repeated List x = 3;
+		message List {
+			int64 m = 1;
+			int64 n = 2;
+			string method = 3;
+		}
+	}
+
+	SendBody send_body = 1;
+}
+
+message XNIntervalMAvgEndPriceDataReply {
+	repeated List_k dataListK = 1;
+	message List_k {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+	repeated List_ma5m5 dataListMa5M5 = 6;
+	message List_ma5m5 {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+	repeated List_ma10m5 dataListMa10M5 = 7;
+	message List_ma10m5 {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+	repeated List_ma5m15 dataListMa5M15 = 8;
+	message List_ma5m15 {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+	repeated List_ma10m15 dataListMa10M15 = 9;
+	message List_ma10m15 {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+	repeated List_ma5m60 dataListMa5M60 = 10;
+	message List_ma5m60 {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+	repeated List_ma10m60 dataListMa10M60 = 11;
+	message List_ma10m60 {
+		double start_price = 1;
+		double end_price = 2;
+		double top_price = 3;
+		double low_price = 4;
+		double avg_end_price = 5;
+		int64 time = 6;
+	}
+
+
+	repeated List2 operationData = 2;
+	message List2 {
+		double start_price = 1;
+		double end_price = 2;
+		int64 start_time = 3;
+		int64 end_time = 6;
+		string type = 7;
+		string status = 8;
+		double rate = 9;
+		string action = 10;
+	}
+
+	int64 operationOrderTotal = 3;
+	string operationWinRate = 4;
+	string operationWinAmount = 5;
+
+}
 
 message IntervalMAvgEndPriceDataRequest {
 	string start = 1;

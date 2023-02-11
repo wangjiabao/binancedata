@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BinanceDataClient interface {
 	PullBinanceData(ctx context.Context, in *PullBinanceDataRequest, opts ...grpc.CallOption) (*PullBinanceDataReply, error)
+	XNIntervalMAvgEndPriceData(ctx context.Context, in *XNIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*XNIntervalMAvgEndPriceDataReply, error)
 	IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error)
 }
 
@@ -43,6 +44,15 @@ func (c *binanceDataClient) PullBinanceData(ctx context.Context, in *PullBinance
 	return out, nil
 }
 
+func (c *binanceDataClient) XNIntervalMAvgEndPriceData(ctx context.Context, in *XNIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*XNIntervalMAvgEndPriceDataReply, error) {
+	out := new(XNIntervalMAvgEndPriceDataReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/XNIntervalMAvgEndPriceData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *binanceDataClient) IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error) {
 	out := new(IntervalMAvgEndPriceDataReply)
 	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/IntervalMAvgEndPriceData", in, out, opts...)
@@ -57,6 +67,7 @@ func (c *binanceDataClient) IntervalMAvgEndPriceData(ctx context.Context, in *In
 // for forward compatibility
 type BinanceDataServer interface {
 	PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error)
+	XNIntervalMAvgEndPriceData(context.Context, *XNIntervalMAvgEndPriceDataRequest) (*XNIntervalMAvgEndPriceDataReply, error)
 	IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error)
 	mustEmbedUnimplementedBinanceDataServer()
 }
@@ -67,6 +78,9 @@ type UnimplementedBinanceDataServer struct {
 
 func (UnimplementedBinanceDataServer) PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PullBinanceData not implemented")
+}
+func (UnimplementedBinanceDataServer) XNIntervalMAvgEndPriceData(context.Context, *XNIntervalMAvgEndPriceDataRequest) (*XNIntervalMAvgEndPriceDataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method XNIntervalMAvgEndPriceData not implemented")
 }
 func (UnimplementedBinanceDataServer) IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IntervalMAvgEndPriceData not implemented")
@@ -102,6 +116,24 @@ func _BinanceData_PullBinanceData_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BinanceData_XNIntervalMAvgEndPriceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(XNIntervalMAvgEndPriceDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinanceDataServer).XNIntervalMAvgEndPriceData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.binancedata.v1.BinanceData/XNIntervalMAvgEndPriceData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinanceDataServer).XNIntervalMAvgEndPriceData(ctx, req.(*XNIntervalMAvgEndPriceDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BinanceData_IntervalMAvgEndPriceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IntervalMAvgEndPriceDataRequest)
 	if err := dec(in); err != nil {
@@ -130,6 +162,10 @@ var BinanceData_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PullBinanceData",
 			Handler:    _BinanceData_PullBinanceData_Handler,
+		},
+		{
+			MethodName: "XNIntervalMAvgEndPriceData",
+			Handler:    _BinanceData_XNIntervalMAvgEndPriceData_Handler,
 		},
 		{
 			MethodName: "IntervalMAvgEndPriceData",

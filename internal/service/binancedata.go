@@ -22,6 +22,10 @@ func (b *BinanceDataService) PullBinanceData(ctx context.Context, req *v1.PullBi
 	return b.uc.PullBinanceData(ctx, req)
 }
 
+func (b *BinanceDataService) XNIntervalMAvgEndPriceData(ctx context.Context, req *v1.XNIntervalMAvgEndPriceDataRequest) (*v1.XNIntervalMAvgEndPriceDataReply, error) {
+	return b.uc.XNIntervalMAvgEndPriceData(ctx, req)
+}
+
 func (b *BinanceDataService) IntervalMAvgEndPriceData(ctx context.Context, req *v1.IntervalMAvgEndPriceDataRequest) (*v1.IntervalMAvgEndPriceDataReply, error) {
 	return b.uc.IntervalMAvgEndPriceData(ctx, req)
 }

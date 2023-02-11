@@ -181,3 +181,35 @@ func (k *KLineMOneRepo) InsertKLineMOne(ctx context.Context, kLineMOne []*biz.KL
 
 	return true, nil
 }
+
+// GetKLineMOneByStartTime .
+func (k *KLineMOneRepo) GetKLineMOneByStartTime(start int64, end int64) ([]*biz.KLineMOne, error) {
+	var kLineMOnes []*KLineMOne
+	if err := k.data.db.Where("start_time>=? and start_time<=?", start, end).Table("kline_m_one_btc_usdt").Find(&kLineMOnes).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.NotFound("KLINE_M_ONE_NOT_FOUND", "kline m one not found")
+		}
+
+		return nil, errors.New(500, "KLINE M ONE ERROR", err.Error())
+	}
+
+	res := make([]*biz.KLineMOne, 0)
+	for _, kLineMOne := range kLineMOnes {
+		res = append(res, &biz.KLineMOne{
+			ID:                  kLineMOne.ID,
+			StartTime:           kLineMOne.StartTime,
+			EndTime:             kLineMOne.EndTime,
+			StartPrice:          kLineMOne.StartPrice,
+			TopPrice:            kLineMOne.TopPrice,
+			LowPrice:            kLineMOne.LowPrice,
+			EndPrice:            kLineMOne.EndPrice,
+			DealTotalAmount:     kLineMOne.DealTotalAmount,
+			DealAmount:          kLineMOne.DealAmount,
+			DealTotal:           kLineMOne.DealTotal,
+			DealSelfTotalAmount: kLineMOne.DealSelfTotalAmount,
+			DealSelfAmount:      kLineMOne.DealSelfAmount,
+		})
+	}
+
+	return res, nil
+}

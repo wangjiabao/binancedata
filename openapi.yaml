@@ -66,6 +66,30 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/binancedata/x_n_interval_m_avg_end_price_data:
+        post:
+            tags:
+                - BinanceData
+            operationId: BinanceData_XNIntervalMAvgEndPriceData
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataRequest_SendBody'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
         GoogleProtobufAny:
@@ -133,6 +157,17 @@ components:
         PullBinanceDataReply:
             type: object
             properties: {}
+        SendBody_List:
+            type: object
+            properties:
+                m:
+                    type: integer
+                    format: int64
+                n:
+                    type: integer
+                    format: int64
+                method:
+                    type: string
         Status:
             type: object
             properties:
@@ -149,5 +184,229 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        XNIntervalMAvgEndPriceDataReply:
+            type: object
+            properties:
+                dataListK:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_k'
+                dataListMa5M5:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_ma5m5'
+                dataListMa10M5:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_ma10m5'
+                dataListMa5M15:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_ma5m15'
+                dataListMa10M15:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_ma10m15'
+                dataListMa5M60:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_ma5m60'
+                dataListMa10M60:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List_ma10m60'
+                operationData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/XNIntervalMAvgEndPriceDataReply_List2'
+                operationOrderTotal:
+                    type: integer
+                    format: int64
+                operationWinRate:
+                    type: string
+                operationWinAmount:
+                    type: string
+        XNIntervalMAvgEndPriceDataReply_List2:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                startTime:
+                    type: integer
+                    format: int64
+                endTime:
+                    type: integer
+                    format: int64
+                type:
+                    type: string
+                status:
+                    type: string
+                rate:
+                    type: number
+                    format: double
+                action:
+                    type: string
+        XNIntervalMAvgEndPriceDataReply_List_k:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataReply_List_ma10m15:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataReply_List_ma10m5:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataReply_List_ma10m60:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataReply_List_ma5m15:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataReply_List_ma5m5:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataReply_List_ma5m60:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                avgEndPrice:
+                    type: number
+                    format: double
+                time:
+                    type: integer
+                    format: int64
+        XNIntervalMAvgEndPriceDataRequest_SendBody:
+            type: object
+            properties:
+                start:
+                    type: string
+                end:
+                    type: string
+                x:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SendBody_List'
 tags:
     - name: BinanceData
