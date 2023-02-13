@@ -274,129 +274,39 @@ components:
         XNIntervalMAvgEndPriceDataReply_List_ma10m15:
             type: object
             properties:
-                startPrice:
-                    type: number
-                    format: double
-                endPrice:
-                    type: number
-                    format: double
-                topPrice:
-                    type: number
-                    format: double
-                lowPrice:
-                    type: number
-                    format: double
                 avgEndPrice:
                     type: number
                     format: double
-                time:
-                    type: integer
-                    format: int64
         XNIntervalMAvgEndPriceDataReply_List_ma10m5:
             type: object
             properties:
-                startPrice:
-                    type: number
-                    format: double
-                endPrice:
-                    type: number
-                    format: double
-                topPrice:
-                    type: number
-                    format: double
-                lowPrice:
-                    type: number
-                    format: double
                 avgEndPrice:
                     type: number
                     format: double
-                time:
-                    type: integer
-                    format: int64
         XNIntervalMAvgEndPriceDataReply_List_ma10m60:
             type: object
             properties:
-                startPrice:
-                    type: number
-                    format: double
-                endPrice:
-                    type: number
-                    format: double
-                topPrice:
-                    type: number
-                    format: double
-                lowPrice:
-                    type: number
-                    format: double
                 avgEndPrice:
                     type: number
                     format: double
-                time:
-                    type: integer
-                    format: int64
         XNIntervalMAvgEndPriceDataReply_List_ma5m15:
             type: object
             properties:
-                startPrice:
-                    type: number
-                    format: double
-                endPrice:
-                    type: number
-                    format: double
-                topPrice:
-                    type: number
-                    format: double
-                lowPrice:
-                    type: number
-                    format: double
                 avgEndPrice:
                     type: number
                     format: double
-                time:
-                    type: integer
-                    format: int64
         XNIntervalMAvgEndPriceDataReply_List_ma5m5:
             type: object
             properties:
-                startPrice:
-                    type: number
-                    format: double
-                endPrice:
-                    type: number
-                    format: double
-                topPrice:
-                    type: number
-                    format: double
-                lowPrice:
-                    type: number
-                    format: double
                 avgEndPrice:
                     type: number
                     format: double
-                time:
-                    type: integer
-                    format: int64
         XNIntervalMAvgEndPriceDataReply_List_ma5m60:
             type: object
             properties:
-                startPrice:
-                    type: number
-                    format: double
-                endPrice:
-                    type: number
-                    format: double
-                topPrice:
-                    type: number
-                    format: double
-                lowPrice:
-                    type: number
-                    format: double
                 avgEndPrice:
                     type: number
                     format: double
-                time:
-                    type: integer
-                    format: int64
         XNIntervalMAvgEndPriceDataRequest_SendBody:
             type: object
             properties:

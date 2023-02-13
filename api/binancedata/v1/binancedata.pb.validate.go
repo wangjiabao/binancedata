@@ -1446,17 +1446,7 @@ func (m *XNIntervalMAvgEndPriceDataReply_ListMa5M5) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for StartPrice
-
-	// no validation rules for EndPrice
-
-	// no validation rules for TopPrice
-
-	// no validation rules for LowPrice
-
 	// no validation rules for AvgEndPrice
-
-	// no validation rules for Time
 
 	if len(errors) > 0 {
 		return XNIntervalMAvgEndPriceDataReply_ListMa5M5MultiError(errors)
@@ -1564,17 +1554,7 @@ func (m *XNIntervalMAvgEndPriceDataReply_ListMa10M5) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for StartPrice
-
-	// no validation rules for EndPrice
-
-	// no validation rules for TopPrice
-
-	// no validation rules for LowPrice
-
 	// no validation rules for AvgEndPrice
-
-	// no validation rules for Time
 
 	if len(errors) > 0 {
 		return XNIntervalMAvgEndPriceDataReply_ListMa10M5MultiError(errors)
@@ -1682,17 +1662,7 @@ func (m *XNIntervalMAvgEndPriceDataReply_ListMa5M15) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for StartPrice
-
-	// no validation rules for EndPrice
-
-	// no validation rules for TopPrice
-
-	// no validation rules for LowPrice
-
 	// no validation rules for AvgEndPrice
-
-	// no validation rules for Time
 
 	if len(errors) > 0 {
 		return XNIntervalMAvgEndPriceDataReply_ListMa5M15MultiError(errors)
@@ -1800,17 +1770,7 @@ func (m *XNIntervalMAvgEndPriceDataReply_ListMa10M15) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for StartPrice
-
-	// no validation rules for EndPrice
-
-	// no validation rules for TopPrice
-
-	// no validation rules for LowPrice
-
 	// no validation rules for AvgEndPrice
-
-	// no validation rules for Time
 
 	if len(errors) > 0 {
 		return XNIntervalMAvgEndPriceDataReply_ListMa10M15MultiError(errors)
@@ -1918,17 +1878,7 @@ func (m *XNIntervalMAvgEndPriceDataReply_ListMa5M60) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for StartPrice
-
-	// no validation rules for EndPrice
-
-	// no validation rules for TopPrice
-
-	// no validation rules for LowPrice
-
 	// no validation rules for AvgEndPrice
-
-	// no validation rules for Time
 
 	if len(errors) > 0 {
 		return XNIntervalMAvgEndPriceDataReply_ListMa5M60MultiError(errors)
@@ -2036,17 +1986,7 @@ func (m *XNIntervalMAvgEndPriceDataReply_ListMa10M60) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for StartPrice
-
-	// no validation rules for EndPrice
-
-	// no validation rules for TopPrice
-
-	// no validation rules for LowPrice
-
 	// no validation rules for AvgEndPrice
-
-	// no validation rules for Time
 
 	if len(errors) > 0 {
 		return XNIntervalMAvgEndPriceDataReply_ListMa10M60MultiError(errors)

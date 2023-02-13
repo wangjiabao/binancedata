@@ -590,67 +590,37 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 
 	for _, v := range ma5M15 {
 		res.DataListMa5M15 = append(res.DataListMa5M15, &v1.XNIntervalMAvgEndPriceDataReply_ListMa5M15{
-			StartPrice:  v.StartPrice,
-			EndPrice:    v.EndPrice,
-			TopPrice:    v.TopPrice,
-			LowPrice:    v.EndPrice,
 			AvgEndPrice: v.AvgEndPrice,
-			Time:        v.EndTime,
 		})
 	}
 
 	for _, v := range ma10M15 {
 		res.DataListMa10M15 = append(res.DataListMa10M15, &v1.XNIntervalMAvgEndPriceDataReply_ListMa10M15{
-			StartPrice:  v.StartPrice,
-			EndPrice:    v.EndPrice,
-			TopPrice:    v.TopPrice,
-			LowPrice:    v.EndPrice,
 			AvgEndPrice: v.AvgEndPrice,
-			Time:        v.EndTime,
 		})
 	}
 
 	for _, v := range ma5M5 {
 		res.DataListMa5M5 = append(res.DataListMa5M5, &v1.XNIntervalMAvgEndPriceDataReply_ListMa5M5{
-			StartPrice:  v.StartPrice,
-			EndPrice:    v.EndPrice,
-			TopPrice:    v.TopPrice,
-			LowPrice:    v.EndPrice,
 			AvgEndPrice: v.AvgEndPrice,
-			Time:        v.EndTime,
 		})
 	}
 
 	for _, v := range ma10M5 {
 		res.DataListMa10M5 = append(res.DataListMa10M5, &v1.XNIntervalMAvgEndPriceDataReply_ListMa10M5{
-			StartPrice:  v.StartPrice,
-			EndPrice:    v.EndPrice,
-			TopPrice:    v.TopPrice,
-			LowPrice:    v.EndPrice,
 			AvgEndPrice: v.AvgEndPrice,
-			Time:        v.EndTime,
 		})
 	}
 
 	for _, v := range ma5M60 {
 		res.DataListMa5M60 = append(res.DataListMa5M60, &v1.XNIntervalMAvgEndPriceDataReply_ListMa5M60{
-			StartPrice:  v.StartPrice,
-			EndPrice:    v.EndPrice,
-			TopPrice:    v.TopPrice,
-			LowPrice:    v.EndPrice,
 			AvgEndPrice: v.AvgEndPrice,
-			Time:        v.EndTime,
 		})
 	}
 
 	for _, v := range ma10M60 {
 		res.DataListMa10M60 = append(res.DataListMa10M60, &v1.XNIntervalMAvgEndPriceDataReply_ListMa10M60{
-			StartPrice:  v.StartPrice,
-			EndPrice:    v.EndPrice,
-			TopPrice:    v.TopPrice,
-			LowPrice:    v.EndPrice,
 			AvgEndPrice: v.AvgEndPrice,
-			Time:        v.EndTime,
 		})
 	}
 
@@ -703,17 +673,8 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 
 func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne int, vKlineMOne *KLineMOne, klineMOne []*KLineMOne) *Ma {
 	var (
-		need int
-
-		tmpMaNStartTime  int64
-		tmpMaNStartPrice float64
-
-		tmpMaNEndTime       = vKlineMOne.EndTime // 当前数据为最晚的结束时间
-		tmpMaNEndPrice      = vKlineMOne.EndPrice
+		need                int
 		tmpMaNEndPriceTotal float64 // 最新这条永远是最后一条
-
-		tmpMaNTopPrice = vKlineMOne.TopPrice
-		tmpMaNLowPrice = vKlineMOne.LowPrice
 	)
 
 	tmp := 0
@@ -744,29 +705,10 @@ func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne i
 			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
 			//}
 		}
-
-		if i == (need - 1) {
-			tmpMaNStartTime = klineMOne[kKlineMOne-i].StartTime // 最早的那个数据
-			tmpMaNStartPrice = klineMOne[kKlineMOne-i].StartPrice
-		}
-
-		if tmpMaNTopPrice < klineMOne[kKlineMOne-i].TopPrice { // 所有数据中最高的
-			tmpMaNTopPrice = klineMOne[kKlineMOne-i].TopPrice
-		}
-
-		if tmpMaNLowPrice > klineMOne[kKlineMOne-i].LowPrice { // 所有数据中最低的
-			tmpMaNLowPrice = klineMOne[kKlineMOne-i].LowPrice
-		}
 	}
 
 	tmpMaNAvgEndPrice, _ := strconv.ParseFloat(fmt.Sprintf("%.8f", tmpMaNEndPriceTotal/float64(n)), 64)
 	return &Ma{
-		StartTime:   tmpMaNStartTime,
-		EndTime:     tmpMaNEndTime,
-		StartPrice:  tmpMaNStartPrice,
-		TopPrice:    tmpMaNTopPrice,
-		LowPrice:    tmpMaNLowPrice,
-		EndPrice:    tmpMaNEndPrice,
 		AvgEndPrice: tmpMaNAvgEndPrice,
 	}
 }
