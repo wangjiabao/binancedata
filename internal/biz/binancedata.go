@@ -267,7 +267,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 		tmpNow := time.UnixMilli(vKlineMOne.StartTime).UTC().Add(8 * time.Hour)
 		tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC)
 		//fmt.Println(tmpNow, tmpNow0, tmpNow.Sub(tmpNow0).Minutes())
-		tmpNowSubNow0 := int(tmpNow.Sub(tmpNow0).Minutes())
+		tmpNowSubNow0 := int(tmpNow.Sub(tmpNow0).Minutes()) + 1 // 这里都是开始时间的差值，而我们需要知道这个范围的差值，例如00：00-01：00我们需要的是2，两个1分钟
 		// todo 改成可调节
 		// 遍历分钟线
 		//for _, vX := range x {
@@ -280,16 +280,16 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 		// 计算5根10分钟线
 		tmpMa10M5 := handleManMnWithKLineMineData(10, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M5 = append(ma10M5, tmpMa10M5)
-		// 计算5根15分钟线
+		//// 计算5根15分钟线
 		tmpMa5M15 := handleManMnWithKLineMineData(5, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M15 = append(ma5M15, tmpMa5M15)
-		// 计算10根15分钟线
+		//// 计算10根15分钟线
 		tmpMa10M15 := handleManMnWithKLineMineData(10, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M15 = append(ma10M15, tmpMa10M15)
-		// 计算5根60分钟线
+		//// 计算5根60分钟线
 		tmpMa5M60 := handleManMnWithKLineMineData(5, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M60 = append(ma5M60, tmpMa5M60)
-		// 计算10根60分钟线
+		//// 计算10根60分钟线
 		tmpMa10M60 := handleManMnWithKLineMineData(10, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M60 = append(ma10M60, tmpMa10M60)
 
@@ -710,19 +710,27 @@ func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne i
 
 		tmpMaNEndTime       = vKlineMOne.EndTime // 当前数据为最晚的结束时间
 		tmpMaNEndPrice      = vKlineMOne.EndPrice
-		tmpMaNEndPriceTotal float64
+		tmpMaNEndPriceTotal float64 // 最新这条永远是最后一条
 
 		tmpMaNTopPrice = vKlineMOne.TopPrice
 		tmpMaNLowPrice = vKlineMOne.LowPrice
 	)
 
-	if 0 < current%interval {
-		need = current%interval + (n-1)*interval
+	tmp := 0
+	if current%interval > 0 {
+		tmp = current % interval
+	} else if current/interval > 0 {
+		tmp = interval
 	} else {
-		need = n * interval
+		tmp = 1
 	}
 
+	need = (n-1)*interval + tmp
+
+	//fmt.Println(need, current%interval)
+
 	for i := need - 1; i >= 0; i-- {
+		//fmt.Println(klineMOne[kKlineMOne-i], i)
 		// 整除
 		if 0 == (need-i)%interval {
 			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
