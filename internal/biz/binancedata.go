@@ -264,29 +264,33 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 			continue
 		}
 
+		tmpNow := time.UnixMilli(vKlineMOne.StartTime).UTC().Add(8 * time.Hour)
+		tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC)
+		//fmt.Println(tmpNow, tmpNow0, tmpNow.Sub(tmpNow0).Minutes())
+		tmpNowSubNow0 := int(tmpNow.Sub(tmpNow0).Minutes())
 		// todo 改成可调节
 		// 遍历分钟线
 		//for _, vX := range x {
 		//
 		//}
 
-		// 计算5*5*1分钟线
-		tmpMa5M5 := handleManMnWithKLineMineData(25, kKlineMOne, vKlineMOne, klineMOne)
+		// 计算5根5分钟线
+		tmpMa5M5 := handleManMnWithKLineMineData(5, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M5 = append(ma5M5, tmpMa5M5)
-		// 计算5*10*1分钟线
-		tmpMa10M5 := handleManMnWithKLineMineData(50, kKlineMOne, vKlineMOne, klineMOne)
+		// 计算5根10分钟线
+		tmpMa10M5 := handleManMnWithKLineMineData(10, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M5 = append(ma10M5, tmpMa10M5)
-		// 计算15*5*1分钟线
-		tmpMa5M15 := handleManMnWithKLineMineData(75, kKlineMOne, vKlineMOne, klineMOne)
+		// 计算5根15分钟线
+		tmpMa5M15 := handleManMnWithKLineMineData(5, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M15 = append(ma5M15, tmpMa5M15)
-		// 计算15*10*1分钟线
-		tmpMa10M15 := handleManMnWithKLineMineData(150, kKlineMOne, vKlineMOne, klineMOne)
+		// 计算10根15分钟线
+		tmpMa10M15 := handleManMnWithKLineMineData(10, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M15 = append(ma10M15, tmpMa10M15)
-		// 计算60*5*1分钟线
-		tmpMa5M60 := handleManMnWithKLineMineData(300, kKlineMOne, vKlineMOne, klineMOne)
+		// 计算5根60分钟线
+		tmpMa5M60 := handleManMnWithKLineMineData(5, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M60 = append(ma5M60, tmpMa5M60)
-		// 计算60*10*1分钟线
-		tmpMa10M60 := handleManMnWithKLineMineData(600, kKlineMOne, vKlineMOne, klineMOne)
+		// 计算10根60分钟线
+		tmpMa10M60 := handleManMnWithKLineMineData(10, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M60 = append(ma10M60, tmpMa10M60)
 
 		// 开 全/半的空多 平 仓
@@ -697,29 +701,52 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 	return res, nil
 }
 
-func handleManMnWithKLineMineData(n int, kKlineMOne int, vKlineMOne *KLineMOne, klineMOne []*KLineMOne) *Ma {
+func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne int, vKlineMOne *KLineMOne, klineMOne []*KLineMOne) *Ma {
 	var (
-		tmpMaNEndPriceTotal float64
+		need int
+
+		tmpMaNStartTime  int64
+		tmpMaNStartPrice float64
+
+		tmpMaNEndTime       = vKlineMOne.EndTime // 当前数据为最晚的结束时间
 		tmpMaNEndPrice      = vKlineMOne.EndPrice
-		tmpMaNStartPrice    = vKlineMOne.StartPrice
-		tmpMaNTopPrice      = vKlineMOne.TopPrice
-		tmpMaNLowPrice      = vKlineMOne.LowPrice
-		tmpMaNStartTime     int64
-		tmpMaNEndTime       = vKlineMOne.EndTime
+		tmpMaNEndPriceTotal float64
+
+		tmpMaNTopPrice = vKlineMOne.TopPrice
+		tmpMaNLowPrice = vKlineMOne.LowPrice
 	)
 
-	for i := 0; i < n; i++ {
-		tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
-		if i == (n - 1) {
-			tmpMaNStartTime = klineMOne[kKlineMOne-i].StartTime
+	if 0 < current%interval {
+		need = current%interval + (n-1)*interval
+	} else {
+		need = n * interval
+	}
+
+	for i := need - 1; i >= 0; i-- {
+		// 整除
+		if 0 == (need-i)%interval {
+			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
+			//if need <= 25 {
+			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
+			//}
+
+		} else if 0 == i {
+			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
+			//if need <= 25 {
+			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
+			//}
+		}
+
+		if i == (need - 1) {
+			tmpMaNStartTime = klineMOne[kKlineMOne-i].StartTime // 最早的那个数据
 			tmpMaNStartPrice = klineMOne[kKlineMOne-i].StartPrice
 		}
 
-		if tmpMaNTopPrice < klineMOne[kKlineMOne-i].TopPrice {
+		if tmpMaNTopPrice < klineMOne[kKlineMOne-i].TopPrice { // 所有数据中最高的
 			tmpMaNTopPrice = klineMOne[kKlineMOne-i].TopPrice
 		}
 
-		if tmpMaNLowPrice > klineMOne[kKlineMOne-i].LowPrice {
+		if tmpMaNLowPrice > klineMOne[kKlineMOne-i].LowPrice { // 所有数据中最低的
 			tmpMaNLowPrice = klineMOne[kKlineMOne-i].LowPrice
 		}
 	}
