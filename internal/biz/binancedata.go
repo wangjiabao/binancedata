@@ -308,7 +308,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 						tmpDo = true
 					}
 					if tmpDo {
-						rate := (vKlineMOne.EndPrice - tmpOpenLastOperationData2.StartPrice) / tmpOpenLastOperationData2.StartPrice
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -339,7 +339,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 					}
 
 					if tmpDo {
-						rate := (vKlineMOne.EndPrice - tmpOpenLastOperationData2.StartPrice) / tmpOpenLastOperationData2.StartPrice
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -419,7 +419,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 					}
 
 					if tmpDo {
-						rate := (vKlineMOne.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -518,7 +518,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 					}
 
 					if tmpDo {
-						rate := (vKlineMOne.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -629,9 +629,22 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 		tmpCloseTotal int64
 		tmpRate       float64
 		winRate       float64
+		tmpLastCloseK = -1
 	)
 
-	for _, vOperationData := range resOperationData {
+	// 得到最后一个关仓
+	for i := len(resOperationData) - 1; i >= 0; i-- {
+		if "close" == resOperationData[i].Status {
+			tmpLastCloseK = i
+			break
+		}
+	}
+
+	for k, vOperationData := range resOperationData {
+		if k == tmpLastCloseK { // 结束查询到最后一个，默认-1不会被查到
+			break
+		}
+
 		if "open" == vOperationData.Status {
 			res.OperationOrderTotal++
 		}
