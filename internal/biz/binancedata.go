@@ -80,12 +80,6 @@ type KLineMOne struct {
 }
 
 type Ma struct {
-	StartTime   int64
-	EndTime     int64
-	StartPrice  float64
-	TopPrice    float64
-	LowPrice    float64
-	EndPrice    float64
 	AvgEndPrice float64
 }
 
