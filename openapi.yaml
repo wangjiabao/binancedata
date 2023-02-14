@@ -314,6 +314,12 @@ components:
                     type: string
                 end:
                     type: string
+                n1:
+                    type: integer
+                    format: int32
+                n2:
+                    type: integer
+                    format: int32
                 x:
                     type: array
                     items:

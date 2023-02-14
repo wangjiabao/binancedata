@@ -40,7 +40,9 @@ message XNIntervalMAvgEndPriceDataRequest {
 	message SendBody{
 		string start = 1;
 		string end = 2;
-		repeated List x = 3;
+		int32 n1 = 3;
+		int32 n2 = 4;
+		repeated List x = 5;
 		message List {
 			int64 m = 1;
 			int64 n = 2;

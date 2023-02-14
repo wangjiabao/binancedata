@@ -1072,6 +1072,10 @@ func (m *XNIntervalMAvgEndPriceDataRequest_SendBody) validate(all bool) error {
 
 	// no validation rules for End
 
+	// no validation rules for N1
+
+	// no validation rules for N2
+
 	for idx, item := range m.GetX() {
 		_, _ = idx, item
 

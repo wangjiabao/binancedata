@@ -185,6 +185,8 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 		reqStart         time.Time
 		reqEnd           time.Time
 		klineMOne        []*KLineMOne
+		n1               int
+		n2               int
 		ma5M15           []*Ma // todo 各种图优化
 		ma10M15          []*Ma
 		ma5M5            []*Ma
@@ -205,9 +207,11 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 	if nil != err {
 		return nil, err
 	}
+	n1 = int(req.SendBody.N1)
+	n2 = int(req.SendBody.N2)
 
 	var (
-		maxMxN int64 = 600 // todo 现在是写死的，改成可识别参与计算数据最大值
+		maxMxN = int64(n2 * 60) // todo 现在是写死的，改成可识别参与计算数据最大值 60分钟的参数是最大的
 	)
 
 	fmt.Println(req)
@@ -269,22 +273,22 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 		//}
 
 		// 计算5根5分钟线
-		tmpMa5M5 := handleManMnWithKLineMineData(5, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		tmpMa5M5 := handleManMnWithKLineMineData(n1, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M5 = append(ma5M5, tmpMa5M5)
 		// 计算5根10分钟线
-		tmpMa10M5 := handleManMnWithKLineMineData(10, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		tmpMa10M5 := handleManMnWithKLineMineData(n2, 5, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M5 = append(ma10M5, tmpMa10M5)
 		//// 计算5根15分钟线
-		tmpMa5M15 := handleManMnWithKLineMineData(5, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		tmpMa5M15 := handleManMnWithKLineMineData(n1, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M15 = append(ma5M15, tmpMa5M15)
 		//// 计算10根15分钟线
-		tmpMa10M15 := handleManMnWithKLineMineData(10, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		tmpMa10M15 := handleManMnWithKLineMineData(n2, 15, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M15 = append(ma10M15, tmpMa10M15)
 		//// 计算5根60分钟线
-		tmpMa5M60 := handleManMnWithKLineMineData(5, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		tmpMa5M60 := handleManMnWithKLineMineData(n1, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma5M60 = append(ma5M60, tmpMa5M60)
 		//// 计算10根60分钟线
-		tmpMa10M60 := handleManMnWithKLineMineData(10, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		tmpMa10M60 := handleManMnWithKLineMineData(n2, 60, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
 		ma10M60 = append(ma10M60, tmpMa10M60)
 
 		// 开 全/半的空多 平 仓
@@ -372,40 +376,42 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 				//fmt.Println("last2_ma5m15", last2Ma5M15)
 				//fmt.Println("last2_ma10m15", last2Ma10M15)
 				if lastMa5M15.AvgEndPrice < lastMa10M15.AvgEndPrice { // 条件1
-					//if tmpMa5M60.AvgEndPrice > tmpMa10M60.AvgEndPrice { // 条件2
-					// 本次开，下单逻辑判断上一单
-					tmpDo := false
-					if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-						if "close" == tmpOpenLastOperationData2.Status {
+					if 0 < klineMOne[kKlineMOne-1].EndPrice-klineMOne[kKlineMOne-15].StartPrice { //  一定有15根了，条件判断阳线
+						//if tmpMa5M60.AvgEndPrice > tmpMa10M60.AvgEndPrice { // 条件2
+						// 本次开，下单逻辑判断上一单
+						tmpDo := false
+						if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+							if "close" == tmpOpenLastOperationData2.Status {
+								tmpDo = true
+							}
+						} else {
 							tmpDo = true
 						}
-					} else {
-						tmpDo = true
-					}
 
-					if tmpDo {
-						//fmt.Println(vKlineMOne, time.UnixMilli(vKlineMOne.StartTime))
-						//fmt.Println(vKlineMOne, lastMa5M15, lastMa10M15, tmpMa5M60, tmpMa10M60, last2Ma5M15, last2Ma10M15)
-						currentOperationData := &OperationData2{
-							StartTime:   vKlineMOne.StartTime,
-							EndTime:     vKlineMOne.EndTime,
-							StartPrice:  vKlineMOne.StartPrice,
-							EndPrice:    vKlineMOne.EndPrice,
-							AvgEndPrice: tmpMa5M15.AvgEndPrice,
-							Amount:      2,
-							Type:        "more",
-							Status:      "open", // 全开状态
+						if tmpDo {
+							//fmt.Println(vKlineMOne, time.UnixMilli(vKlineMOne.StartTime))
+							//fmt.Println(vKlineMOne, lastMa5M15, lastMa10M15, tmpMa5M60, tmpMa10M60, last2Ma5M15, last2Ma10M15)
+							currentOperationData := &OperationData2{
+								StartTime:   vKlineMOne.StartTime,
+								EndTime:     vKlineMOne.EndTime,
+								StartPrice:  vKlineMOne.StartPrice,
+								EndPrice:    vKlineMOne.EndPrice,
+								AvgEndPrice: tmpMa5M15.AvgEndPrice,
+								Amount:      2,
+								Type:        "more",
+								Status:      "open", // 全开状态
+							}
+							//tmpOperationData = append(tmpOperationData, currentOperationData)
+
+							tagNum++
+							tmpLastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+							openActionTag = tmpLastActionTag
+							//fmt.Println(openActionTag)
+							operationData[tmpLastActionTag] = currentOperationData
 						}
-						//tmpOperationData = append(tmpOperationData, currentOperationData)
 
-						tagNum++
-						tmpLastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
-						openActionTag = tmpLastActionTag
-						//fmt.Println(openActionTag)
-						operationData[tmpLastActionTag] = currentOperationData
+						//}
 					}
-
-					//}
 				}
 			}
 
@@ -476,35 +482,37 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 				//last2Ma5M15 := ma5M15[len(ma5M15)-3]                  // 上一单
 				//last2Ma10M15 := ma10M15[len(ma10M15)-3]               // 上一单
 				if lastMa5M15.AvgEndPrice > lastMa10M15.AvgEndPrice { // 条件1
-					//if tmpMa5M60.AvgEndPrice < tmpMa10M60.AvgEndPrice { // 条件2
-					// 本次开，下单逻辑判断上一单
-					tmpDo := false
-					if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-						if "close" == tmpOpenLastOperationData2.Status {
+					if 0 > klineMOne[kKlineMOne-1].EndPrice-klineMOne[kKlineMOne-15].StartPrice { //  一定有15根了，条件判断阴线
+						//if tmpMa5M60.AvgEndPrice < tmpMa10M60.AvgEndPrice { // 条件2
+						// 本次开，下单逻辑判断上一单
+						tmpDo := false
+						if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+							if "close" == tmpOpenLastOperationData2.Status {
+								tmpDo = true
+							}
+						} else {
 							tmpDo = true
 						}
-					} else {
-						tmpDo = true
-					}
-					// 本次开
-					if tmpDo {
-						currentOperationData := &OperationData2{
-							StartTime:   vKlineMOne.StartTime,
-							EndTime:     vKlineMOne.EndTime,
-							StartPrice:  vKlineMOne.StartPrice,
-							EndPrice:    vKlineMOne.EndPrice,
-							AvgEndPrice: tmpMa5M15.AvgEndPrice,
-							Amount:      2,
-							Type:        "empty",
-							Status:      "open",
-						}
+						// 本次开
+						if tmpDo {
+							currentOperationData := &OperationData2{
+								StartTime:   vKlineMOne.StartTime,
+								EndTime:     vKlineMOne.EndTime,
+								StartPrice:  vKlineMOne.StartPrice,
+								EndPrice:    vKlineMOne.EndPrice,
+								AvgEndPrice: tmpMa5M15.AvgEndPrice,
+								Amount:      2,
+								Type:        "empty",
+								Status:      "open",
+							}
 
-						tagNum++
-						tmpLastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
-						openActionTag = tmpLastActionTag
-						operationData[tmpLastActionTag] = currentOperationData
+							tagNum++
+							tmpLastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+							openActionTag = tmpLastActionTag
+							operationData[tmpLastActionTag] = currentOperationData
+						}
+						//}
 					}
-					//}
 				}
 			}
 
