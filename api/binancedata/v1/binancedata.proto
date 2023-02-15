@@ -10,16 +10,23 @@ option java_multiple_files = true;
 option java_package = "api.binancedata.v1";
 
 service BinanceData {
-	rpc PullBinanceData (PullBinanceDataRequest) returns (PullBinanceDataReply) {
-		option (google.api.http) = {
-			get: "/api/binancedata/pull"
-		};
-	};
-
 	rpc XNIntervalMAvgEndPriceData (XNIntervalMAvgEndPriceDataRequest) returns (XNIntervalMAvgEndPriceDataReply) {
 		option (google.api.http) = {
 			post: "/api/binancedata/x_n_interval_m_avg_end_price_data"
 			body: "send_body"
+		};
+	};
+
+	rpc KAnd2NIntervalMAvgEndPriceData (KAnd2NIntervalMAvgEndPriceDataRequest) returns (KAnd2NIntervalMAvgEndPriceDataReply) {
+		option (google.api.http) = {
+			post: "/api/binancedata/k_and_2_n_interval_m_avg_end_price_data"
+			body: "send_body"
+		};
+	};
+
+	rpc PullBinanceData (PullBinanceDataRequest) returns (PullBinanceDataReply) {
+		option (google.api.http) = {
+			get: "/api/binancedata/pull"
 		};
 	};
 
@@ -111,6 +118,45 @@ message XNIntervalMAvgEndPriceDataReply {
 	string operationWinRate = 4;
 	string operationWinAmount = 5;
 
+}
+
+message KAnd2NIntervalMAvgEndPriceDataRequest {
+	message SendBody{
+		string start = 1;
+		string end = 2;
+		int32 n1 = 3;
+		int32 n2 = 4;
+		int32 m1 = 5;
+		int32 m2 = 6;
+	}
+
+	SendBody send_body = 1;
+}
+
+message KAnd2NIntervalMAvgEndPriceDataReply {
+	repeated List_k dataListK = 1;
+	message List_k {
+		double x1 = 1;
+		double x2 = 2;
+		double x3 = 3;
+		double x4 = 4;
+		int64 x5 = 5;
+	}
+
+	repeated List_maNMFirst dataListMaNMFirst = 2;
+	message List_maNMFirst{
+		double x1 = 1;
+	}
+
+	repeated List_maNMSecond dataListMaNMSecond = 3;
+	message List_maNMSecond{
+		double x1 = 1;
+	}
+
+	repeated List_backGround backGround = 4;
+	message List_backGround{
+		string x1 = 1;
+	}
 }
 
 message IntervalMAvgEndPriceDataRequest {

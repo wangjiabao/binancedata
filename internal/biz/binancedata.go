@@ -181,6 +181,7 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 
 // XNIntervalMAvgEndPriceData x个<n个间隔m时间的平均收盘价>数据 .
 func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req *v1.XNIntervalMAvgEndPriceDataRequest) (*v1.XNIntervalMAvgEndPriceDataReply, error) {
+	fmt.Println(req)
 	var (
 		reqStart         time.Time
 		reqEnd           time.Time
@@ -214,7 +215,11 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 		maxMxN = int64(n2 * 60) // todo 现在是写死的，改成可识别参与计算数据最大值 60分钟的参数是最大的
 	)
 
-	fmt.Println(req)
+	// 数据时间限制
+	dataLimitTime := time.Date(2022, 01, 02, 0, 0, 0, 0, time.UTC)
+	if reqStart.Before(dataLimitTime) {
+		reqStart = dataLimitTime
+	}
 
 	//x = req.SendBody.X
 	//for _, vX := range x {
@@ -686,46 +691,129 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 	return res, nil
 }
 
-func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne int, vKlineMOne *KLineMOne, klineMOne []*KLineMOne) *Ma {
+// KAnd2NIntervalMAvgEndPriceData k线和x个<2个间隔m时间的平均收盘价>数据 .
+func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context, req *v1.KAnd2NIntervalMAvgEndPriceDataRequest) (*v1.KAnd2NIntervalMAvgEndPriceDataReply, error) {
+	fmt.Println(req)
 	var (
-		need                int
-		tmpMaNEndPriceTotal float64 // 最新这条永远是最后一条
+		reqStart   time.Time
+		reqEnd     time.Time
+		klineMOne  []*KLineMOne
+		n1         int
+		n2         int
+		m1         int
+		m2         int
+		maNMFirst  []*Ma // todo 各种图优化
+		maNMSecond []*Ma
+		err        error
+		//x         []*v1.XNIntervalMAvgEndPriceDataRequest_SendBody_List
 	)
 
-	tmp := 0
-	if current%interval > 0 {
-		tmp = current % interval
-	} else if current/interval > 0 {
-		tmp = interval
-	} else {
-		tmp = 1
+	// 返回结果
+	res := &v1.KAnd2NIntervalMAvgEndPriceDataReply{
+		DataListK:          make([]*v1.KAnd2NIntervalMAvgEndPriceDataReply_ListK, 0),
+		DataListMaNMFirst:  make([]*v1.KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst, 0),
+		DataListMaNMSecond: make([]*v1.KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond, 0),
+		BackGround:         make([]*v1.KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround, 0),
 	}
 
-	need = (n-1)*interval + tmp
+	// 简单的参数限制，解决程序达不到的操作
+	reqStart, err = time.Parse("2006-01-02 15:04:05", req.SendBody.Start) // 时间进行格式校验
+	if nil != err {
+		return res, nil
+	}
+	reqEnd, err = time.Parse("2006-01-02 15:04:05", req.SendBody.End) // 时间进行格式校验
+	if nil != err {
+		return res, nil
+	}
 
-	//fmt.Println(need, current%interval)
+	n1 = int(req.SendBody.N1)
+	m1 = int(req.SendBody.M1)
+	n2 = int(req.SendBody.N2)
+	m2 = int(req.SendBody.M2)
+	maxMxN := int64(n2 * m2)
+	if n1 > n2 || m1 > m2 {
+		return res, nil
+	}
 
-	for i := need - 1; i >= 0; i-- {
-		//fmt.Println(klineMOne[kKlineMOne-i], i)
-		// 整除
-		if 0 == (need-i)%interval {
-			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
-			//if need <= 25 {
-			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
-			//}
+	// 获取时间范围内的k线分钟数据
+	reqStart = reqStart.Add(-time.Duration(maxMxN-1) * time.Minute)
+	// todo 数据时间限制，先应该随着maxMxN改变而改变
+	dataLimitTime := time.Date(2022, 01, 02, 0, 0, 0, 0, time.UTC)
+	if reqStart.Before(dataLimitTime) {
+		reqStart = dataLimitTime
+	}
+	// 时间查不出数据
+	if reqStart.After(reqEnd) {
+		return res, nil
+	}
 
-		} else if 0 == i {
-			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
-			//if need <= 25 {
-			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
-			//}
+	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+		reqStart.Add(-8*time.Hour).UnixMilli(),
+		reqEnd.Add(-8*time.Hour).UnixMilli(),
+	)
+
+	// 遍历k线数据，也是每分钟数据
+	for kKlineMOne, vKlineMOne := range klineMOne {
+		if maxMxN-1 > int64(kKlineMOne) { // 多的线，注意查到的前置数据个数>=maxMxN，不然有bug
+			continue
 		}
+
+		tmpNow := time.UnixMilli(vKlineMOne.StartTime).UTC().Add(8 * time.Hour)
+		tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC)
+		//fmt.Println(tmpNow, tmpNow0, tmpNow.Sub(tmpNow0).Minutes())
+		tmpNowSubNow0 := int(tmpNow.Sub(tmpNow0).Minutes()) + 1 // 这里都是开始时间的差值，而我们需要知道这个范围的差值，例如00：00-01：00我们需要的是2，两个1分钟
+
+		// 计算N根M分钟线，第一条
+		tmpMaNMFirst := handleManMnWithKLineMineData(n1, m1, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		maNMFirst = append(maNMFirst, tmpMaNMFirst)
+		res.DataListMaNMFirst = append(res.DataListMaNMFirst, &v1.KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpMaNMFirst.AvgEndPrice})
+
+		// 计算N根M分钟线，第二条
+		tmpMaNMSecond := handleManMnWithKLineMineData(n2, m2, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		maNMSecond = append(maNMSecond, tmpMaNMSecond)
+		res.DataListMaNMSecond = append(res.DataListMaNMSecond, &v1.KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond{X1: tmpMaNMSecond.AvgEndPrice})
+
+		// 背景颜色
+		tmpBackGround := "white"
+		if lenBackGround := len(res.BackGround); lenBackGround > 1 {
+			tmpBackGround = res.BackGround[lenBackGround-1].X1
+		}
+		// 第一单跳过
+		if maxMxN < int64(kKlineMOne) {
+			// 开多
+			//fmt.Println(len(ma5M15))
+			if tmpMaNMFirst.AvgEndPrice > tmpMaNMSecond.AvgEndPrice { // 条件1
+				lastMaNMFirst := maNMFirst[len(maNMFirst)-2]                // 上一单
+				lastMaNMSecond := maNMSecond[len(maNMSecond)-2]             // 上一单
+				if lastMaNMFirst.AvgEndPrice < lastMaNMSecond.AvgEndPrice { // 条件1
+					tmpBackGround = "green"
+				}
+			}
+
+			// 开多
+			//fmt.Println(len(ma5M15))
+			if tmpMaNMFirst.AvgEndPrice < tmpMaNMSecond.AvgEndPrice { // 条件1
+				lastMaNMFirst := maNMFirst[len(maNMFirst)-2]                // 上一单
+				lastMaNMSecond := maNMSecond[len(maNMSecond)-2]             // 上一单
+				if lastMaNMFirst.AvgEndPrice > lastMaNMSecond.AvgEndPrice { // 条件1
+					tmpBackGround = "red"
+				}
+			}
+		}
+		res.BackGround = append(res.BackGround, &v1.KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround{X1: tmpBackGround})
+
+		// 结果
+		res.DataListK = append(res.DataListK, &v1.KAnd2NIntervalMAvgEndPriceDataReply_ListK{
+			X1: vKlineMOne.StartPrice,
+			X2: vKlineMOne.EndPrice,
+			X3: vKlineMOne.TopPrice,
+			X4: vKlineMOne.LowPrice,
+			X5: vKlineMOne.EndTime,
+		})
 	}
 
-	tmpMaNAvgEndPrice, _ := strconv.ParseFloat(fmt.Sprintf("%.8f", tmpMaNEndPriceTotal/float64(n)), 64)
-	return &Ma{
-		AvgEndPrice: tmpMaNAvgEndPrice,
-	}
+	return res, nil
 }
 
 func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *v1.IntervalMAvgEndPriceDataRequest) (*v1.IntervalMAvgEndPriceDataReply, error) {
@@ -1062,4 +1150,46 @@ func requestBinanceMinuteKLinesData(symbol string, startTime string, endTime str
 	}
 
 	return res, err
+}
+
+func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne int, vKlineMOne *KLineMOne, klineMOne []*KLineMOne) *Ma {
+	var (
+		need                int
+		tmpMaNEndPriceTotal float64 // 最新这条永远是最后一条
+	)
+
+	tmp := 0
+	if current%interval > 0 {
+		tmp = current % interval
+	} else if current/interval > 0 {
+		tmp = interval
+	} else {
+		tmp = 1
+	}
+
+	need = (n-1)*interval + tmp
+
+	//fmt.Println(need, current%interval)
+
+	for i := need - 1; i >= 0; i-- {
+		//fmt.Println(klineMOne[kKlineMOne-i], i)
+		// 整除
+		if 0 == (need-i)%interval {
+			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
+			//if need <= 25 {
+			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
+			//}
+
+		} else if 0 == i {
+			tmpMaNEndPriceTotal += klineMOne[kKlineMOne-i].EndPrice // 累加
+			//if need <= 25 {
+			//	fmt.Println(need, time.UnixMilli(klineMOne[kKlineMOne-i].EndTime))
+			//}
+		}
+	}
+
+	tmpMaNAvgEndPrice, _ := strconv.ParseFloat(fmt.Sprintf("%.8f", tmpMaNEndPriceTotal/float64(n)), 64)
+	return &Ma{
+		AvgEndPrice: tmpMaNAvgEndPrice,
+	}
 }
