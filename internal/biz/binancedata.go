@@ -806,35 +806,58 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 				lastMaNMSecond := maNMSecond[len(maNMSecond)-2]             // 上一单
 				if lastMaNMFirst.AvgEndPrice < lastMaNMSecond.AvgEndPrice { // 条件1
 					// 本次开，下单逻辑判断上一单
-					tmpDo := false
-					if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-						if "close" == tmpOpenLastOperationData2.Status {
-							tmpDo = true
+					//tmpDo := false
+					//if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+					//	if "close" == tmpOpenLastOperationData2.Status {
+					//		tmpDo = true
+					//	}
+					//} else {
+					//	tmpDo = true
+					//}
+					//
+					//if tmpDo {
+					// 平空 如果有先平掉上一单
+					if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
+						if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+							rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
+							tmpCloseLastOperationData := &OperationData2{
+								StartTime:  vKlineMOne.StartTime,
+								EndTime:    vKlineMOne.EndTime,
+								StartPrice: vKlineMOne.StartPrice,
+								EndPrice:   vKlineMOne.EndPrice,
+								Amount:     0,
+								Type:       "empty",
+								Status:     "close",
+								Rate:       rate,
+							}
+
+							tagNum++
+							lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+							operationData[lastActionTag] = tmpCloseLastOperationData
+							openActionTag = ""
+							compareLowPrice = 0
 						}
-					} else {
-						tmpDo = true
 					}
 
-					if tmpDo {
-						currentOperationData := &OperationData2{
-							StartTime:  vKlineMOne.StartTime,
-							EndTime:    vKlineMOne.EndTime,
-							StartPrice: vKlineMOne.StartPrice,
-							EndPrice:   vKlineMOne.EndPrice,
-							Amount:     2,
-							Type:       "more",
-							Status:     "open", // 全开状态
-						}
-						tagNum++
-						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
-						openActionTag = lastActionTag
-						//fmt.Println(openActionTag)
-						operationData[lastActionTag] = currentOperationData
-						compareTopPrice = vKlineMOne.TopPrice
-
-						tmpBackGround = "green"
+					currentOperationData := &OperationData2{
+						StartTime:  vKlineMOne.StartTime,
+						EndTime:    vKlineMOne.EndTime,
+						StartPrice: vKlineMOne.StartPrice,
+						EndPrice:   vKlineMOne.EndPrice,
+						Amount:     2,
+						Type:       "more",
+						Status:     "open", // 全开状态
 					}
+					tagNum++
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					openActionTag = lastActionTag
+					//fmt.Println(openActionTag)
+					operationData[lastActionTag] = currentOperationData
+					compareTopPrice = vKlineMOne.TopPrice
+
+					tmpBackGround = "green"
 				}
+				//}
 			}
 
 			// 开空
@@ -844,36 +867,59 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 				lastMaNMSecond := maNMSecond[len(maNMSecond)-2]             // 上一单
 				if lastMaNMFirst.AvgEndPrice > lastMaNMSecond.AvgEndPrice { // 条件1
 					// 本次开，下单逻辑判断上一单
-					tmpDo := false
-					if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-						if "close" == tmpOpenLastOperationData2.Status {
-							tmpDo = true
+					//tmpDo := false
+					//if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+					//	if "close" == tmpOpenLastOperationData2.Status {
+					//		tmpDo = true
+					//	}
+					//} else {
+					//	tmpDo = true
+					//}
+
+					//if tmpDo {
+					// 平多 如果有先平掉上一单
+					if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
+						if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+							rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
+							tmpCloseLastOperationData := &OperationData2{
+								StartTime:  vKlineMOne.StartTime,
+								EndTime:    vKlineMOne.EndTime,
+								StartPrice: vKlineMOne.StartPrice,
+								EndPrice:   vKlineMOne.EndPrice,
+								Amount:     0,
+								Type:       "more",
+								Status:     "close",
+								Rate:       rate,
+							}
+
+							tagNum++
+							lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+							operationData[lastActionTag] = tmpCloseLastOperationData
+							openActionTag = ""
+							compareLowPrice = 0
 						}
-					} else {
-						tmpDo = true
 					}
 
-					if tmpDo {
-						currentOperationData := &OperationData2{
-							StartTime:  vKlineMOne.StartTime,
-							EndTime:    vKlineMOne.EndTime,
-							StartPrice: vKlineMOne.StartPrice,
-							EndPrice:   vKlineMOne.EndPrice,
-							Amount:     2,
-							Type:       "empty",
-							Status:     "open", // 全开状态
-						}
-						tagNum++
-						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
-						openActionTag = lastActionTag
-						//fmt.Println(openActionTag)
-						operationData[lastActionTag] = currentOperationData
-						compareLowPrice = vKlineMOne.LowPrice
-
-						tmpBackGround = "red"
+					currentOperationData := &OperationData2{
+						StartTime:  vKlineMOne.StartTime,
+						EndTime:    vKlineMOne.EndTime,
+						StartPrice: vKlineMOne.StartPrice,
+						EndPrice:   vKlineMOne.EndPrice,
+						Amount:     2,
+						Type:       "empty",
+						Status:     "open", // 全开状态
 					}
+					tagNum++
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					openActionTag = lastActionTag
+					//fmt.Println(openActionTag)
+					operationData[lastActionTag] = currentOperationData
+					compareLowPrice = vKlineMOne.LowPrice
 
+					tmpBackGround = "red"
 				}
+
+				//}
 			}
 		}
 		res.BackGround = append(res.BackGround, &v1.KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround{X1: tmpBackGround})
