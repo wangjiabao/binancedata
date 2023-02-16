@@ -128,6 +128,9 @@ message KAnd2NIntervalMAvgEndPriceDataRequest {
 		int32 n2 = 4;
 		int32 m1 = 5;
 		int32 m2 = 6;
+		double top_x = 7;
+		double low_x = 8;
+		double fee = 9;
 	}
 
 	SendBody send_body = 1;
@@ -157,6 +160,22 @@ message KAnd2NIntervalMAvgEndPriceDataReply {
 	message List_backGround{
 		string x1 = 1;
 	}
+
+	repeated List2 operationData = 6;
+	message List2 {
+		double start_price = 1;
+		double end_price = 2;
+		int64 start_time = 3;
+		int64 end_time = 6;
+		string type = 7;
+		string status = 8;
+		double rate = 9;
+		string action = 10;
+	}
+
+	int64 operationOrderTotal = 7;
+	string operationWinRate = 8;
+	string operationWinAmount = 9;
 }
 
 message IntervalMAvgEndPriceDataRequest {

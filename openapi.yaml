@@ -197,6 +197,41 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/KAnd2NIntervalMAvgEndPriceDataReply_List_backGround'
+                operationData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/KAnd2NIntervalMAvgEndPriceDataReply_List2'
+                operationOrderTotal:
+                    type: integer
+                    format: int64
+                operationWinRate:
+                    type: string
+                operationWinAmount:
+                    type: string
+        KAnd2NIntervalMAvgEndPriceDataReply_List2:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                startTime:
+                    type: integer
+                    format: int64
+                endTime:
+                    type: integer
+                    format: int64
+                type:
+                    type: string
+                status:
+                    type: string
+                rate:
+                    type: number
+                    format: double
+                action:
+                    type: string
         KAnd2NIntervalMAvgEndPriceDataReply_List_backGround:
             type: object
             properties:
@@ -251,6 +286,15 @@ components:
                 m2:
                     type: integer
                     format: int32
+                topX:
+                    type: number
+                    format: double
+                lowX:
+                    type: number
+                    format: double
+                fee:
+                    type: number
+                    format: double
         PullBinanceDataReply:
             type: object
             properties: {}

@@ -1049,6 +1049,46 @@ func (m *KAnd2NIntervalMAvgEndPriceDataReply) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetOperationData() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, KAnd2NIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("OperationData[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, KAnd2NIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("OperationData[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return KAnd2NIntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("OperationData[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for OperationOrderTotal
+
+	// no validation rules for OperationWinRate
+
+	// no validation rules for OperationWinAmount
+
 	if len(errors) > 0 {
 		return KAnd2NIntervalMAvgEndPriceDataReplyMultiError(errors)
 	}
@@ -2606,6 +2646,12 @@ func (m *KAnd2NIntervalMAvgEndPriceDataRequest_SendBody) validate(all bool) erro
 
 	// no validation rules for M2
 
+	// no validation rules for TopX
+
+	// no validation rules for LowX
+
+	// no validation rules for Fee
+
 	if len(errors) > 0 {
 		return KAnd2NIntervalMAvgEndPriceDataRequest_SendBodyMultiError(errors)
 	}
@@ -3153,6 +3199,128 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = KAnd2NIntervalMAvgEndPriceDataReply_ListBackGroundValidationError{}
+
+// Validate checks the field values on
+// KAnd2NIntervalMAvgEndPriceDataReply_List2 with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *KAnd2NIntervalMAvgEndPriceDataReply_List2) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// KAnd2NIntervalMAvgEndPriceDataReply_List2 with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// KAnd2NIntervalMAvgEndPriceDataReply_List2MultiError, or nil if none found.
+func (m *KAnd2NIntervalMAvgEndPriceDataReply_List2) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *KAnd2NIntervalMAvgEndPriceDataReply_List2) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StartPrice
+
+	// no validation rules for EndPrice
+
+	// no validation rules for StartTime
+
+	// no validation rules for EndTime
+
+	// no validation rules for Type
+
+	// no validation rules for Status
+
+	// no validation rules for Rate
+
+	// no validation rules for Action
+
+	if len(errors) > 0 {
+		return KAnd2NIntervalMAvgEndPriceDataReply_List2MultiError(errors)
+	}
+
+	return nil
+}
+
+// KAnd2NIntervalMAvgEndPriceDataReply_List2MultiError is an error wrapping
+// multiple validation errors returned by
+// KAnd2NIntervalMAvgEndPriceDataReply_List2.ValidateAll() if the designated
+// constraints aren't met.
+type KAnd2NIntervalMAvgEndPriceDataReply_List2MultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m KAnd2NIntervalMAvgEndPriceDataReply_List2MultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m KAnd2NIntervalMAvgEndPriceDataReply_List2MultiError) AllErrors() []error { return m }
+
+// KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError is the validation
+// error returned by KAnd2NIntervalMAvgEndPriceDataReply_List2.Validate if the
+// designated constraints aren't met.
+type KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError) ErrorName() string {
+	return "KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sKAnd2NIntervalMAvgEndPriceDataReply_List2.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError{}
 
 // Validate checks the field values on IntervalMAvgEndPriceDataReply_List with
 // the rules defined in the proto definition for this message. If any rules
