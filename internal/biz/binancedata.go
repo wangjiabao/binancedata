@@ -60,9 +60,16 @@ type OperationData2 struct {
 
 type OperationData2Slice []*OperationData2
 
-func (o OperationData2Slice) Len() int           { return len(o) }
-func (o OperationData2Slice) Less(i, j int) bool { return o[i].EndTime < o[j].EndTime }
-func (o OperationData2Slice) Swap(i, j int)      { o[i], o[j] = o[j], o[i] }
+func (o OperationData2Slice) Len() int { return len(o) }
+func (o OperationData2Slice) Less(i, j int) bool {
+	if o[i].EndTime < o[j].EndTime {
+		return true
+	} else if o[i].EndTime == o[j].EndTime && "close" == o[i].Status {
+		return true
+	}
+	return false
+}
+func (o OperationData2Slice) Swap(i, j int) { o[i], o[j] = o[j], o[i] }
 
 type KLineMOne struct {
 	ID                  int64
@@ -879,7 +886,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 					//if tmpDo {
 					// 平多 如果有先平掉上一单
 					if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
-						if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+						if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 							rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
 							tmpCloseLastOperationData := &OperationData2{
 								StartTime:  vKlineMOne.StartTime,
