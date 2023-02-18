@@ -941,7 +941,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 							lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
 							operationData[lastActionTag] = tmpCloseLastOperationData
 							openActionTag = ""
-							compareLowPrice = 0
+							compareTopPrice = 0
 						}
 					}
 
