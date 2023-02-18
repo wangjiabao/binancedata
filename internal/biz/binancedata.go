@@ -803,7 +803,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 						}
 
 						// 最高价-最高价*x% > 最新价 关仓条件
-						if compareLowPrice-compareLowPrice*lowX < vKlineMOne.EndPrice {
+						if compareLowPrice+compareLowPrice*lowX < vKlineMOne.EndPrice {
 							tmpDo = true
 						}
 					} else if 2 == closeCondition {
