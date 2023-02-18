@@ -295,6 +295,12 @@ components:
                 fee:
                     type: number
                     format: double
+                closeCondition:
+                    type: integer
+                    format: int32
+                closeCondition2Rate:
+                    type: number
+                    format: double
         PullBinanceDataReply:
             type: object
             properties: {}

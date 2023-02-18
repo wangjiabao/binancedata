@@ -9,6 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"io"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/url"
 	"sort"
@@ -56,6 +57,7 @@ type OperationData2 struct {
 	Action        string
 	CloseEndPrice string
 	Rate          float64
+	CloseSubPrice float64
 }
 
 type OperationData2Slice []*OperationData2
@@ -629,20 +631,22 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context, req *v1.KAnd2NIntervalMAvgEndPriceDataRequest) (*v1.KAnd2NIntervalMAvgEndPriceDataReply, error) {
 	fmt.Println(req)
 	var (
-		reqStart         time.Time
-		reqEnd           time.Time
-		klineMOne        []*KLineMOne
-		n1               int
-		n2               int
-		m1               int
-		m2               int
-		topX             float64
-		lowX             float64
-		fee              float64
-		maNMFirst        []*Ma // todo 各种图优化
-		maNMSecond       []*Ma
-		resOperationData OperationData2Slice
-		err              error
+		reqStart            time.Time
+		reqEnd              time.Time
+		klineMOne           []*KLineMOne
+		n1                  int
+		n2                  int
+		m1                  int
+		m2                  int
+		topX                float64
+		lowX                float64
+		fee                 float64
+		maNMFirst           []*Ma // todo 各种图优化
+		maNMSecond          []*Ma
+		resOperationData    OperationData2Slice
+		closeCondition      = 1
+		closeCondition2Rate float64
+		err                 error
 		//x         []*v1.XNIntervalMAvgEndPriceDataRequest_SendBody_List
 	)
 
@@ -674,6 +678,15 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 	maxMxN := int64(n2 * m2)
 	if n1 > n2 || m1 > m2 {
 		return res, nil
+	}
+
+	// 条件2目前是止盈止损点
+	if 2 == req.SendBody.CloseCondition {
+		if maxMxN < 5 {
+			return res, nil
+		}
+		closeCondition = 2
+		closeCondition2Rate = float64(req.SendBody.CloseCondition2Rate)
 	}
 
 	// 获取时间范围内的k线分钟数据
@@ -736,14 +749,22 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					tmpBackGround = "green"
 
-					// 更新比较的最高价
-					if vKlineMOne.TopPrice > compareTopPrice {
-						compareTopPrice = vKlineMOne.TopPrice
-					}
+					if 1 == closeCondition {
+						// 更新比较的最高价
+						if vKlineMOne.TopPrice > compareTopPrice {
+							compareTopPrice = vKlineMOne.TopPrice
+						}
 
-					// 最高价-最高价*x% > 最新价 关仓条件
-					if compareTopPrice-compareTopPrice*topX > vKlineMOne.EndPrice {
-						tmpDo = true
+						// 最高价-最高价*x% > 最新价 关仓条件
+						if compareTopPrice-compareTopPrice*topX > vKlineMOne.EndPrice {
+							tmpDo = true
+						}
+					} else if 2 == closeCondition {
+						// 止损
+						if vKlineMOne.EndPrice+tmpOpenLastOperationData2.CloseSubPrice*closeCondition2Rate <= tmpOpenLastOperationData2.StartPrice {
+							tmpDo = true
+						}
+
 					}
 
 				}
@@ -775,14 +796,22 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					tmpBackGround = "red"
 
-					// 更新比较的最高价
-					if vKlineMOne.LowPrice < compareLowPrice {
-						compareLowPrice = vKlineMOne.LowPrice
-					}
+					if 1 == closeCondition {
+						// 更新比较的最高价
+						if vKlineMOne.LowPrice < compareLowPrice {
+							compareLowPrice = vKlineMOne.LowPrice
+						}
 
-					// 最高价-最高价*x% > 最新价 关仓条件
-					if compareLowPrice-compareLowPrice*lowX < vKlineMOne.EndPrice {
-						tmpDo = true
+						// 最高价-最高价*x% > 最新价 关仓条件
+						if compareLowPrice-compareLowPrice*lowX < vKlineMOne.EndPrice {
+							tmpDo = true
+						}
+					} else if 2 == closeCondition {
+						// 止损
+						if vKlineMOne.EndPrice-tmpOpenLastOperationData2.CloseSubPrice*closeCondition2Rate >= tmpOpenLastOperationData2.StartPrice {
+							tmpDo = true
+						}
+
 					}
 				}
 				if tmpDo {
@@ -846,14 +875,23 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 						}
 					}
 
+					// 找到前5k线数据的最低价
+					tmpFiveLowPrice := klineMOne[kKlineMOne-1].LowPrice
+					for tmpI := 2; tmpI <= 5; tmpI++ {
+						if tmpFiveLowPrice > klineMOne[kKlineMOne-tmpI].LowPrice {
+							tmpFiveLowPrice = klineMOne[kKlineMOne-tmpI].LowPrice
+						}
+					}
+
 					currentOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
-						Amount:     2,
-						Type:       "more",
-						Status:     "open", // 全开状态
+						StartTime:     vKlineMOne.StartTime,
+						EndTime:       vKlineMOne.EndTime,
+						StartPrice:    vKlineMOne.StartPrice,
+						EndPrice:      vKlineMOne.EndPrice,
+						Amount:        2,
+						Type:          "more",
+						Status:        "open", // 全开状态
+						CloseSubPrice: math.Abs(vKlineMOne.StartPrice - tmpFiveLowPrice),
 					}
 					tagNum++
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
@@ -907,14 +945,23 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 						}
 					}
 
+					// 找到前5k线数据的最低价
+					tmpFiveTopPrice := klineMOne[kKlineMOne-1].TopPrice
+					for tmpI := 2; tmpI <= 5; tmpI++ {
+						if tmpFiveTopPrice < klineMOne[kKlineMOne-tmpI].TopPrice {
+							tmpFiveTopPrice = klineMOne[kKlineMOne-tmpI].TopPrice
+						}
+					}
+
 					currentOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
-						Amount:     2,
-						Type:       "empty",
-						Status:     "open", // 全开状态
+						StartTime:     vKlineMOne.StartTime,
+						EndTime:       vKlineMOne.EndTime,
+						StartPrice:    vKlineMOne.StartPrice,
+						EndPrice:      vKlineMOne.EndPrice,
+						Amount:        2,
+						Type:          "empty",
+						Status:        "open", // 全开状态
+						CloseSubPrice: math.Abs(vKlineMOne.StartPrice - tmpFiveTopPrice),
 					}
 					tagNum++
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)

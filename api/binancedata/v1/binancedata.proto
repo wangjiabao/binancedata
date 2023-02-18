@@ -131,6 +131,8 @@ message KAnd2NIntervalMAvgEndPriceDataRequest {
 		double top_x = 7;
 		double low_x = 8;
 		double fee = 9;
+		int32 close_condition = 10;
+		double close_condition2_rate = 11;
 	}
 
 	SendBody send_body = 1;

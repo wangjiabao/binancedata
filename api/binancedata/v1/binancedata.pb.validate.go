@@ -2652,6 +2652,10 @@ func (m *KAnd2NIntervalMAvgEndPriceDataRequest_SendBody) validate(all bool) erro
 
 	// no validation rules for Fee
 
+	// no validation rules for CloseCondition
+
+	// no validation rules for CloseCondition2Rate
+
 	if len(errors) > 0 {
 		return KAnd2NIntervalMAvgEndPriceDataRequest_SendBodyMultiError(errors)
 	}
