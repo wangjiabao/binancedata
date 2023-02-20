@@ -3,15 +3,9 @@ package biz
 import (
 	v1 "binancedata/api/binancedata/v1"
 	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
-	"io"
-	"io/ioutil"
 	"math"
-	"net/http"
-	"net/url"
 	"sort"
 	"strconv"
 	"time"
@@ -686,7 +680,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 			return res, nil
 		}
 		closeCondition = 2
-		closeCondition2Rate = float64(req.SendBody.CloseCondition2Rate)
+		closeCondition2Rate = req.SendBody.CloseCondition2Rate
 	}
 
 	// 获取时间范围内的k线分钟数据
@@ -694,7 +688,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 	// todo 数据时间限制，先应该随着maxMxN改变而改变
 	dataLimitTime := time.Date(2022, 01, 02, 0, 0, 0, 0, time.UTC)
 	if reqStart.Before(dataLimitTime) {
-		reqStart = dataLimitTime
+		return res, nil
 	}
 	// 时间查不出数据
 	if reqStart.After(reqEnd) {
@@ -1049,247 +1043,212 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 	return res, nil
 }
 
+// IntervalMAvgEndPriceData k线和间隔m时间的平均收盘价数据 .
 func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *v1.IntervalMAvgEndPriceDataRequest) (*v1.IntervalMAvgEndPriceDataReply, error) {
 	var (
-		binanceData       []*BinanceData
-		beforeBinanceData []*BinanceData
-		operationData     []*OperationData
-		reqStart          time.Time
-		reqEnd            time.Time
-		err               error
+		resOperationData OperationData2Slice
+		klineMOne        []*KLineMOne
+		reqStart         time.Time
+		reqEnd           time.Time
+		m                int
+		n                int
+		fee              float64
+		err              error
 	)
 
-	m := req.M
-	n := req.N // 辅助前置数据数量 & 平均值的计算数量
-	startTime := req.Start
-	endTime := req.End
-
-	reqStart, err = time.Parse("2006-01-02 15:04:05", startTime) // 时间进行格式校验
+	reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
 	if nil != err {
 		return nil, err
 	}
-	reqEnd, err = time.Parse("2006-01-02 15:04:05", endTime) // 时间进行格式校验
-	if nil != err {
-		return nil, err
-	}
-	//startTime := time.Date(2022, 1, 16, 18, 59, 59, 0, time.Local)
-	//endTime := startTime.Add(999 * time.Minute) // 为了每分钟一条的数据，获取最大限制1000条
-
-	limit := int64(1500)
-	// 获取数据
-
-	start := reqStart
-	end := reqEnd
-	fmt.Println(reqStart, reqEnd, start, end)
-	for i := 1; i <= 100; i++ { // 每分钟最大请求次数 1200次，最大限度留一次给后边，这里目前够查询15w条
-		var tmpBinanceData []*BinanceData
-		if reqEnd.After(start.Add(time.Duration(m*limit) * time.Minute)) {
-			end = start.Add(time.Duration(m*limit) * time.Minute).Add(-1 * time.Second)
-		} else {
-			end = reqEnd
-		}
-
-		tmpBinanceData, err = requestBinanceMinuteKLinesData("BTCUSDT",
-			strconv.FormatInt(start.Add(-8*time.Hour).UnixMilli(), 10),
-			strconv.FormatInt(end.Add(-8*time.Hour).UnixMilli(), 10),
-			strconv.FormatInt(m, 10)+"m",
-			strconv.FormatInt(limit, 10))
-		if nil != err {
-			return nil, err
-		}
-
-		binanceData = append(binanceData, tmpBinanceData...)
-
-		start = start.Add(time.Duration(m*limit) * time.Minute)
-		if reqEnd.Before(start) {
-			break
-		}
-	}
-
-	// 前置数据
-	beforeEnd := reqStart.Add(-1 * time.Second)
-	beforeStart := reqStart.Add(-time.Duration(m*(n-1)) * time.Minute)
-	beforeBinanceData, err = requestBinanceMinuteKLinesData("BTCUSDT",
-		strconv.FormatInt(beforeStart.Add(-8*time.Hour).UnixMilli(), 10),
-		strconv.FormatInt(beforeEnd.Add(-8*time.Hour).UnixMilli(), 10),
-		strconv.FormatInt(m, 10)+"m",
-		strconv.FormatInt(limit, 10))
+	reqEnd, err = time.Parse("2006-01-02 15:04:05", req.End) // 时间进行格式校验
 	if nil != err {
 		return nil, err
 	}
 
 	res := &v1.IntervalMAvgEndPriceDataReply{
-		Data:          make([]*v1.IntervalMAvgEndPriceDataReply_List, 0),
+		DataListK:     make([]*v1.IntervalMAvgEndPriceDataReply_ListK, 0),
 		OperationData: make([]*v1.IntervalMAvgEndPriceDataReply_List2, 0),
 	}
 
-	status := 1
+	m = int(req.M)
+	n = int(req.N)
+	maxMxN := n * m
 
-	// 遍历数据
-	for k, v := range binanceData {
-		var (
-			tmpEndPrice      float64
-			tmpTotalEndPrice float64
-			tmpAvgEndPrice   float64
-		)
-		if tmpEndPrice, err = strconv.ParseFloat(v.EndPrice, 64); nil != err {
-			return nil, errors.New(500, "string to float64 error", "string to float64 error")
-		}
+	fee = req.Fee
 
-		tmpTotalEndPrice = tmpEndPrice
-
-		// 前置数据遍历参与计算
-		if (k+1)-int(n) < 0 { // 游标位置判断是否需要前置数据
-			for kBefore, vBefore := range beforeBinanceData {
-				if k > kBefore { // 游标位置底线
-					continue
-				}
-				var tmpBeforeEndPrice float64
-				if tmpBeforeEndPrice, err = strconv.ParseFloat(vBefore.EndPrice, 64); nil != err {
-					return nil, errors.New(500, "string to float64 error", "string to float64 error")
-				}
-
-				tmpTotalEndPrice += tmpBeforeEndPrice
-			}
-		}
-
-		// 遍历数据参与计算
-		if 0 < k {
-			for kBak, vBak := range binanceData {
-				if k == kBak { // 游标和到了和本身相等的值
-					break
-				}
-
-				if kBak < (k+1)-int(n) { // 游标小跳过
-					continue
-				}
-
-				var tmpBakEndPrice float64
-				if tmpBakEndPrice, err = strconv.ParseFloat(vBak.EndPrice, 64); nil != err {
-					return nil, errors.New(500, "string to float64 error", "string to float64 error")
-				}
-
-				tmpTotalEndPrice += tmpBakEndPrice
-			}
-		}
-
-		tmpAvgEndPrice = tmpTotalEndPrice / float64(n)
-
-		if 0 == k {
-			if tmpEndPrice > tmpAvgEndPrice {
-				status = 1
-			} else {
-				status = -1
-			}
-		}
-
-		if tmpEndPrice > tmpAvgEndPrice && -1 == status {
-			status = 1
-			// 开空，有平多
-			if 0 < len(operationData) {
-				var (
-					tmpOpenLastOperationData         *OperationData
-					tmpCloseLastOperationData        *OperationData
-					tmpOpenLastOperationDataEndPrice float64
-				)
-				// 开仓的信息
-				tmpOpenLastOperationData = operationData[len(operationData)-1]
-
-				if tmpOpenLastOperationDataEndPrice, err = strconv.ParseFloat(tmpOpenLastOperationData.EndPrice, 64); nil != err {
-					return nil, errors.New(500, "string to float64 error", "string to float64 error")
-				}
-
-				rate := (tmpEndPrice - tmpOpenLastOperationDataEndPrice) / tmpOpenLastOperationDataEndPrice
-				// 关
-				tmpCloseLastOperationData = &OperationData{
-					StartTime:     tmpOpenLastOperationData.StartTime,
-					StartPrice:    tmpOpenLastOperationData.StartPrice,
-					EndPrice:      tmpOpenLastOperationData.EndPrice,
-					EndTime:       tmpOpenLastOperationData.EndTime,
-					Time:          tmpOpenLastOperationData.EndTime,
-					Type:          tmpOpenLastOperationData.Type,
-					CloseEndPrice: v.EndPrice, // 关时候收盘价
-					Status:        "close",
-					Rate:          rate,
-				}
-				operationData = append(operationData, tmpCloseLastOperationData)
-			}
-
-			// 本次开
-			currentOperationData := &OperationData{
-				StartTime:  v.StartTime,
-				StartPrice: v.StartPrice,
-				EndPrice:   v.EndPrice, // 开时候收盘价
-				EndTime:    v.EndTime,
-				Time:       v.EndTime,
-				Type:       "empty",
-				Status:     "open",
-			}
-			operationData = append(operationData, currentOperationData)
-		}
-
-		if tmpEndPrice < tmpAvgEndPrice && 1 == status {
-			// 开多。有平空
-			status = -1
-
-			if 0 < len(operationData) {
-				var (
-					tmpOpenLastOperationData         *OperationData
-					tmpCloseLastOperationData        *OperationData
-					tmpOpenLastOperationDataEndPrice float64
-				)
-				// 开仓的信息
-				tmpOpenLastOperationData = operationData[len(operationData)-1]
-
-				if tmpOpenLastOperationDataEndPrice, err = strconv.ParseFloat(tmpOpenLastOperationData.EndPrice, 64); nil != err {
-					return nil, errors.New(500, "string to float64 error", "string to float64 error")
-				}
-
-				rate := (tmpOpenLastOperationDataEndPrice - tmpEndPrice) / tmpOpenLastOperationDataEndPrice
-				// 关
-				tmpCloseLastOperationData = &OperationData{
-					StartTime:     tmpOpenLastOperationData.StartTime,
-					StartPrice:    tmpOpenLastOperationData.StartPrice,
-					EndPrice:      tmpOpenLastOperationData.EndPrice,
-					EndTime:       tmpOpenLastOperationData.EndTime,
-					Time:          tmpOpenLastOperationData.EndTime,
-					Type:          tmpOpenLastOperationData.Type,
-					CloseEndPrice: v.EndPrice, // 关时候收盘价
-					Status:        "close",
-					Rate:          rate,
-				}
-				operationData = append(operationData, tmpCloseLastOperationData)
-			}
-
-			// 本次开
-			currentOperationData := &OperationData{
-				StartTime:  v.StartTime,
-				StartPrice: v.StartPrice,
-				EndPrice:   v.EndPrice, // 开时候收盘价
-				EndTime:    v.EndTime,
-				Time:       v.EndTime,
-				Type:       "more",
-				Status:     "open",
-			}
-			operationData = append(operationData, currentOperationData)
-		}
-
-		res.Data = append(res.Data, &v1.IntervalMAvgEndPriceDataReply_List{
-			StartPrice:            v.StartPrice,
-			EndPrice:              v.EndPrice,
-			TopPrice:              v.TopPrice,
-			LowPrice:              v.LowPrice,
-			Time:                  v.StartTime,
-			WithBeforeAvgEndPrice: strconv.FormatFloat(tmpAvgEndPrice, 'f', -1, 64),
-		})
+	// 获取时间范围内的k线分钟数据
+	reqStart = reqStart.Add(-time.Duration(maxMxN-1) * time.Minute)
+	// todo 数据时间限制，先应该随着maxMxN改变而改变
+	dataLimitTime := time.Date(2022, 01, 02, 0, 0, 0, 0, time.UTC)
+	if reqStart.Before(dataLimitTime) {
+		return res, nil
 	}
+	// 时间查不出数据
+	if reqStart.After(reqEnd) {
+		return res, nil
+	}
+	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+		reqStart.Add(-8*time.Hour).UnixMilli(),
+		reqEnd.Add(-8*time.Hour).UnixMilli(),
+	)
+
+	var (
+		lastActionTag string
+		operationData map[string]*OperationData2
+		maNMFirst     []*Ma // todo 各种图优化
+	)
+	operationData = make(map[string]*OperationData2, 0)
+	// 遍历数据
+	for kKlineMOne, vKlineMOne := range klineMOne {
+		var tagNum int64
+		if maxMxN-1 > kKlineMOne { // 多的线，注意查到的前置数据个数>=maxMxN，不然有bug
+			continue
+		}
+
+		tmpNow := time.UnixMilli(vKlineMOne.StartTime).UTC().Add(8 * time.Hour)
+		tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC)
+		//fmt.Println(tmpNow, tmpNow0, tmpNow.Sub(tmpNow0).Minutes())
+		tmpNowSubNow0 := int(tmpNow.Sub(tmpNow0).Minutes()) + 1 // 这里都是开始时间的差值，而我们需要知道这个范围的差值，例如00：00-01：00我们需要的是2，两个1分钟
+
+		// 计算N根M分钟线，第一条
+		tmpMaNMFirst := handleManMnWithKLineMineData(n, m, tmpNowSubNow0, kKlineMOne, vKlineMOne, klineMOne)
+		maNMFirst = append(maNMFirst, tmpMaNMFirst)
+		res.DataListMaNMFirst = append(res.DataListMaNMFirst, &v1.IntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpMaNMFirst.AvgEndPrice})
+
+		// 第一单跳过
+		if maxMxN < kKlineMOne {
+			// 开多
+			if vKlineMOne.EndPrice < tmpMaNMFirst.AvgEndPrice {
+				if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+					if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+						rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - fee
+						tmpCloseLastOperationData := &OperationData2{
+							StartTime:  vKlineMOne.StartTime,
+							EndTime:    vKlineMOne.EndTime,
+							StartPrice: vKlineMOne.StartPrice,
+							EndPrice:   vKlineMOne.EndPrice,
+							Amount:     0,
+							Type:       "empty",
+							Status:     "close",
+							Rate:       rate,
+						}
+
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+						operationData[lastActionTag] = tmpCloseLastOperationData
+
+						currentOperationData := &OperationData2{
+							StartTime:  vKlineMOne.StartTime,
+							EndTime:    vKlineMOne.EndTime,
+							StartPrice: vKlineMOne.StartPrice,
+							EndPrice:   vKlineMOne.EndPrice,
+							Amount:     2,
+							Type:       "more",
+							Status:     "open", // 全开状态
+						}
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+						operationData[lastActionTag] = currentOperationData
+					}
+
+				} else {
+					currentOperationData := &OperationData2{
+						StartTime:  vKlineMOne.StartTime,
+						EndTime:    vKlineMOne.EndTime,
+						StartPrice: vKlineMOne.StartPrice,
+						EndPrice:   vKlineMOne.EndPrice,
+						Amount:     2,
+						Type:       "more",
+						Status:     "open", // 全开状态
+					}
+					tagNum++
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					operationData[lastActionTag] = currentOperationData
+				}
+
+			}
+
+			// 开空
+			if vKlineMOne.EndPrice > tmpMaNMFirst.AvgEndPrice {
+				if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+					if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+						rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - fee
+						tmpCloseLastOperationData := &OperationData2{
+							StartTime:  vKlineMOne.StartTime,
+							EndTime:    vKlineMOne.EndTime,
+							StartPrice: vKlineMOne.StartPrice,
+							EndPrice:   vKlineMOne.EndPrice,
+							Amount:     0,
+							Type:       "more",
+							Status:     "close",
+							Rate:       rate,
+						}
+
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+						operationData[lastActionTag] = tmpCloseLastOperationData
+
+						currentOperationData := &OperationData2{
+							StartTime:  vKlineMOne.StartTime,
+							EndTime:    vKlineMOne.EndTime,
+							StartPrice: vKlineMOne.StartPrice,
+							EndPrice:   vKlineMOne.EndPrice,
+							Amount:     2,
+							Type:       "empty",
+							Status:     "open", // 全开状态
+						}
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+						operationData[lastActionTag] = currentOperationData
+					}
+
+				} else {
+					currentOperationData := &OperationData2{
+						StartTime:  vKlineMOne.StartTime,
+						EndTime:    vKlineMOne.EndTime,
+						StartPrice: vKlineMOne.StartPrice,
+						EndPrice:   vKlineMOne.EndPrice,
+						Amount:     2,
+						Type:       "empty",
+						Status:     "open", // 全开状态
+					}
+					tagNum++
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					operationData[lastActionTag] = currentOperationData
+				}
+			}
+		}
+
+	}
+
+	// 排序
+	for _, vOperationData := range operationData {
+		resOperationData = append(resOperationData, vOperationData)
+	}
+	sort.Sort(resOperationData)
 
 	var (
 		tmpWinTotal   int64
 		tmpCloseTotal int64
 		tmpRate       float64
+		winRate       float64
+		tmpLastCloseK = -1
 	)
-	for _, vOperationData := range operationData {
+
+	// 得到最后一个关仓
+	for i := len(resOperationData) - 1; i >= 0; i-- {
+		if "close" == resOperationData[i].Status {
+			tmpLastCloseK = i
+			break
+		}
+	}
+
+	for k, vOperationData := range resOperationData {
+		if k > tmpLastCloseK { // 结束查询到最后一个，默认-1不会被查到
+			break
+		}
+
 		if "open" == vOperationData.Status {
 			res.OperationOrderTotal++
 		}
@@ -1304,21 +1263,22 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 		tmpRate += vOperationData.Rate
 
 		res.OperationData = append(res.OperationData, &v1.IntervalMAvgEndPriceDataReply_List2{
-			StartPrice:    vOperationData.StartPrice,
-			EndPrice:      vOperationData.EndPrice,
-			StartTime:     vOperationData.StartTime,
-			Time:          vOperationData.Time,
-			EndTime:       vOperationData.EndTime,
-			Type:          vOperationData.Type,
-			Status:        vOperationData.Status,
-			Rate:          strconv.FormatFloat(vOperationData.Rate, 'f', -1, 64),
-			CloseEndPrice: vOperationData.CloseEndPrice,
+			StartPrice: vOperationData.StartPrice,
+			EndPrice:   vOperationData.EndPrice,
+			StartTime:  vOperationData.StartTime,
+			EndTime:    vOperationData.EndTime,
+			Type:       vOperationData.Type,
+			Action:     vOperationData.Action,
+			Status:     vOperationData.Status,
+			Rate:       vOperationData.Rate,
 		})
 	}
 
-	res.OperationWinRate = fmt.Sprintf("%.2f", float64(tmpWinTotal)/float64(tmpCloseTotal))
+	if 0 < tmpWinTotal && 0 < tmpCloseTotal {
+		winRate = float64(tmpWinTotal) / float64(tmpCloseTotal)
+	}
+	res.OperationWinRate = fmt.Sprintf("%.2f", winRate)
 	res.OperationWinAmount = strconv.FormatFloat(tmpRate, 'f', -1, 64)
-	fmt.Println(len(binanceData), len(beforeBinanceData))
 	return res, nil
 }
 
@@ -1393,69 +1353,6 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 	}
 
 	return &v1.PullBinanceDataReply{}, nil
-}
-
-func requestBinanceMinuteKLinesData(symbol string, startTime string, endTime string, interval string, limit string) ([]*BinanceData, error) {
-	fmt.Println(symbol, startTime, endTime, interval, limit)
-	apiUrl := "https://fapi.binance.com/fapi/v1/klines"
-	// URL param
-	data := url.Values{}
-	data.Set("symbol", symbol)
-	data.Set("interval", interval)
-	data.Set("startTime", startTime)
-	data.Set("endTime", endTime)
-	data.Set("limit", limit)
-
-	u, err := url.ParseRequestURI(apiUrl)
-	if err != nil {
-		return nil, err
-	}
-	u.RawQuery = data.Encode() // URL encode
-	client := http.Client{
-		Timeout: 30 * time.Second,
-	}
-
-	fmt.Println(u.String())
-	resp, err := client.Get(u.String())
-	if err != nil {
-		return nil, err
-	}
-
-	defer func(Body io.ReadCloser) {
-		err = Body.Close()
-		if err != nil {
-
-		}
-	}(resp.Body)
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var i [][]interface{}
-	err = json.Unmarshal(b, &i)
-	if err != nil {
-		return nil, err
-	}
-
-	res := make([]*BinanceData, 0)
-	for _, v := range i {
-		res = append(res, &BinanceData{
-			StartTime:           strconv.FormatFloat(v[0].(float64), 'f', -1, 64),
-			StartPrice:          v[1].(string),
-			EndPrice:            v[4].(string),
-			TopPrice:            v[2].(string),
-			LowPrice:            v[3].(string),
-			EndTime:             strconv.FormatFloat(v[6].(float64), 'f', -1, 64),
-			DealTotalAmount:     v[5].(string),
-			DealAmount:          v[7].(string),
-			DealTotal:           strconv.FormatFloat(v[8].(float64), 'f', -1, 64),
-			DealSelfTotalAmount: v[9].(string),
-			DealSelfAmount:      v[10].(string),
-		})
-	}
-
-	return res, err
 }
 
 func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne int, vKlineMOne *KLineMOne, klineMOne []*KLineMOne) *Ma {

@@ -24,12 +24,17 @@ paths:
                   in: query
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
                 - name: n
                   in: query
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
+                - name: fee
+                  in: query
+                  schema:
+                    type: number
+                    format: double
             responses:
                 "200":
                     description: OK
@@ -127,10 +132,14 @@ components:
         IntervalMAvgEndPriceDataReply:
             type: object
             properties:
-                data:
+                dataListK:
                     type: array
                     items:
-                        $ref: '#/components/schemas/IntervalMAvgEndPriceDataReply_List'
+                        $ref: '#/components/schemas/IntervalMAvgEndPriceDataReply_List_k'
+                dataListMaNMFirst:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMAvgEndPriceDataReply_List_maNMFirst'
                 operationData:
                     type: array
                     items:
@@ -142,42 +151,54 @@ components:
                     type: string
                 operationWinAmount:
                     type: string
-        IntervalMAvgEndPriceDataReply_List:
-            type: object
-            properties:
-                startPrice:
-                    type: string
-                endPrice:
-                    type: string
-                topPrice:
-                    type: string
-                lowPrice:
-                    type: string
-                withBeforeAvgEndPrice:
-                    type: string
-                time:
-                    type: string
         IntervalMAvgEndPriceDataReply_List2:
             type: object
             properties:
                 startPrice:
-                    type: string
+                    type: number
+                    format: double
                 endPrice:
-                    type: string
+                    type: number
+                    format: double
                 startTime:
-                    type: string
-                time:
-                    type: string
+                    type: integer
+                    format: int64
                 endTime:
-                    type: string
+                    type: integer
+                    format: int64
                 type:
                     type: string
                 status:
                     type: string
                 rate:
+                    type: number
+                    format: double
+                action:
                     type: string
-                CloseEndPrice:
-                    type: string
+        IntervalMAvgEndPriceDataReply_List_k:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: number
+                    format: double
+                x5:
+                    type: integer
+                    format: int64
+        IntervalMAvgEndPriceDataReply_List_maNMFirst:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
         KAnd2NIntervalMAvgEndPriceDataReply:
             type: object
             properties:
