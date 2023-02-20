@@ -1173,7 +1173,7 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 			if vKlineMOne.EndPrice > tmpMaNMFirst.AvgEndPrice {
 				if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 					if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-						rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - fee
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineMOne.StartTime,
 							EndTime:    vKlineMOne.EndTime,
