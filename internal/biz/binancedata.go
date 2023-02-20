@@ -247,7 +247,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 						tmpDo = true
 					}
 					if tmpDo {
-						rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - 0.0003
+						rate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -278,7 +278,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 					}
 
 					if tmpDo {
-						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - 0.0003
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -360,7 +360,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 					}
 
 					if tmpDo {
-						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - 0.0003
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -461,7 +461,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 					}
 
 					if tmpDo {
-						rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - 0.0003
+						rate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:   vKlineMOne.StartTime,
 							EndTime:     vKlineMOne.EndTime,
@@ -755,7 +755,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 						}
 					} else if 2 == closeCondition {
 						// 止损
-						if vKlineMOne.EndPrice+tmpOpenLastOperationData2.CloseSubPrice*closeCondition2Rate <= tmpOpenLastOperationData2.StartPrice {
+						if vKlineMOne.EndPrice+tmpOpenLastOperationData2.CloseSubPrice*closeCondition2Rate <= tmpOpenLastOperationData2.EndPrice {
 							tmpDo = true
 						}
 
@@ -763,7 +763,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 
 				}
 				if tmpDo {
-					rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
+					rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineMOne.StartTime,
 						EndTime:    vKlineMOne.EndTime,
@@ -802,14 +802,14 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 						}
 					} else if 2 == closeCondition {
 						// 止损
-						if vKlineMOne.EndPrice-tmpOpenLastOperationData2.CloseSubPrice*closeCondition2Rate >= tmpOpenLastOperationData2.StartPrice {
+						if vKlineMOne.EndPrice-tmpOpenLastOperationData2.CloseSubPrice*closeCondition2Rate >= tmpOpenLastOperationData2.EndPrice {
 							tmpDo = true
 						}
 
 					}
 				}
 				if tmpDo {
-					rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - fee
+					rate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineMOne.StartTime,
 						EndTime:    vKlineMOne.EndTime,
@@ -849,7 +849,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 					// 平空 如果有先平掉上一单
 					if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 						if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-							rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - fee
+							rate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
 							tmpCloseLastOperationData := &OperationData2{
 								StartTime:  vKlineMOne.StartTime,
 								EndTime:    vKlineMOne.EndTime,
@@ -919,7 +919,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 					// 平多 如果有先平掉上一单
 					if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 						if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-							rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
+							rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
 							tmpCloseLastOperationData := &OperationData2{
 								StartTime:  vKlineMOne.StartTime,
 								EndTime:    vKlineMOne.EndTime,
@@ -1122,7 +1122,7 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 			if vKlineMOne.EndPrice < tmpMaNMFirst.AvgEndPrice {
 				if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 					if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-						rate := (tmpOpenLastOperationData2.StartPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.StartPrice - fee
+						rate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineMOne.StartTime,
 							EndTime:    vKlineMOne.EndTime,
@@ -1173,7 +1173,7 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 			if vKlineMOne.EndPrice > tmpMaNMFirst.AvgEndPrice {
 				if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 					if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.StartPrice)/tmpOpenLastOperationData2.StartPrice - fee
+						rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineMOne.StartTime,
 							EndTime:    vKlineMOne.EndTime,
