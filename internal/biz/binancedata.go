@@ -1220,6 +1220,14 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 			}
 		}
 
+		// 结果
+		res.DataListK = append(res.DataListK, &v1.IntervalMAvgEndPriceDataReply_ListK{
+			X1: vKlineMOne.StartPrice,
+			X2: vKlineMOne.EndPrice,
+			X3: vKlineMOne.TopPrice,
+			X4: vKlineMOne.LowPrice,
+			X5: vKlineMOne.EndTime,
+		})
 	}
 
 	// 排序
