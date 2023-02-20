@@ -1053,6 +1053,7 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 		m                int
 		n                int
 		fee              float64
+		targetCloseRate  float64
 		err              error
 	)
 
@@ -1075,6 +1076,7 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 	maxMxN := n * m
 
 	fee = req.Fee
+	targetCloseRate = req.TargetCloseRate
 
 	// 获取时间范围内的k线分钟数据
 	reqStart = reqStart.Add(-time.Duration(maxMxN-1) * time.Minute)
@@ -1118,6 +1120,53 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 
 		// 第一单跳过
 		if maxMxN < kKlineMOne {
+			// 亏损关单
+			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+				if "open" == tmpOpenLastOperationData2.Status {
+
+					if "empty" == tmpOpenLastOperationData2.Type {
+						tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
+						if tmpRate < -targetCloseRate {
+							// 关
+							tmpCloseLastOperationData := &OperationData2{
+								StartTime:  vKlineMOne.StartTime,
+								EndTime:    vKlineMOne.EndTime,
+								StartPrice: vKlineMOne.StartPrice,
+								EndPrice:   vKlineMOne.EndPrice,
+								Amount:     0,
+								Type:       "empty",
+								Status:     "close",
+								Rate:       tmpRate,
+							}
+
+							tagNum++
+							lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+							operationData[lastActionTag] = tmpCloseLastOperationData
+						}
+					} else if "more" == tmpOpenLastOperationData2.Type {
+						tmpRate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - fee
+						if tmpRate < -targetCloseRate {
+							// 关
+							tmpCloseLastOperationData := &OperationData2{
+								StartTime:  vKlineMOne.StartTime,
+								EndTime:    vKlineMOne.EndTime,
+								StartPrice: vKlineMOne.StartPrice,
+								EndPrice:   vKlineMOne.EndPrice,
+								Amount:     0,
+								Type:       "more",
+								Status:     "close",
+								Rate:       tmpRate,
+							}
+
+							tagNum++
+							lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+							operationData[lastActionTag] = tmpCloseLastOperationData
+						}
+					}
+
+				}
+			}
+
 			// 开多
 			if vKlineMOne.EndPrice < tmpMaNMFirst.AvgEndPrice {
 				if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
@@ -1138,6 +1187,19 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
 						operationData[lastActionTag] = tmpCloseLastOperationData
 
+						currentOperationData := &OperationData2{
+							StartTime:  vKlineMOne.StartTime,
+							EndTime:    vKlineMOne.EndTime,
+							StartPrice: vKlineMOne.StartPrice,
+							EndPrice:   vKlineMOne.EndPrice,
+							Amount:     2,
+							Type:       "more",
+							Status:     "open", // 全开状态
+						}
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+						operationData[lastActionTag] = currentOperationData
+					} else if "empty" == tmpOpenLastOperationData2.Type && "close" == tmpOpenLastOperationData2.Status {
 						currentOperationData := &OperationData2{
 							StartTime:  vKlineMOne.StartTime,
 							EndTime:    vKlineMOne.EndTime,
@@ -1189,6 +1251,19 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
 						operationData[lastActionTag] = tmpCloseLastOperationData
 
+						currentOperationData := &OperationData2{
+							StartTime:  vKlineMOne.StartTime,
+							EndTime:    vKlineMOne.EndTime,
+							StartPrice: vKlineMOne.StartPrice,
+							EndPrice:   vKlineMOne.EndPrice,
+							Amount:     2,
+							Type:       "empty",
+							Status:     "open", // 全开状态
+						}
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+						operationData[lastActionTag] = currentOperationData
+					} else if "more" == tmpOpenLastOperationData2.Type && "close" == tmpOpenLastOperationData2.Status {
 						currentOperationData := &OperationData2{
 							StartTime:  vKlineMOne.StartTime,
 							EndTime:    vKlineMOne.EndTime,

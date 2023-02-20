@@ -1203,6 +1203,8 @@ func (m *IntervalMAvgEndPriceDataRequest) validate(all bool) error {
 
 	// no validation rules for Fee
 
+	// no validation rules for TargetCloseRate
+
 	if len(errors) > 0 {
 		return IntervalMAvgEndPriceDataRequestMultiError(errors)
 	}

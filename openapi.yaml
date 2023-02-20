@@ -35,6 +35,11 @@ paths:
                   schema:
                     type: number
                     format: double
+                - name: targetCloseRate
+                  in: query
+                  schema:
+                    type: number
+                    format: double
             responses:
                 "200":
                     description: OK

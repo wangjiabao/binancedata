@@ -186,6 +186,7 @@ message IntervalMAvgEndPriceDataRequest {
 	int32 m = 3;
 	int32 n = 4;
 	double fee = 5;
+	double target_close_rate = 6;
 }
 
 message IntervalMAvgEndPriceDataReply {
