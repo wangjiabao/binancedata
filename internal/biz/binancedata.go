@@ -1510,7 +1510,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		})
 
 		// 第一单跳过
-		if 0 == kKlineMOne {
+		if k > kKlineMOne {
 			continue
 		}
 
@@ -1520,7 +1520,8 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 
 		// 关多
 		closeMore := true
-		for i := kKlineMOne; i >= kKlineMOne-(k-1); i-- {
+		tmpLastKCloseMore := kKlineMOne - 1
+		for i := tmpLastKCloseMore; i >= tmpLastKCloseMore-(k-1); i-- {
 			if klineMOne[i].EndPrice > klineMOne[i].StartPrice {
 				continue
 			}
@@ -1552,7 +1553,8 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 
 		// 关空
 		closeEmpty := true
-		for i := kKlineMOne; i >= kKlineMOne-(k-1); i-- {
+		tmpLastKCloseEmpty := kKlineMOne - 1
+		for i := tmpLastKCloseEmpty; i >= tmpLastKCloseEmpty-(k-1); i-- {
 			if klineMOne[i].EndPrice < klineMOne[i].StartPrice {
 				continue
 			}
