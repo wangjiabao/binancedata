@@ -1495,9 +1495,11 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 	// 遍历数据
 	var (
 		lastActionTag string
+		closeEmptyTag int
+		closeMoreTag  int
 	)
 	tmpKlineM := klineM[maxMxN/m-1:]
-	for kKlineM, vKlineM := range tmpKlineM {
+	for _, vKlineM := range tmpKlineM {
 		var tagNum int64
 
 		// 结果
@@ -1510,28 +1512,22 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 			X6: vKlineM.StartTime,
 		})
 
-		// 第一单跳过
-		if k > kKlineM {
-			continue
-		}
-
 		if _, ok := macdDataMap[vKlineM.StartTime]; !ok {
 			continue
 		}
 
 		// 关多
-		closeMore := true
-		tmpLastKCloseMore := kKlineM - 1
-		for i := tmpLastKCloseMore; i >= tmpLastKCloseMore-(k-1); i-- {
-			if tmpKlineM[i].EndPrice > tmpKlineM[i].StartPrice {
-				continue
-			}
-			closeMore = false
-			break
-		}
-		if closeMore {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
+
+		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+			if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
+				if vKlineM.StartPrice < vKlineM.EndPrice {
+					closeMoreTag++
+				}
+				closeMore := false
+				if k <= closeMoreTag {
+					closeMore = true
+				}
+				if closeMore {
 					tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					// 关
 					tmpCloseLastOperationData := &OperationData2{
@@ -1553,21 +1549,16 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		}
 
 		// 关空
-		closeEmpty := true
-		tmpLastKCloseEmpty := kKlineM - 1
-		for i := tmpLastKCloseEmpty; i >= tmpLastKCloseEmpty-(k-1); i-- {
-			if vKlineM.EndTime == 1675367999999 {
-				fmt.Println(tmpKlineM[i])
-			}
-			if tmpKlineM[i].EndPrice < tmpKlineM[i].StartPrice {
-				continue
-			}
-			closeEmpty = false
-			break
-		}
-		if closeEmpty {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
+		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+			if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
+				if vKlineM.StartPrice > vKlineM.EndPrice {
+					closeEmptyTag++
+				}
+				closeEmpty := false
+				if k <= closeEmptyTag {
+					closeEmpty = true
+				}
+				if closeEmpty {
 					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					// 关
 					tmpCloseLastOperationData := &OperationData2{
@@ -1582,6 +1573,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					}
 
 					tagNum++
+					closeEmptyTag = 0
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
 				}
