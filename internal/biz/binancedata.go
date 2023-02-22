@@ -1496,33 +1496,34 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 	var (
 		lastActionTag string
 	)
-	for kKlineMOne, vKlineMOne := range klineM[maxMxN/m-1:] {
+	tmpKlineM := klineM[maxMxN/m-1:]
+	for kKlineM, vKlineM := range tmpKlineM {
 		var tagNum int64
 
 		// 结果
 		res.DataListK = append(res.DataListK, &v1.IntervalMMACDDataReply_ListK{
-			X1: vKlineMOne.StartPrice,
-			X2: vKlineMOne.EndPrice,
-			X3: vKlineMOne.TopPrice,
-			X4: vKlineMOne.LowPrice,
-			X5: vKlineMOne.EndTime,
-			X6: vKlineMOne.StartTime,
+			X1: vKlineM.StartPrice,
+			X2: vKlineM.EndPrice,
+			X3: vKlineM.TopPrice,
+			X4: vKlineM.LowPrice,
+			X5: vKlineM.EndTime,
+			X6: vKlineM.StartTime,
 		})
 
 		// 第一单跳过
-		if k > kKlineMOne {
+		if k > kKlineM {
 			continue
 		}
 
-		if _, ok := macdDataMap[vKlineMOne.StartTime]; !ok {
+		if _, ok := macdDataMap[vKlineM.StartTime]; !ok {
 			continue
 		}
 
 		// 关多
 		closeMore := true
-		tmpLastKCloseMore := kKlineMOne - 1
+		tmpLastKCloseMore := kKlineM - 1
 		for i := tmpLastKCloseMore; i >= tmpLastKCloseMore-(k-1); i-- {
-			if klineMOne[i].EndPrice > klineMOne[i].StartPrice {
+			if tmpKlineM[i].EndPrice > tmpKlineM[i].StartPrice {
 				continue
 			}
 			closeMore = false
@@ -1531,13 +1532,13 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		if closeMore {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
-					tmpRate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					// 关
 					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     0,
 						Type:       "more",
 						Status:     "close",
@@ -1545,7 +1546,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					}
 
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
 				}
 			}
@@ -1553,9 +1554,12 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 
 		// 关空
 		closeEmpty := true
-		tmpLastKCloseEmpty := kKlineMOne - 1
+		tmpLastKCloseEmpty := kKlineM - 1
 		for i := tmpLastKCloseEmpty; i >= tmpLastKCloseEmpty-(k-1); i-- {
-			if klineMOne[i].EndPrice < klineMOne[i].StartPrice {
+			if vKlineM.EndTime == 1675367999999 {
+				fmt.Println(tmpKlineM[i])
+			}
+			if tmpKlineM[i].EndPrice < tmpKlineM[i].StartPrice {
 				continue
 			}
 			closeEmpty = false
@@ -1564,13 +1568,13 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		if closeEmpty {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
-					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					// 关
 					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     0,
 						Type:       "empty",
 						Status:     "close",
@@ -1578,22 +1582,22 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					}
 
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
 				}
 			}
 		}
 
 		// 开多
-		if macdDataMap[vKlineMOne.StartTime].MACD > 0 {
+		if macdDataMap[vKlineM.StartTime].MACD > 0 {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineMOne.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     0,
 						Type:       "empty",
 						Status:     "close",
@@ -1601,62 +1605,62 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					}
 
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
 
 					currentOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     2,
 						Type:       "more",
 						Status:     "open", // 全开状态
 					}
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = currentOperationData
 				} else if "empty" == tmpOpenLastOperationData2.Type && "close" == tmpOpenLastOperationData2.Status {
 					currentOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     2,
 						Type:       "more",
 						Status:     "open", // 全开状态
 					}
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = currentOperationData
 				}
 
 			} else {
 				currentOperationData := &OperationData2{
-					StartTime:  vKlineMOne.StartTime,
-					EndTime:    vKlineMOne.EndTime,
-					StartPrice: vKlineMOne.StartPrice,
-					EndPrice:   vKlineMOne.EndPrice,
+					StartTime:  vKlineM.StartTime,
+					EndTime:    vKlineM.EndTime,
+					StartPrice: vKlineM.StartPrice,
+					EndPrice:   vKlineM.EndPrice,
 					Amount:     2,
 					Type:       "more",
 					Status:     "open", // 全开状态
 				}
 				tagNum++
-				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 				operationData[lastActionTag] = currentOperationData
 			}
 		}
 
 		// 开空
-		if macdDataMap[vKlineMOne.StartTime].MACD < 0 {
+		if macdDataMap[vKlineM.StartTime].MACD < 0 {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (vKlineMOne.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     0,
 						Type:       "more",
 						Status:     "close",
@@ -1664,48 +1668,48 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					}
 
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
 
 					currentOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     2,
 						Type:       "empty",
 						Status:     "open", // 全开状态
 					}
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = currentOperationData
 				} else if "more" == tmpOpenLastOperationData2.Type && "close" == tmpOpenLastOperationData2.Status {
 					currentOperationData := &OperationData2{
-						StartTime:  vKlineMOne.StartTime,
-						EndTime:    vKlineMOne.EndTime,
-						StartPrice: vKlineMOne.StartPrice,
-						EndPrice:   vKlineMOne.EndPrice,
+						StartTime:  vKlineM.StartTime,
+						EndTime:    vKlineM.EndTime,
+						StartPrice: vKlineM.StartPrice,
+						EndPrice:   vKlineM.EndPrice,
 						Amount:     2,
 						Type:       "empty",
 						Status:     "open", // 全开状态
 					}
 					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = currentOperationData
 				}
 
 			} else {
 				currentOperationData := &OperationData2{
-					StartTime:  vKlineMOne.StartTime,
-					EndTime:    vKlineMOne.EndTime,
-					StartPrice: vKlineMOne.StartPrice,
-					EndPrice:   vKlineMOne.EndPrice,
+					StartTime:  vKlineM.StartTime,
+					EndTime:    vKlineM.EndTime,
+					StartPrice: vKlineM.StartPrice,
+					EndPrice:   vKlineM.EndPrice,
 					Amount:     2,
 					Type:       "empty",
 					Status:     "open", // 全开状态
 				}
 				tagNum++
-				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineMOne.EndTime, 10)
+				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 				operationData[lastActionTag] = currentOperationData
 			}
 
