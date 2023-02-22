@@ -26,6 +26,7 @@ type BinanceDataClient interface {
 	KAnd2NIntervalMAvgEndPriceData(ctx context.Context, in *KAnd2NIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*KAnd2NIntervalMAvgEndPriceDataReply, error)
 	PullBinanceData(ctx context.Context, in *PullBinanceDataRequest, opts ...grpc.CallOption) (*PullBinanceDataReply, error)
 	IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error)
+	IntervalMMACDData(ctx context.Context, in *IntervalMMACDDataRequest, opts ...grpc.CallOption) (*IntervalMMACDDataReply, error)
 }
 
 type binanceDataClient struct {
@@ -72,6 +73,15 @@ func (c *binanceDataClient) IntervalMAvgEndPriceData(ctx context.Context, in *In
 	return out, nil
 }
 
+func (c *binanceDataClient) IntervalMMACDData(ctx context.Context, in *IntervalMMACDDataRequest, opts ...grpc.CallOption) (*IntervalMMACDDataReply, error) {
+	out := new(IntervalMMACDDataReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/IntervalMMACDData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BinanceDataServer is the server API for BinanceData service.
 // All implementations must embed UnimplementedBinanceDataServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type BinanceDataServer interface {
 	KAnd2NIntervalMAvgEndPriceData(context.Context, *KAnd2NIntervalMAvgEndPriceDataRequest) (*KAnd2NIntervalMAvgEndPriceDataReply, error)
 	PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error)
 	IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error)
+	IntervalMMACDData(context.Context, *IntervalMMACDDataRequest) (*IntervalMMACDDataReply, error)
 	mustEmbedUnimplementedBinanceDataServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedBinanceDataServer) PullBinanceData(context.Context, *PullBina
 }
 func (UnimplementedBinanceDataServer) IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IntervalMAvgEndPriceData not implemented")
+}
+func (UnimplementedBinanceDataServer) IntervalMMACDData(context.Context, *IntervalMMACDDataRequest) (*IntervalMMACDDataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IntervalMMACDData not implemented")
 }
 func (UnimplementedBinanceDataServer) mustEmbedUnimplementedBinanceDataServer() {}
 
@@ -184,6 +198,24 @@ func _BinanceData_IntervalMAvgEndPriceData_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BinanceData_IntervalMMACDData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IntervalMMACDDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinanceDataServer).IntervalMMACDData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.binancedata.v1.BinanceData/IntervalMMACDData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinanceDataServer).IntervalMMACDData(ctx, req.(*IntervalMMACDDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BinanceData_ServiceDesc is the grpc.ServiceDesc for BinanceData service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var BinanceData_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IntervalMAvgEndPriceData",
 			Handler:    _BinanceData_IntervalMAvgEndPriceData_Handler,
+		},
+		{
+			MethodName: "IntervalMMACDData",
+			Handler:    _BinanceData_IntervalMMACDData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

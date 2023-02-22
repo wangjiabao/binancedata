@@ -30,6 +30,10 @@ func (b *BinanceDataService) IntervalMAvgEndPriceData(ctx context.Context, req *
 	return b.uc.IntervalMAvgEndPriceData(ctx, req)
 }
 
+func (b *BinanceDataService) IntervalMMACDData(ctx context.Context, req *v1.IntervalMMACDDataRequest) (*v1.IntervalMMACDDataReply, error) {
+	return b.uc.IntervalMMACDData(ctx, req)
+}
+
 func (b *BinanceDataService) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
 	return b.uc.PullBinanceData(ctx, req)
 }

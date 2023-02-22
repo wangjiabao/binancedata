@@ -213,3 +213,16 @@ func (k *KLineMOneRepo) GetKLineMOneByStartTime(start int64, end int64) ([]*biz.
 
 	return res, nil
 }
+
+func (k *KLineMOneRepo) NewMACDData(list []*biz.KLineMOne) ([]*biz.MACDPoint, error) {
+	points := make([]*KLineMOne, 0)
+	for _, v := range list {
+		points = append(points, &KLineMOne{
+			StartTime:  v.StartTime,
+			EndTime:    v.EndTime,
+			StartPrice: v.StartPrice,
+			EndPrice:   v.EndPrice,
+		})
+	}
+	return NewMACD(points).Calculation().GetPoints(), nil
+}
