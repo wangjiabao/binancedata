@@ -1414,55 +1414,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 	)
 
 	// 截取掉不需要的数据，之后计算
-	subK := 0
-	for kKlineMOne, vKlineMOne := range klineMOne {
-		// 当前时间
-		tmpNow := time.UnixMilli(vKlineMOne.StartTime).UTC().Add(8 * time.Hour)
-		if tmpNow.Minute()%m == 0 {
-			subK = kKlineMOne
-			break
-		}
-	}
-	var (
-		klineM []*KLineMOne
-	)
-	tmpKlineMOne := klineMOne[subK:]
-	lenTmpKlineMOne := len(tmpKlineMOne)
-	for tmpKKlineMOne, tmpVKlineMOne := range tmpKlineMOne {
-		// 当前时间
-		tmpNow := time.UnixMilli(tmpVKlineMOne.StartTime).UTC().Add(8 * time.Hour)
-		if tmpNow.Minute()%m != 0 {
-			continue
-		}
-
-		tmpKlineM := &KLineMOne{
-			StartPrice: tmpVKlineMOne.StartPrice,
-			StartTime:  tmpVKlineMOne.StartTime,
-			TopPrice:   tmpVKlineMOne.TopPrice,
-			LowPrice:   tmpVKlineMOne.LowPrice,
-			EndPrice:   tmpVKlineMOne.EndPrice,
-			EndTime:    tmpVKlineMOne.EndTime,
-		}
-
-		tmpLimitK := tmpKKlineMOne + m - 1
-		if lenTmpKlineMOne-1 < tmpLimitK {
-			tmpLimitK = lenTmpKlineMOne - 1
-		}
-		for i := tmpKKlineMOne; i <= tmpLimitK; i++ {
-			if nil == tmpKlineMOne[i] {
-				break
-			}
-			if tmpKlineMOne[i].TopPrice > tmpKlineM.TopPrice {
-				tmpKlineM.TopPrice = tmpKlineMOne[i].TopPrice
-			}
-			if tmpKlineMOne[i].LowPrice < tmpKlineM.LowPrice {
-				tmpKlineM.LowPrice = tmpKlineMOne[i].LowPrice
-			}
-			tmpKlineM.EndPrice = tmpKlineMOne[i].EndPrice
-			tmpKlineM.EndTime = tmpKlineMOne[i].EndTime
-		}
-		klineM = append(klineM, tmpKlineM)
-	}
+	klineM := handleMKData(klineMOne, m)
 
 	//fmt.Println(len(klineM), klineM[199], len(tmpKlineMOne), tmpKlineMOne[199])
 
@@ -1517,7 +1469,6 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		}
 
 		// 关多
-
 		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 			if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
 				if vKlineM.StartPrice < vKlineM.EndPrice {
@@ -1542,6 +1493,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					}
 
 					tagNum++
+					closeMoreTag = 0
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
 				}
@@ -1769,6 +1721,426 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 	return res, nil
 }
 
+// IntervalMKAndMACDData k线和间隔m时间的平均收盘价数据 .
+func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.IntervalMKAndMACDDataRequest) (*v1.IntervalMKAndMACDDataReply, error) {
+	var (
+		resOperationData OperationData2Slice
+		klineMOne        []*KLineMOne
+		reqStart         time.Time
+		reqEnd           time.Time
+		m                int
+		k                int
+		//n                int
+		err error
+	)
+
+	reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
+	if nil != err {
+		return nil, err
+	}
+	reqEnd, err = time.Parse("2006-01-02 15:04:05", req.End) // 时间进行格式校验
+	if nil != err {
+		return nil, err
+	}
+
+	res := &v1.IntervalMKAndMACDDataReply{
+		DataListK:     make([]*v1.IntervalMKAndMACDDataReply_ListK, 0),
+		OperationData: make([]*v1.IntervalMKAndMACDDataReply_List2, 0),
+		DataListMacd:  make([]*v1.IntervalMKAndMACDDataReply_ListMacd, 0),
+	}
+
+	m = int(req.M)
+	k = int(req.K)
+	//n = int(req.N)
+	maxMxN := 200 * 60 // macd计算，至少需要数据源头数据条数，本次最大查询60分钟
+
+	// 获取时间范围内的k线分钟数据
+	reqStart = reqStart.Add(-time.Duration(maxMxN-1) * time.Minute)
+	// todo 数据时间限制，先应该随着maxMxN改变而改变
+	dataLimitTime := time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)
+	if reqStart.Before(dataLimitTime) {
+		return res, nil
+	}
+	// 时间查不出数据
+	if reqStart.After(reqEnd) {
+		return res, nil
+	}
+	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+		reqStart.Add(-8*time.Hour).UnixMilli(),
+		reqEnd.Add(-8*time.Hour).UnixMilli(),
+	)
+
+	// 截取掉不需要的数据，之后计算
+	klineM := handleMKData(klineMOne, m)
+	var (
+		macdData []*MACDPoint
+	)
+	// macd返回数据
+	macdData, err = b.klineMOneRepo.NewMACDData(klineM)
+	if nil != err {
+		return res, nil
+	}
+	macdDataMap := make(map[int64]*MACDPoint, 0)
+	for _, vMacdData := range macdData[maxMxN/m-1:] {
+		macdDataMap[vMacdData.Time] = &MACDPoint{
+			Time: vMacdData.Time,
+			DIF:  vMacdData.DIF,
+			DEA:  vMacdData.DEA,
+			MACD: vMacdData.MACD,
+		}
+		res.DataListMacd = append(res.DataListMacd, &v1.IntervalMKAndMACDDataReply_ListMacd{
+			X1: vMacdData.MACD,
+			X2: vMacdData.DIF,
+			X3: vMacdData.DEA,
+			X4: vMacdData.Time,
+		})
+	}
+
+	klineM3 := handleMKData(klineMOne, 3)
+	var (
+		macdM3Data []*MACDPoint
+	)
+	// macd返回数据
+	macdM3Data, err = b.klineMOneRepo.NewMACDData(klineM3)
+	if nil != err {
+		return res, nil
+	}
+	macdM3DataMap := make(map[int64]*MACDPoint, 0)
+	for _, vMacdData := range macdM3Data[maxMxN/3-(k+1):] {
+		macdM3DataMap[vMacdData.Time] = &MACDPoint{
+			Time: vMacdData.Time,
+			DIF:  vMacdData.DIF,
+			DEA:  vMacdData.DEA,
+			MACD: vMacdData.MACD,
+		}
+	}
+
+	klineM60 := handleMKData(klineMOne, 60)
+	var (
+		macdM60Data []*MACDPoint
+	)
+	// macd返回数据
+	macdM60Data, err = b.klineMOneRepo.NewMACDData(klineM60)
+	if nil != err {
+		return res, nil
+	}
+	macdM60DataMap := make(map[int64]*MACDPoint, 0)
+	for _, vMacdData := range macdM60Data[maxMxN/60-(k+1):] {
+		macdM60DataMap[vMacdData.Time] = &MACDPoint{
+			Time: vMacdData.Time,
+			DIF:  vMacdData.DIF,
+			DEA:  vMacdData.DEA,
+			MACD: vMacdData.MACD,
+		}
+	}
+	//fmt.Println(len(klineM), klineM[199], len(tmpKlineMOne), tmpKlineMOne[199])
+
+	// 遍历数据
+	var (
+	//lastActionTag string
+	//closeEmptyTag int
+	//closeMoreTag  int
+	)
+	operationData := make(map[string]*OperationData2, 0)
+	tmpKlineM := klineM[maxMxN/m-1:]
+	for _, vKlineM := range tmpKlineM {
+		//var tagNum int64
+
+		// 结果
+		res.DataListK = append(res.DataListK, &v1.IntervalMKAndMACDDataReply_ListK{
+			X1: vKlineM.StartPrice,
+			X2: vKlineM.EndPrice,
+			X3: vKlineM.TopPrice,
+			X4: vKlineM.LowPrice,
+			X5: vKlineM.EndTime,
+			X6: vKlineM.StartTime,
+		})
+
+		if _, ok := macdDataMap[vKlineM.StartTime]; !ok {
+			continue
+		}
+
+		fmt.Println(vKlineM.StartTime, time.UnixMilli(vKlineM.StartTime).UTC().Add(8*time.Hour))
+		// 找到macd3分钟，60分钟的前k根
+		for i := 1; i <= k; i++ {
+			// 3分钟
+			tmpStartTimeKey := vKlineM.StartTime - int64(3*60000*i)
+			if _, ok := macdM3DataMap[tmpStartTimeKey]; !ok {
+				fmt.Println(tmpStartTimeKey, time.UnixMilli(tmpStartTimeKey).UTC().Add(8*time.Hour), 234)
+				continue
+			}
+			fmt.Println(tmpStartTimeKey, time.UnixMilli(tmpStartTimeKey).UTC().Add(8*time.Hour), macdM3DataMap[tmpStartTimeKey], 2345)
+
+		}
+
+		tmpNow := time.UnixMilli(vKlineM.StartTime).UTC()
+		tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC).UnixMilli()
+		if vKlineM.StartTime == tmpNow0 {
+			tmpNow0 -= int64(60 * 60000)
+		}
+		for i := 0; i < k; i++ {
+			// 60分钟
+			tmpStartTimeKey := tmpNow0 - int64(60*60000*i)
+			if _, ok := macdM60DataMap[tmpStartTimeKey]; !ok {
+				fmt.Println(time.UnixMilli(tmpStartTimeKey).UTC().Add(8*time.Hour), 123)
+				continue
+			}
+			fmt.Println(time.UnixMilli(tmpStartTimeKey).UTC().Add(8*time.Hour), macdM60DataMap[tmpStartTimeKey], 12345)
+		}
+
+		//// 关多
+		//if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+		//	if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
+		//		if vKlineM.StartPrice < vKlineM.EndPrice {
+		//			closeMoreTag++
+		//		}
+		//		closeMore := false
+		//		if k <= closeMoreTag {
+		//			closeMore = true
+		//		}
+		//		if closeMore {
+		//			tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+		//			// 关
+		//			tmpCloseLastOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     0,
+		//				Type:       "more",
+		//				Status:     "close",
+		//				Rate:       tmpRate,
+		//			}
+		//
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = tmpCloseLastOperationData
+		//		}
+		//	}
+		//}
+		//
+		//// 关空
+		//if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+		//	if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
+		//		if vKlineM.StartPrice > vKlineM.EndPrice {
+		//			closeEmptyTag++
+		//		}
+		//		closeEmpty := false
+		//		if k <= closeEmptyTag {
+		//			closeEmpty = true
+		//		}
+		//		if closeEmpty {
+		//			tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+		//			// 关
+		//			tmpCloseLastOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     0,
+		//				Type:       "empty",
+		//				Status:     "close",
+		//				Rate:       tmpRate,
+		//			}
+		//
+		//			tagNum++
+		//			closeEmptyTag = 0
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = tmpCloseLastOperationData
+		//		}
+		//	}
+		//}
+		//
+		//// 开多
+		//if macdDataMap[vKlineM.StartTime].MACD > 0 {
+		//	if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+		//		if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+		//			rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+		//			tmpCloseLastOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     0,
+		//				Type:       "empty",
+		//				Status:     "close",
+		//				Rate:       rate,
+		//			}
+		//
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = tmpCloseLastOperationData
+		//
+		//			currentOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     2,
+		//				Type:       "more",
+		//				Status:     "open", // 全开状态
+		//			}
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = currentOperationData
+		//		} else if "empty" == tmpOpenLastOperationData2.Type && "close" == tmpOpenLastOperationData2.Status {
+		//			currentOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     2,
+		//				Type:       "more",
+		//				Status:     "open", // 全开状态
+		//			}
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = currentOperationData
+		//		}
+		//
+		//	} else {
+		//		currentOperationData := &OperationData2{
+		//			StartTime:  vKlineM.StartTime,
+		//			EndTime:    vKlineM.EndTime,
+		//			StartPrice: vKlineM.StartPrice,
+		//			EndPrice:   vKlineM.EndPrice,
+		//			Amount:     2,
+		//			Type:       "more",
+		//			Status:     "open", // 全开状态
+		//		}
+		//		tagNum++
+		//		lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//		operationData[lastActionTag] = currentOperationData
+		//	}
+		//}
+		//
+		//// 开空
+		//if macdDataMap[vKlineM.StartTime].MACD < 0 {
+		//	if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+		//		if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+		//			rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+		//			tmpCloseLastOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     0,
+		//				Type:       "more",
+		//				Status:     "close",
+		//				Rate:       rate,
+		//			}
+		//
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = tmpCloseLastOperationData
+		//
+		//			currentOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     2,
+		//				Type:       "empty",
+		//				Status:     "open", // 全开状态
+		//			}
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = currentOperationData
+		//		} else if "more" == tmpOpenLastOperationData2.Type && "close" == tmpOpenLastOperationData2.Status {
+		//			currentOperationData := &OperationData2{
+		//				StartTime:  vKlineM.StartTime,
+		//				EndTime:    vKlineM.EndTime,
+		//				StartPrice: vKlineM.StartPrice,
+		//				EndPrice:   vKlineM.EndPrice,
+		//				Amount:     2,
+		//				Type:       "empty",
+		//				Status:     "open", // 全开状态
+		//			}
+		//			tagNum++
+		//			lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//			operationData[lastActionTag] = currentOperationData
+		//		}
+		//
+		//	} else {
+		//		currentOperationData := &OperationData2{
+		//			StartTime:  vKlineM.StartTime,
+		//			EndTime:    vKlineM.EndTime,
+		//			StartPrice: vKlineM.StartPrice,
+		//			EndPrice:   vKlineM.EndPrice,
+		//			Amount:     2,
+		//			Type:       "empty",
+		//			Status:     "open", // 全开状态
+		//		}
+		//		tagNum++
+		//		lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+		//		operationData[lastActionTag] = currentOperationData
+		//	}
+		//
+		//}
+
+	}
+
+	// 排序
+	for _, vOperationData := range operationData {
+		resOperationData = append(resOperationData, vOperationData)
+	}
+	sort.Sort(resOperationData)
+
+	var (
+		tmpWinTotal   int64
+		tmpCloseTotal int64
+		tmpRate       float64
+		winRate       float64
+		tmpLastCloseK = -1
+	)
+
+	// 得到最后一个关仓
+	for i := len(resOperationData) - 1; i >= 0; i-- {
+		if "close" == resOperationData[i].Status {
+			tmpLastCloseK = i
+			break
+		}
+	}
+
+	for kOperationData, vOperationData := range resOperationData {
+		if kOperationData > tmpLastCloseK { // 结束查询到最后一个，默认-1不会被查到
+			break
+		}
+
+		if "open" == vOperationData.Status {
+			res.OperationOrderTotal++
+		}
+
+		if "close" == vOperationData.Status {
+			tmpCloseTotal++
+			if 0 < vOperationData.Rate {
+				tmpWinTotal++
+			}
+		}
+
+		tmpRate += vOperationData.Rate
+
+		res.OperationData = append(res.OperationData, &v1.IntervalMKAndMACDDataReply_List2{
+			StartPrice: vOperationData.StartPrice,
+			EndPrice:   vOperationData.EndPrice,
+			StartTime:  vOperationData.StartTime,
+			EndTime:    vOperationData.EndTime,
+			Type:       vOperationData.Type,
+			Action:     vOperationData.Action,
+			Status:     vOperationData.Status,
+			Rate:       vOperationData.Rate,
+		})
+	}
+
+	if 0 < tmpWinTotal && 0 < tmpCloseTotal {
+		winRate = float64(tmpWinTotal) / float64(tmpCloseTotal)
+	}
+	res.OperationWinRate = fmt.Sprintf("%.2f", winRate)
+	res.OperationWinAmount = strconv.FormatFloat(tmpRate, 'f', -1, 64)
+	return res, nil
+}
+
 func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
 	var (
 		start                time.Time
@@ -1882,4 +2254,59 @@ func handleManMnWithKLineMineData(n int, interval int, current int, kKlineMOne i
 	return &Ma{
 		AvgEndPrice: tmpMaNAvgEndPrice,
 	}
+}
+
+func handleMKData(klineMOne []*KLineMOne, m int) []*KLineMOne {
+	var (
+		klineM []*KLineMOne
+	)
+	// 截取掉不需要的数据，之后计算
+	subK := 0
+	for kKlineMOne, vKlineMOne := range klineMOne {
+		// 当前时间
+		tmpNow := time.UnixMilli(vKlineMOne.StartTime).UTC().Add(8 * time.Hour)
+		if tmpNow.Minute()%m == 0 {
+			subK = kKlineMOne
+			break
+		}
+	}
+	tmpKlineMOne := klineMOne[subK:]
+	lenTmpKlineMOne := len(tmpKlineMOne)
+	for tmpKKlineMOne, tmpVKlineMOne := range tmpKlineMOne {
+		// 当前时间
+		tmpNow := time.UnixMilli(tmpVKlineMOne.StartTime).UTC().Add(8 * time.Hour)
+		if tmpNow.Minute()%m != 0 {
+			continue
+		}
+
+		tmpKlineM := &KLineMOne{
+			StartPrice: tmpVKlineMOne.StartPrice,
+			StartTime:  tmpVKlineMOne.StartTime,
+			TopPrice:   tmpVKlineMOne.TopPrice,
+			LowPrice:   tmpVKlineMOne.LowPrice,
+			EndPrice:   tmpVKlineMOne.EndPrice,
+			EndTime:    tmpVKlineMOne.EndTime,
+		}
+
+		tmpLimitK := tmpKKlineMOne + m - 1
+		if lenTmpKlineMOne-1 < tmpLimitK {
+			tmpLimitK = lenTmpKlineMOne - 1
+		}
+		for i := tmpKKlineMOne; i <= tmpLimitK; i++ {
+			if nil == tmpKlineMOne[i] {
+				break
+			}
+			if tmpKlineMOne[i].TopPrice > tmpKlineM.TopPrice {
+				tmpKlineM.TopPrice = tmpKlineMOne[i].TopPrice
+			}
+			if tmpKlineMOne[i].LowPrice < tmpKlineM.LowPrice {
+				tmpKlineM.LowPrice = tmpKlineMOne[i].LowPrice
+			}
+			tmpKlineM.EndPrice = tmpKlineMOne[i].EndPrice
+			tmpKlineM.EndTime = tmpKlineMOne[i].EndTime
+		}
+		klineM = append(klineM, tmpKlineM)
+	}
+
+	return klineM
 }

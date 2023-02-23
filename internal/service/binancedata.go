@@ -34,6 +34,10 @@ func (b *BinanceDataService) IntervalMMACDData(ctx context.Context, req *v1.Inte
 	return b.uc.IntervalMMACDData(ctx, req)
 }
 
+func (b *BinanceDataService) IntervalMKAndMACDData(ctx context.Context, req *v1.IntervalMKAndMACDDataRequest) (*v1.IntervalMKAndMACDDataReply, error) {
+	return b.uc.IntervalMKAndMACDData(ctx, req)
+}
+
 func (b *BinanceDataService) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
 	return b.uc.PullBinanceData(ctx, req)
 }

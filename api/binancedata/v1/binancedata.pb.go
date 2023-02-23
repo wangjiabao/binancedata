@@ -771,6 +771,172 @@ func (x *IntervalMMACDDataReply) GetOperationWinAmount() string {
 	return ""
 }
 
+type IntervalMKAndMACDDataRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Start string `protobuf:"bytes,1,opt,name=start,proto3" json:"start,omitempty"`
+	End   string `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
+	M     int32  `protobuf:"varint,3,opt,name=m,proto3" json:"m,omitempty"`
+	N     int32  `protobuf:"varint,4,opt,name=n,proto3" json:"n,omitempty"`
+	K     int32  `protobuf:"varint,5,opt,name=k,proto3" json:"k,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataRequest) Reset() {
+	*x = IntervalMKAndMACDDataRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataRequest) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataRequest.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataRequest) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *IntervalMKAndMACDDataRequest) GetStart() string {
+	if x != nil {
+		return x.Start
+	}
+	return ""
+}
+
+func (x *IntervalMKAndMACDDataRequest) GetEnd() string {
+	if x != nil {
+		return x.End
+	}
+	return ""
+}
+
+func (x *IntervalMKAndMACDDataRequest) GetM() int32 {
+	if x != nil {
+		return x.M
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataRequest) GetN() int32 {
+	if x != nil {
+		return x.N
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataRequest) GetK() int32 {
+	if x != nil {
+		return x.K
+	}
+	return 0
+}
+
+type IntervalMKAndMACDDataReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DataListK           []*IntervalMKAndMACDDataReply_ListK    `protobuf:"bytes,1,rep,name=dataListK,proto3" json:"dataListK,omitempty"`
+	DataListMacd        []*IntervalMKAndMACDDataReply_ListMacd `protobuf:"bytes,2,rep,name=dataListMacd,proto3" json:"dataListMacd,omitempty"`
+	OperationData       []*IntervalMKAndMACDDataReply_List2    `protobuf:"bytes,6,rep,name=operationData,proto3" json:"operationData,omitempty"`
+	OperationOrderTotal int64                                  `protobuf:"varint,3,opt,name=operationOrderTotal,proto3" json:"operationOrderTotal,omitempty"`
+	OperationWinRate    string                                 `protobuf:"bytes,4,opt,name=operationWinRate,proto3" json:"operationWinRate,omitempty"`
+	OperationWinAmount  string                                 `protobuf:"bytes,5,opt,name=operationWinAmount,proto3" json:"operationWinAmount,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataReply) Reset() {
+	*x = IntervalMKAndMACDDataReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataReply) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataReply.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataReply) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *IntervalMKAndMACDDataReply) GetDataListK() []*IntervalMKAndMACDDataReply_ListK {
+	if x != nil {
+		return x.DataListK
+	}
+	return nil
+}
+
+func (x *IntervalMKAndMACDDataReply) GetDataListMacd() []*IntervalMKAndMACDDataReply_ListMacd {
+	if x != nil {
+		return x.DataListMacd
+	}
+	return nil
+}
+
+func (x *IntervalMKAndMACDDataReply) GetOperationData() []*IntervalMKAndMACDDataReply_List2 {
+	if x != nil {
+		return x.OperationData
+	}
+	return nil
+}
+
+func (x *IntervalMKAndMACDDataReply) GetOperationOrderTotal() int64 {
+	if x != nil {
+		return x.OperationOrderTotal
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply) GetOperationWinRate() string {
+	if x != nil {
+		return x.OperationWinRate
+	}
+	return ""
+}
+
+func (x *IntervalMKAndMACDDataReply) GetOperationWinAmount() string {
+	if x != nil {
+		return x.OperationWinAmount
+	}
+	return ""
+}
+
 type XNIntervalMAvgEndPriceDataRequest_SendBody struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -786,7 +952,7 @@ type XNIntervalMAvgEndPriceDataRequest_SendBody struct {
 func (x *XNIntervalMAvgEndPriceDataRequest_SendBody) Reset() {
 	*x = XNIntervalMAvgEndPriceDataRequest_SendBody{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[10]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -799,7 +965,7 @@ func (x *XNIntervalMAvgEndPriceDataRequest_SendBody) String() string {
 func (*XNIntervalMAvgEndPriceDataRequest_SendBody) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataRequest_SendBody) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[10]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -863,7 +1029,7 @@ type XNIntervalMAvgEndPriceDataRequest_SendBody_List struct {
 func (x *XNIntervalMAvgEndPriceDataRequest_SendBody_List) Reset() {
 	*x = XNIntervalMAvgEndPriceDataRequest_SendBody_List{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[11]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -876,7 +1042,7 @@ func (x *XNIntervalMAvgEndPriceDataRequest_SendBody_List) String() string {
 func (*XNIntervalMAvgEndPriceDataRequest_SendBody_List) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataRequest_SendBody_List) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[11]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -929,7 +1095,7 @@ type XNIntervalMAvgEndPriceDataReply_ListK struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListK) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListK{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[12]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -942,7 +1108,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListK) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListK) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListK) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[12]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1011,7 +1177,7 @@ type XNIntervalMAvgEndPriceDataReply_ListMa5M5 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M5) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListMa5M5{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[13]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1024,7 +1190,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M5) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListMa5M5) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M5) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[13]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1058,7 +1224,7 @@ type XNIntervalMAvgEndPriceDataReply_ListMa10M5 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M5) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListMa10M5{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[14]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1071,7 +1237,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M5) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListMa10M5) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M5) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[14]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1105,7 +1271,7 @@ type XNIntervalMAvgEndPriceDataReply_ListMa5M15 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M15) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListMa5M15{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[15]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1118,7 +1284,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M15) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListMa5M15) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M15) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[15]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1152,7 +1318,7 @@ type XNIntervalMAvgEndPriceDataReply_ListMa10M15 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M15) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListMa10M15{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[16]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1165,7 +1331,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M15) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListMa10M15) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M15) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[16]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1199,7 +1365,7 @@ type XNIntervalMAvgEndPriceDataReply_ListMa5M60 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M60) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListMa5M60{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[17]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1212,7 +1378,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M60) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListMa5M60) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa5M60) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[17]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1246,7 +1412,7 @@ type XNIntervalMAvgEndPriceDataReply_ListMa10M60 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M60) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_ListMa10M60{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[18]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1259,7 +1425,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M60) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_ListMa10M60) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_ListMa10M60) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[18]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1300,7 +1466,7 @@ type XNIntervalMAvgEndPriceDataReply_List2 struct {
 func (x *XNIntervalMAvgEndPriceDataReply_List2) Reset() {
 	*x = XNIntervalMAvgEndPriceDataReply_List2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[19]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1313,7 +1479,7 @@ func (x *XNIntervalMAvgEndPriceDataReply_List2) String() string {
 func (*XNIntervalMAvgEndPriceDataReply_List2) ProtoMessage() {}
 
 func (x *XNIntervalMAvgEndPriceDataReply_List2) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[19]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1406,7 +1572,7 @@ type KAnd2NIntervalMAvgEndPriceDataRequest_SendBody struct {
 func (x *KAnd2NIntervalMAvgEndPriceDataRequest_SendBody) Reset() {
 	*x = KAnd2NIntervalMAvgEndPriceDataRequest_SendBody{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[20]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1419,7 +1585,7 @@ func (x *KAnd2NIntervalMAvgEndPriceDataRequest_SendBody) String() string {
 func (*KAnd2NIntervalMAvgEndPriceDataRequest_SendBody) ProtoMessage() {}
 
 func (x *KAnd2NIntervalMAvgEndPriceDataRequest_SendBody) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[20]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1527,7 +1693,7 @@ type KAnd2NIntervalMAvgEndPriceDataReply_ListK struct {
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListK) Reset() {
 	*x = KAnd2NIntervalMAvgEndPriceDataReply_ListK{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[21]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1540,7 +1706,7 @@ func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListK) String() string {
 func (*KAnd2NIntervalMAvgEndPriceDataReply_ListK) ProtoMessage() {}
 
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListK) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[21]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1602,7 +1768,7 @@ type KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst struct {
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst) Reset() {
 	*x = KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[22]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1615,7 +1781,7 @@ func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst) String() string {
 func (*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst) ProtoMessage() {}
 
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[22]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1649,7 +1815,7 @@ type KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond struct {
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond) Reset() {
 	*x = KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[23]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1662,7 +1828,7 @@ func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond) String() string {
 func (*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond) ProtoMessage() {}
 
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[23]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1696,7 +1862,7 @@ type KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround struct {
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround) Reset() {
 	*x = KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[24]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1709,7 +1875,7 @@ func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround) String() string {
 func (*KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround) ProtoMessage() {}
 
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[24]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1750,7 +1916,7 @@ type KAnd2NIntervalMAvgEndPriceDataReply_List2 struct {
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_List2) Reset() {
 	*x = KAnd2NIntervalMAvgEndPriceDataReply_List2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[25]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1763,7 +1929,7 @@ func (x *KAnd2NIntervalMAvgEndPriceDataReply_List2) String() string {
 func (*KAnd2NIntervalMAvgEndPriceDataReply_List2) ProtoMessage() {}
 
 func (x *KAnd2NIntervalMAvgEndPriceDataReply_List2) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[25]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1850,7 +2016,7 @@ type IntervalMAvgEndPriceDataReply_ListK struct {
 func (x *IntervalMAvgEndPriceDataReply_ListK) Reset() {
 	*x = IntervalMAvgEndPriceDataReply_ListK{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[26]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1863,7 +2029,7 @@ func (x *IntervalMAvgEndPriceDataReply_ListK) String() string {
 func (*IntervalMAvgEndPriceDataReply_ListK) ProtoMessage() {}
 
 func (x *IntervalMAvgEndPriceDataReply_ListK) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[26]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1925,7 +2091,7 @@ type IntervalMAvgEndPriceDataReply_ListMaNMFirst struct {
 func (x *IntervalMAvgEndPriceDataReply_ListMaNMFirst) Reset() {
 	*x = IntervalMAvgEndPriceDataReply_ListMaNMFirst{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[27]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1938,7 +2104,7 @@ func (x *IntervalMAvgEndPriceDataReply_ListMaNMFirst) String() string {
 func (*IntervalMAvgEndPriceDataReply_ListMaNMFirst) ProtoMessage() {}
 
 func (x *IntervalMAvgEndPriceDataReply_ListMaNMFirst) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[27]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1979,7 +2145,7 @@ type IntervalMAvgEndPriceDataReply_List2 struct {
 func (x *IntervalMAvgEndPriceDataReply_List2) Reset() {
 	*x = IntervalMAvgEndPriceDataReply_List2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[28]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1992,7 +2158,7 @@ func (x *IntervalMAvgEndPriceDataReply_List2) String() string {
 func (*IntervalMAvgEndPriceDataReply_List2) ProtoMessage() {}
 
 func (x *IntervalMAvgEndPriceDataReply_List2) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[28]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2080,7 +2246,7 @@ type IntervalMMACDDataReply_ListK struct {
 func (x *IntervalMMACDDataReply_ListK) Reset() {
 	*x = IntervalMMACDDataReply_ListK{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[29]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2093,7 +2259,7 @@ func (x *IntervalMMACDDataReply_ListK) String() string {
 func (*IntervalMMACDDataReply_ListK) ProtoMessage() {}
 
 func (x *IntervalMMACDDataReply_ListK) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[29]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2165,7 +2331,7 @@ type IntervalMMACDDataReply_ListMacd struct {
 func (x *IntervalMMACDDataReply_ListMacd) Reset() {
 	*x = IntervalMMACDDataReply_ListMacd{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[30]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[32]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2178,7 +2344,7 @@ func (x *IntervalMMACDDataReply_ListMacd) String() string {
 func (*IntervalMMACDDataReply_ListMacd) ProtoMessage() {}
 
 func (x *IntervalMMACDDataReply_ListMacd) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[30]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[32]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2240,7 +2406,7 @@ type IntervalMMACDDataReply_List2 struct {
 func (x *IntervalMMACDDataReply_List2) Reset() {
 	*x = IntervalMMACDDataReply_List2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[31]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2253,7 +2419,7 @@ func (x *IntervalMMACDDataReply_List2) String() string {
 func (*IntervalMMACDDataReply_List2) ProtoMessage() {}
 
 func (x *IntervalMMACDDataReply_List2) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[31]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2319,6 +2485,267 @@ func (x *IntervalMMACDDataReply_List2) GetRate() float64 {
 }
 
 func (x *IntervalMMACDDataReply_List2) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+type IntervalMKAndMACDDataReply_ListK struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	X1 float64 `protobuf:"fixed64,1,opt,name=x1,proto3" json:"x1,omitempty"`
+	X2 float64 `protobuf:"fixed64,2,opt,name=x2,proto3" json:"x2,omitempty"`
+	X3 float64 `protobuf:"fixed64,3,opt,name=x3,proto3" json:"x3,omitempty"`
+	X4 float64 `protobuf:"fixed64,4,opt,name=x4,proto3" json:"x4,omitempty"`
+	X5 int64   `protobuf:"varint,5,opt,name=x5,proto3" json:"x5,omitempty"`
+	X6 int64   `protobuf:"varint,6,opt,name=x6,proto3" json:"x6,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) Reset() {
+	*x = IntervalMKAndMACDDataReply_ListK{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[34]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataReply_ListK) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataReply_ListK) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[34]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataReply_ListK.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataReply_ListK) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 0}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) GetX1() float64 {
+	if x != nil {
+		return x.X1
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) GetX2() float64 {
+	if x != nil {
+		return x.X2
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) GetX3() float64 {
+	if x != nil {
+		return x.X3
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) GetX4() float64 {
+	if x != nil {
+		return x.X4
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) GetX5() int64 {
+	if x != nil {
+		return x.X5
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListK) GetX6() int64 {
+	if x != nil {
+		return x.X6
+	}
+	return 0
+}
+
+type IntervalMKAndMACDDataReply_ListMacd struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	X1 float64 `protobuf:"fixed64,1,opt,name=x1,proto3" json:"x1,omitempty"`
+	X2 float64 `protobuf:"fixed64,2,opt,name=x2,proto3" json:"x2,omitempty"`
+	X3 float64 `protobuf:"fixed64,3,opt,name=x3,proto3" json:"x3,omitempty"`
+	X4 int64   `protobuf:"varint,4,opt,name=x4,proto3" json:"x4,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) Reset() {
+	*x = IntervalMKAndMACDDataReply_ListMacd{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[35]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataReply_ListMacd) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[35]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataReply_ListMacd.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataReply_ListMacd) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 1}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) GetX1() float64 {
+	if x != nil {
+		return x.X1
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) GetX2() float64 {
+	if x != nil {
+		return x.X2
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) GetX3() float64 {
+	if x != nil {
+		return x.X3
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListMacd) GetX4() int64 {
+	if x != nil {
+		return x.X4
+	}
+	return 0
+}
+
+type IntervalMKAndMACDDataReply_List2 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	StartPrice float64 `protobuf:"fixed64,1,opt,name=start_price,json=startPrice,proto3" json:"start_price,omitempty"`
+	EndPrice   float64 `protobuf:"fixed64,2,opt,name=end_price,json=endPrice,proto3" json:"end_price,omitempty"`
+	StartTime  int64   `protobuf:"varint,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime    int64   `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Type       string  `protobuf:"bytes,7,opt,name=type,proto3" json:"type,omitempty"`
+	Status     string  `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	Rate       float64 `protobuf:"fixed64,9,opt,name=rate,proto3" json:"rate,omitempty"`
+	Action     string  `protobuf:"bytes,10,opt,name=action,proto3" json:"action,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) Reset() {
+	*x = IntervalMKAndMACDDataReply_List2{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[36]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataReply_List2) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataReply_List2) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[36]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataReply_List2.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataReply_List2) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 2}
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetStartPrice() float64 {
+	if x != nil {
+		return x.StartPrice
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetEndPrice() float64 {
+	if x != nil {
+		return x.EndPrice
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetEndTime() int64 {
+	if x != nil {
+		return x.EndTime
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetRate() float64 {
+	if x != nil {
+		return x.Rate
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_List2) GetAction() string {
 	if x != nil {
 		return x.Action
 	}
@@ -2685,65 +3112,136 @@ var file_api_binancedata_v1_binancedata_proto_rawDesc = []byte{
 	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x61, 0x74, 0x65, 0x18, 0x09,
 	0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x72, 0x61, 0x74, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x63,
 	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69,
-	0x6f, 0x6e, 0x32, 0xa8, 0x07, 0x0a, 0x0b, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61,
-	0x74, 0x61, 0x12, 0xcf, 0x01, 0x0a, 0x1a, 0x58, 0x4e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
-	0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74,
-	0x61, 0x12, 0x35, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64,
-	0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x58, 0x4e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
-	0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74,
-	0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x33, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62,
-	0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x58, 0x4e,
-	0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50,
-	0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x45, 0x82,
-	0xd3, 0xe4, 0x93, 0x02, 0x3f, 0x22, 0x32, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61,
-	0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x78, 0x5f, 0x6e, 0x5f, 0x69, 0x6e, 0x74, 0x65,
-	0x72, 0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x61, 0x76, 0x67, 0x5f, 0x65, 0x6e, 0x64, 0x5f, 0x70,
-	0x72, 0x69, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x09, 0x73, 0x65, 0x6e, 0x64, 0x5f,
-	0x62, 0x6f, 0x64, 0x79, 0x12, 0xe1, 0x01, 0x0a, 0x1e, 0x4b, 0x41, 0x6e, 0x64, 0x32, 0x4e, 0x49,
-	0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72,
-	0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x39, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69,
-	0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x4b, 0x41, 0x6e,
-	0x64, 0x32, 0x4e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45,
-	0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x37, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65,
-	0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x4b, 0x41, 0x6e, 0x64, 0x32, 0x4e, 0x49, 0x6e,
-	0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69,
-	0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x4b, 0x82, 0xd3, 0xe4,
-	0x93, 0x02, 0x45, 0x22, 0x38, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63,
-	0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x6b, 0x5f, 0x61, 0x6e, 0x64, 0x5f, 0x32, 0x5f, 0x6e, 0x5f,
-	0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x61, 0x76, 0x67, 0x5f, 0x65,
-	0x6e, 0x64, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x09, 0x73,
-	0x65, 0x6e, 0x64, 0x5f, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x86, 0x01, 0x0a, 0x0f, 0x50, 0x75, 0x6c,
-	0x6c, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x2a, 0x2e, 0x61,
-	0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76,
-	0x31, 0x2e, 0x50, 0x75, 0x6c, 0x6c, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74,
-	0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x28, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62,
-	0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x75,
-	0x6c, 0x6c, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x1d, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x17, 0x12, 0x15, 0x2f, 0x61, 0x70, 0x69,
-	0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x70, 0x75, 0x6c,
-	0x6c, 0x12, 0xba, 0x01, 0x0a, 0x18, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41,
-	0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x33,
+	0x6f, 0x6e, 0x22, 0x70, 0x0a, 0x1c, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b,
+	0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x74, 0x61, 0x72, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x73, 0x74, 0x61, 0x72, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x65, 0x6e, 0x64, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x65, 0x6e, 0x64, 0x12, 0x0c, 0x0a, 0x01, 0x6d, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x01, 0x6d, 0x12, 0x0c, 0x0a, 0x01, 0x6e, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x01, 0x6e, 0x12, 0x0c, 0x0a, 0x01, 0x6b, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x01, 0x6b, 0x22, 0xca, 0x06, 0x0a, 0x1a, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
+	0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x12, 0x53, 0x0a, 0x09, 0x64, 0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x35, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e,
+	0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65,
+	0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74,
+	0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x52, 0x09, 0x64,
+	0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b, 0x12, 0x5c, 0x0a, 0x0c, 0x64, 0x61, 0x74, 0x61,
+	0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x63, 0x64, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x38,
 	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61,
-	0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67,
-	0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63,
-	0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
-	0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74,
-	0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x36, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x30, 0x12, 0x2e,
-	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61,
-	0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x61, 0x76, 0x67, 0x5f,
-	0x65, 0x6e, 0x64, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x12, 0x9c,
-	0x01, 0x0a, 0x11, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4d, 0x41, 0x43, 0x44,
-	0x44, 0x61, 0x74, 0x61, 0x12, 0x2c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e,
-	0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76,
-	0x61, 0x6c, 0x4d, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x2a, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e,
+	0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x52, 0x0c, 0x64, 0x61, 0x74, 0x61, 0x4c, 0x69,
+	0x73, 0x74, 0x4d, 0x61, 0x63, 0x64, 0x12, 0x5a, 0x0a, 0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x34, 0x2e,
+	0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e,
+	0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64,
+	0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x32, 0x52, 0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x44, 0x61,
+	0x74, 0x61, 0x12, 0x30, 0x0a, 0x13, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4f,
+	0x72, 0x64, 0x65, 0x72, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x13, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x54,
+	0x6f, 0x74, 0x61, 0x6c, 0x12, 0x2a, 0x0a, 0x10, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x57, 0x69, 0x6e, 0x52, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x10,
+	0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x52, 0x61, 0x74, 0x65,
+	0x12, 0x2e, 0x0a, 0x12, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e,
+	0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12, 0x6f, 0x70,
+	0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74,
+	0x1a, 0x68, 0x0a, 0x06, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x31,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x31, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x32,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x32, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x33,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x33, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x34,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x34, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x35,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x35, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x36,
+	0x18, 0x06, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x36, 0x1a, 0x4b, 0x0a, 0x09, 0x4c, 0x69,
+	0x73, 0x74, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x31, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x31, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x32, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x32, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x33, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x33, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x34, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x34, 0x1a, 0xd7, 0x01, 0x0a, 0x05, 0x4c, 0x69, 0x73, 0x74,
+	0x32, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x0a, 0x73, 0x74, 0x61, 0x72, 0x74, 0x50, 0x72, 0x69,
+	0x63, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x65, 0x6e, 0x64, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x08, 0x65, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12,
+	0x1d, 0x0a, 0x0a, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x19,
+	0x0a, 0x08, 0x65, 0x6e, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x07, 0x65, 0x6e, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70,
+	0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x16, 0x0a,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x61, 0x74, 0x65, 0x18, 0x09, 0x20,
+	0x01, 0x28, 0x01, 0x52, 0x04, 0x72, 0x61, 0x74, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x32, 0xd9, 0x08, 0x0a, 0x0b, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74,
+	0x61, 0x12, 0xcf, 0x01, 0x0a, 0x1a, 0x58, 0x4e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c,
+	0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61,
+	0x12, 0x35, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61,
+	0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x58, 0x4e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c,
+	0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x33, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69,
+	0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x58, 0x4e, 0x49,
+	0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72,
+	0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x45, 0x82, 0xd3,
+	0xe4, 0x93, 0x02, 0x3f, 0x22, 0x32, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e,
+	0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x78, 0x5f, 0x6e, 0x5f, 0x69, 0x6e, 0x74, 0x65, 0x72,
+	0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x61, 0x76, 0x67, 0x5f, 0x65, 0x6e, 0x64, 0x5f, 0x70, 0x72,
+	0x69, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x09, 0x73, 0x65, 0x6e, 0x64, 0x5f, 0x62,
+	0x6f, 0x64, 0x79, 0x12, 0xe1, 0x01, 0x0a, 0x1e, 0x4b, 0x41, 0x6e, 0x64, 0x32, 0x4e, 0x49, 0x6e,
+	0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69,
+	0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x39, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e,
+	0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x4b, 0x41, 0x6e, 0x64,
+	0x32, 0x4e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e,
+	0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x37, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64,
+	0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x4b, 0x41, 0x6e, 0x64, 0x32, 0x4e, 0x49, 0x6e, 0x74,
+	0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63,
+	0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x4b, 0x82, 0xd3, 0xe4, 0x93,
+	0x02, 0x45, 0x22, 0x38, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65,
+	0x64, 0x61, 0x74, 0x61, 0x2f, 0x6b, 0x5f, 0x61, 0x6e, 0x64, 0x5f, 0x32, 0x5f, 0x6e, 0x5f, 0x69,
+	0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x61, 0x76, 0x67, 0x5f, 0x65, 0x6e,
+	0x64, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x09, 0x73, 0x65,
+	0x6e, 0x64, 0x5f, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x86, 0x01, 0x0a, 0x0f, 0x50, 0x75, 0x6c, 0x6c,
+	0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x2a, 0x2e, 0x61, 0x70,
+	0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31,
+	0x2e, 0x50, 0x75, 0x6c, 0x6c, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x28, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69,
+	0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x75, 0x6c,
+	0x6c, 0x42, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x1d, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x17, 0x12, 0x15, 0x2f, 0x61, 0x70, 0x69, 0x2f,
+	0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x70, 0x75, 0x6c, 0x6c,
+	0x12, 0xba, 0x01, 0x0a, 0x18, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76,
+	0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x33, 0x2e,
+	0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e,
+	0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x41, 0x76, 0x67, 0x45,
+	0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x31, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65,
 	0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c,
-	0x4d, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x2d,
-	0x82, 0xd3, 0xe4, 0x93, 0x02, 0x27, 0x12, 0x25, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e,
-	0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
-	0x6c, 0x5f, 0x6d, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x42, 0x39, 0x0a,
+	0x4d, 0x41, 0x76, 0x67, 0x45, 0x6e, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x44, 0x61, 0x74, 0x61,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x36, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x30, 0x12, 0x2e, 0x2f,
+	0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f,
+	0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x61, 0x76, 0x67, 0x5f, 0x65,
+	0x6e, 0x64, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x12, 0x9c, 0x01,
+	0x0a, 0x11, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4d, 0x41, 0x43, 0x44, 0x44,
+	0x61, 0x74, 0x61, 0x12, 0x2c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63,
+	0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
+	0x6c, 0x4d, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x2a, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64,
+	0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d,
+	0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x2d, 0x82,
+	0xd3, 0xe4, 0x93, 0x02, 0x27, 0x12, 0x25, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61,
+	0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c,
+	0x5f, 0x6d, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x12, 0xae, 0x01, 0x0a,
+	0x15, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41,
+	0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x12, 0x30, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e,
+	0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65,
+	0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74,
+	0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62,
+	0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e,
+	0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44,
+	0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2d,
+	0x12, 0x2b, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61,
+	0x74, 0x61, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x5f, 0x6d, 0x5f, 0x6b, 0x5f,
+	0x61, 0x6e, 0x64, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x42, 0x39, 0x0a,
 	0x12, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61,
 	0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x21, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61,
 	0x74, 0x61, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61,
@@ -2762,7 +3260,7 @@ func file_api_binancedata_v1_binancedata_proto_rawDescGZIP() []byte {
 	return file_api_binancedata_v1_binancedata_proto_rawDescData
 }
 
-var file_api_binancedata_v1_binancedata_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_api_binancedata_v1_binancedata_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_api_binancedata_v1_binancedata_proto_goTypes = []interface{}{
 	(*PullBinanceDataRequest)(nil),                             // 0: api.binancedata.v1.PullBinanceDataRequest
 	(*PullBinanceDataReply)(nil),                               // 1: api.binancedata.v1.PullBinanceDataReply
@@ -2774,67 +3272,77 @@ var file_api_binancedata_v1_binancedata_proto_goTypes = []interface{}{
 	(*IntervalMAvgEndPriceDataReply)(nil),                      // 7: api.binancedata.v1.IntervalMAvgEndPriceDataReply
 	(*IntervalMMACDDataRequest)(nil),                           // 8: api.binancedata.v1.IntervalMMACDDataRequest
 	(*IntervalMMACDDataReply)(nil),                             // 9: api.binancedata.v1.IntervalMMACDDataReply
-	(*XNIntervalMAvgEndPriceDataRequest_SendBody)(nil),         // 10: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody
-	(*XNIntervalMAvgEndPriceDataRequest_SendBody_List)(nil),    // 11: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.List
-	(*XNIntervalMAvgEndPriceDataReply_ListK)(nil),              // 12: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_k
-	(*XNIntervalMAvgEndPriceDataReply_ListMa5M5)(nil),          // 13: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m5
-	(*XNIntervalMAvgEndPriceDataReply_ListMa10M5)(nil),         // 14: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m5
-	(*XNIntervalMAvgEndPriceDataReply_ListMa5M15)(nil),         // 15: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m15
-	(*XNIntervalMAvgEndPriceDataReply_ListMa10M15)(nil),        // 16: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m15
-	(*XNIntervalMAvgEndPriceDataReply_ListMa5M60)(nil),         // 17: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m60
-	(*XNIntervalMAvgEndPriceDataReply_ListMa10M60)(nil),        // 18: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m60
-	(*XNIntervalMAvgEndPriceDataReply_List2)(nil),              // 19: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List2
-	(*KAnd2NIntervalMAvgEndPriceDataRequest_SendBody)(nil),     // 20: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest.SendBody
-	(*KAnd2NIntervalMAvgEndPriceDataReply_ListK)(nil),          // 21: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_k
-	(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst)(nil),  // 22: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMFirst
-	(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond)(nil), // 23: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMSecond
-	(*KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround)(nil), // 24: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_backGround
-	(*KAnd2NIntervalMAvgEndPriceDataReply_List2)(nil),          // 25: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List2
-	(*IntervalMAvgEndPriceDataReply_ListK)(nil),                // 26: api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_k
-	(*IntervalMAvgEndPriceDataReply_ListMaNMFirst)(nil),        // 27: api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_maNMFirst
-	(*IntervalMAvgEndPriceDataReply_List2)(nil),                // 28: api.binancedata.v1.IntervalMAvgEndPriceDataReply.List2
-	(*IntervalMMACDDataReply_ListK)(nil),                       // 29: api.binancedata.v1.IntervalMMACDDataReply.List_k
-	(*IntervalMMACDDataReply_ListMacd)(nil),                    // 30: api.binancedata.v1.IntervalMMACDDataReply.List_macd
-	(*IntervalMMACDDataReply_List2)(nil),                       // 31: api.binancedata.v1.IntervalMMACDDataReply.List2
+	(*IntervalMKAndMACDDataRequest)(nil),                       // 10: api.binancedata.v1.IntervalMKAndMACDDataRequest
+	(*IntervalMKAndMACDDataReply)(nil),                         // 11: api.binancedata.v1.IntervalMKAndMACDDataReply
+	(*XNIntervalMAvgEndPriceDataRequest_SendBody)(nil),         // 12: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody
+	(*XNIntervalMAvgEndPriceDataRequest_SendBody_List)(nil),    // 13: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.List
+	(*XNIntervalMAvgEndPriceDataReply_ListK)(nil),              // 14: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_k
+	(*XNIntervalMAvgEndPriceDataReply_ListMa5M5)(nil),          // 15: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m5
+	(*XNIntervalMAvgEndPriceDataReply_ListMa10M5)(nil),         // 16: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m5
+	(*XNIntervalMAvgEndPriceDataReply_ListMa5M15)(nil),         // 17: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m15
+	(*XNIntervalMAvgEndPriceDataReply_ListMa10M15)(nil),        // 18: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m15
+	(*XNIntervalMAvgEndPriceDataReply_ListMa5M60)(nil),         // 19: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m60
+	(*XNIntervalMAvgEndPriceDataReply_ListMa10M60)(nil),        // 20: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m60
+	(*XNIntervalMAvgEndPriceDataReply_List2)(nil),              // 21: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List2
+	(*KAnd2NIntervalMAvgEndPriceDataRequest_SendBody)(nil),     // 22: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest.SendBody
+	(*KAnd2NIntervalMAvgEndPriceDataReply_ListK)(nil),          // 23: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_k
+	(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst)(nil),  // 24: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMFirst
+	(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond)(nil), // 25: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMSecond
+	(*KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround)(nil), // 26: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_backGround
+	(*KAnd2NIntervalMAvgEndPriceDataReply_List2)(nil),          // 27: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List2
+	(*IntervalMAvgEndPriceDataReply_ListK)(nil),                // 28: api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_k
+	(*IntervalMAvgEndPriceDataReply_ListMaNMFirst)(nil),        // 29: api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_maNMFirst
+	(*IntervalMAvgEndPriceDataReply_List2)(nil),                // 30: api.binancedata.v1.IntervalMAvgEndPriceDataReply.List2
+	(*IntervalMMACDDataReply_ListK)(nil),                       // 31: api.binancedata.v1.IntervalMMACDDataReply.List_k
+	(*IntervalMMACDDataReply_ListMacd)(nil),                    // 32: api.binancedata.v1.IntervalMMACDDataReply.List_macd
+	(*IntervalMMACDDataReply_List2)(nil),                       // 33: api.binancedata.v1.IntervalMMACDDataReply.List2
+	(*IntervalMKAndMACDDataReply_ListK)(nil),                   // 34: api.binancedata.v1.IntervalMKAndMACDDataReply.List_k
+	(*IntervalMKAndMACDDataReply_ListMacd)(nil),                // 35: api.binancedata.v1.IntervalMKAndMACDDataReply.List_macd
+	(*IntervalMKAndMACDDataReply_List2)(nil),                   // 36: api.binancedata.v1.IntervalMKAndMACDDataReply.List2
 }
 var file_api_binancedata_v1_binancedata_proto_depIdxs = []int32{
-	10, // 0: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.send_body:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody
-	12, // 1: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListK:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_k
-	13, // 2: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa5M5:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m5
-	14, // 3: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa10M5:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m5
-	15, // 4: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa5M15:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m15
-	16, // 5: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa10M15:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m15
-	17, // 6: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa5M60:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m60
-	18, // 7: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa10M60:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m60
-	19, // 8: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.operationData:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List2
-	20, // 9: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest.send_body:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest.SendBody
-	21, // 10: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.dataListK:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_k
-	22, // 11: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.dataListMaNMFirst:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMFirst
-	23, // 12: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.dataListMaNMSecond:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMSecond
-	24, // 13: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.backGround:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_backGround
-	25, // 14: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.operationData:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List2
-	26, // 15: api.binancedata.v1.IntervalMAvgEndPriceDataReply.dataListK:type_name -> api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_k
-	27, // 16: api.binancedata.v1.IntervalMAvgEndPriceDataReply.dataListMaNMFirst:type_name -> api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_maNMFirst
-	28, // 17: api.binancedata.v1.IntervalMAvgEndPriceDataReply.operationData:type_name -> api.binancedata.v1.IntervalMAvgEndPriceDataReply.List2
-	29, // 18: api.binancedata.v1.IntervalMMACDDataReply.dataListK:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List_k
-	30, // 19: api.binancedata.v1.IntervalMMACDDataReply.dataListMacd:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List_macd
-	31, // 20: api.binancedata.v1.IntervalMMACDDataReply.operationData:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List2
-	11, // 21: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.x:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.List
-	2,  // 22: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest
-	4,  // 23: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest
-	0,  // 24: api.binancedata.v1.BinanceData.PullBinanceData:input_type -> api.binancedata.v1.PullBinanceDataRequest
-	6,  // 25: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:input_type -> api.binancedata.v1.IntervalMAvgEndPriceDataRequest
-	8,  // 26: api.binancedata.v1.BinanceData.IntervalMMACDData:input_type -> api.binancedata.v1.IntervalMMACDDataRequest
-	3,  // 27: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply
-	5,  // 28: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply
-	1,  // 29: api.binancedata.v1.BinanceData.PullBinanceData:output_type -> api.binancedata.v1.PullBinanceDataReply
-	7,  // 30: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:output_type -> api.binancedata.v1.IntervalMAvgEndPriceDataReply
-	9,  // 31: api.binancedata.v1.BinanceData.IntervalMMACDData:output_type -> api.binancedata.v1.IntervalMMACDDataReply
-	27, // [27:32] is the sub-list for method output_type
-	22, // [22:27] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	12, // 0: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.send_body:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody
+	14, // 1: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListK:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_k
+	15, // 2: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa5M5:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m5
+	16, // 3: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa10M5:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m5
+	17, // 4: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa5M15:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m15
+	18, // 5: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa10M15:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m15
+	19, // 6: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa5M60:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma5m60
+	20, // 7: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.dataListMa10M60:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List_ma10m60
+	21, // 8: api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.operationData:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply.List2
+	22, // 9: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest.send_body:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest.SendBody
+	23, // 10: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.dataListK:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_k
+	24, // 11: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.dataListMaNMFirst:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMFirst
+	25, // 12: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.dataListMaNMSecond:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_maNMSecond
+	26, // 13: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.backGround:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List_backGround
+	27, // 14: api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.operationData:type_name -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply.List2
+	28, // 15: api.binancedata.v1.IntervalMAvgEndPriceDataReply.dataListK:type_name -> api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_k
+	29, // 16: api.binancedata.v1.IntervalMAvgEndPriceDataReply.dataListMaNMFirst:type_name -> api.binancedata.v1.IntervalMAvgEndPriceDataReply.List_maNMFirst
+	30, // 17: api.binancedata.v1.IntervalMAvgEndPriceDataReply.operationData:type_name -> api.binancedata.v1.IntervalMAvgEndPriceDataReply.List2
+	31, // 18: api.binancedata.v1.IntervalMMACDDataReply.dataListK:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List_k
+	32, // 19: api.binancedata.v1.IntervalMMACDDataReply.dataListMacd:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List_macd
+	33, // 20: api.binancedata.v1.IntervalMMACDDataReply.operationData:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List2
+	34, // 21: api.binancedata.v1.IntervalMKAndMACDDataReply.dataListK:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List_k
+	35, // 22: api.binancedata.v1.IntervalMKAndMACDDataReply.dataListMacd:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List_macd
+	36, // 23: api.binancedata.v1.IntervalMKAndMACDDataReply.operationData:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2
+	13, // 24: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.x:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.List
+	2,  // 25: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest
+	4,  // 26: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest
+	0,  // 27: api.binancedata.v1.BinanceData.PullBinanceData:input_type -> api.binancedata.v1.PullBinanceDataRequest
+	6,  // 28: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:input_type -> api.binancedata.v1.IntervalMAvgEndPriceDataRequest
+	8,  // 29: api.binancedata.v1.BinanceData.IntervalMMACDData:input_type -> api.binancedata.v1.IntervalMMACDDataRequest
+	10, // 30: api.binancedata.v1.BinanceData.IntervalMKAndMACDData:input_type -> api.binancedata.v1.IntervalMKAndMACDDataRequest
+	3,  // 31: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply
+	5,  // 32: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply
+	1,  // 33: api.binancedata.v1.BinanceData.PullBinanceData:output_type -> api.binancedata.v1.PullBinanceDataReply
+	7,  // 34: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:output_type -> api.binancedata.v1.IntervalMAvgEndPriceDataReply
+	9,  // 35: api.binancedata.v1.BinanceData.IntervalMMACDData:output_type -> api.binancedata.v1.IntervalMMACDDataReply
+	11, // 36: api.binancedata.v1.BinanceData.IntervalMKAndMACDData:output_type -> api.binancedata.v1.IntervalMKAndMACDDataReply
+	31, // [31:37] is the sub-list for method output_type
+	25, // [25:31] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_api_binancedata_v1_binancedata_proto_init() }
@@ -2964,7 +3472,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataRequest_SendBody); i {
+			switch v := v.(*IntervalMKAndMACDDataRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2976,7 +3484,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataRequest_SendBody_List); i {
+			switch v := v.(*IntervalMKAndMACDDataReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2988,7 +3496,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListK); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataRequest_SendBody); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3000,7 +3508,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa5M5); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataRequest_SendBody_List); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3012,7 +3520,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa10M5); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListK); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3024,7 +3532,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa5M15); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa5M5); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3036,7 +3544,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa10M15); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa10M5); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3048,7 +3556,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa5M60); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa5M15); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3060,7 +3568,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa10M60); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa10M15); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3072,7 +3580,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*XNIntervalMAvgEndPriceDataReply_List2); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa5M60); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3084,7 +3592,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataRequest_SendBody); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_ListMa10M60); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3096,7 +3604,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListK); i {
+			switch v := v.(*XNIntervalMAvgEndPriceDataReply_List2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3108,7 +3616,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst); i {
+			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataRequest_SendBody); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3120,7 +3628,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond); i {
+			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListK); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3132,7 +3640,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround); i {
+			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMFirst); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3144,7 +3652,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_List2); i {
+			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListMaNMSecond); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3156,7 +3664,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMAvgEndPriceDataReply_ListK); i {
+			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_ListBackGround); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3168,7 +3676,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMAvgEndPriceDataReply_ListMaNMFirst); i {
+			switch v := v.(*KAnd2NIntervalMAvgEndPriceDataReply_List2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3180,7 +3688,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMAvgEndPriceDataReply_List2); i {
+			switch v := v.(*IntervalMAvgEndPriceDataReply_ListK); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3192,7 +3700,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMMACDDataReply_ListK); i {
+			switch v := v.(*IntervalMAvgEndPriceDataReply_ListMaNMFirst); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3204,7 +3712,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMMACDDataReply_ListMacd); i {
+			switch v := v.(*IntervalMAvgEndPriceDataReply_List2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3216,7 +3724,67 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMMACDDataReply_ListK); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMMACDDataReply_ListMacd); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*IntervalMMACDDataReply_List2); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMKAndMACDDataReply_ListK); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMKAndMACDDataReply_ListMacd); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMKAndMACDDataReply_List2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3234,7 +3802,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_binancedata_v1_binancedata_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   32,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

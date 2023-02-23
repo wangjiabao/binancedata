@@ -53,6 +53,48 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/binancedata/interval_m_k_and_macd_data:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_IntervalMKAndMACDData
+            parameters:
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+                - name: end
+                  in: query
+                  schema:
+                    type: string
+                - name: m
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: n
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: k
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IntervalMKAndMACDDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/binancedata/interval_m_macd_data:
         get:
             tags:
@@ -246,6 +288,88 @@ components:
                 x1:
                     type: number
                     format: double
+        IntervalMKAndMACDDataReply:
+            type: object
+            properties:
+                dataListK:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_k'
+                dataListMacd:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd'
+                operationData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List2'
+                operationOrderTotal:
+                    type: integer
+                    format: int64
+                operationWinRate:
+                    type: string
+                operationWinAmount:
+                    type: string
+        IntervalMKAndMACDDataReply_List2:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                startTime:
+                    type: integer
+                    format: int64
+                endTime:
+                    type: integer
+                    format: int64
+                type:
+                    type: string
+                status:
+                    type: string
+                rate:
+                    type: number
+                    format: double
+                action:
+                    type: string
+        IntervalMKAndMACDDataReply_List_k:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: number
+                    format: double
+                x5:
+                    type: integer
+                    format: int64
+                x6:
+                    type: integer
+                    format: int64
+        IntervalMKAndMACDDataReply_List_macd:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: integer
+                    format: int64
         IntervalMMACDDataReply:
             type: object
             properties:
