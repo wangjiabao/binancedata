@@ -1471,7 +1471,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		// 关多
 		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 			if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
-				if vKlineM.StartPrice < vKlineM.EndPrice {
+				if vKlineM.StartPrice > vKlineM.EndPrice {
 					closeMoreTag++
 				}
 				closeMore := false
@@ -1503,7 +1503,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		// 关空
 		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 			if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
-				if vKlineM.StartPrice > vKlineM.EndPrice {
+				if vKlineM.StartPrice < vKlineM.EndPrice {
 					closeEmptyTag++
 				}
 				closeEmpty := false
