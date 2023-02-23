@@ -1479,7 +1479,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					closeMore = true
 				}
 				if closeMore {
-					tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					tmpRate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
 					// 关
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
@@ -1511,7 +1511,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 					closeEmpty = true
 				}
 				if closeEmpty {
-					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					tmpRate := (tmpOpenLastOperationData2.EndPrice - vKlineM.EndPrice) / tmpOpenLastOperationData2.EndPrice
 					// 关
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
@@ -1536,7 +1536,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		if macdDataMap[vKlineM.StartTime].MACD > 0 {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (tmpOpenLastOperationData2.EndPrice - vKlineM.EndPrice) / tmpOpenLastOperationData2.EndPrice
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
@@ -1599,7 +1599,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		if macdDataMap[vKlineM.StartTime].MACD < 0 {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
