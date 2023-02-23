@@ -1471,7 +1471,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		// 关多
 		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 			if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
-				if vKlineM.StartPrice > vKlineM.EndPrice {
+				if vKlineM.StartPrice < vKlineM.EndPrice {
 					closeMoreTag++
 				}
 				closeMore := false
@@ -1503,7 +1503,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		// 关空
 		if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 			if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
-				if vKlineM.StartPrice < vKlineM.EndPrice {
+				if vKlineM.StartPrice > vKlineM.EndPrice {
 					closeEmptyTag++
 				}
 				closeEmpty := false
@@ -1533,7 +1533,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		}
 
 		// 开多
-		if macdDataMap[vKlineM.StartTime].MACD < 0 {
+		if macdDataMap[vKlineM.StartTime].MACD > 0 {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					rate := (tmpOpenLastOperationData2.EndPrice - vKlineM.EndPrice) / tmpOpenLastOperationData2.EndPrice
@@ -1596,7 +1596,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		}
 
 		// 开空
-		if macdDataMap[vKlineM.StartTime].MACD > 0 {
+		if macdDataMap[vKlineM.StartTime].MACD < 0 {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
