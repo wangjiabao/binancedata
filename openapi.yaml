@@ -299,6 +299,14 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd'
+                dataListMacd3:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd3'
+                dataListMacd60:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd60'
                 operationData:
                     type: array
                     items:
@@ -356,6 +364,36 @@ components:
                     type: integer
                     format: int64
         IntervalMKAndMACDDataReply_List_macd:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: integer
+                    format: int64
+        IntervalMKAndMACDDataReply_List_macd3:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: integer
+                    format: int64
+        IntervalMKAndMACDDataReply_List_macd60:
             type: object
             properties:
                 x1:

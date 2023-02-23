@@ -305,6 +305,22 @@ message IntervalMKAndMACDDataReply {
 		int64 x4 = 4;
 	}
 
+	repeated List_macd3 dataListMacd3 = 7;
+	message List_macd3{
+		double x1 = 1;
+		double x2 = 2;
+		double x3 = 3;
+		int64 x4 = 4;
+	}
+
+	repeated List_macd60 dataListMacd60 = 8;
+	message List_macd60{
+		double x1 = 1;
+		double x2 = 2;
+		double x3 = 3;
+		int64 x4 = 4;
+	}
+
 	repeated List2 operationData = 6;
 	message List2 {
 		double start_price = 1;

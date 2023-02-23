@@ -1814,6 +1814,13 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			DEA:  vMacdData.DEA,
 			MACD: vMacdData.MACD,
 		}
+
+		res.DataListMacd3 = append(res.DataListMacd3, &v1.IntervalMKAndMACDDataReply_ListMacd3{
+			X1: vMacdData.MACD,
+			X2: vMacdData.DIF,
+			X3: vMacdData.DEA,
+			X4: vMacdData.Time,
+		})
 	}
 
 	klineM60 := handleMKData(klineMOne, 60)
@@ -1833,6 +1840,13 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			DEA:  vMacdData.DEA,
 			MACD: vMacdData.MACD,
 		}
+
+		res.DataListMacd60 = append(res.DataListMacd60, &v1.IntervalMKAndMACDDataReply_ListMacd60{
+			X1: vMacdData.MACD,
+			X2: vMacdData.DIF,
+			X3: vMacdData.DEA,
+			X4: vMacdData.Time,
+		})
 	}
 	//fmt.Println(len(klineM), klineM[199], len(tmpKlineMOne), tmpKlineMOne[199])
 
