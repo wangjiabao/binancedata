@@ -1898,6 +1898,9 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		//	}
 		//}
 
+		if vKlineM.StartTime == 1675223100000 {
+			fmt.Println(macdDataMap[1675223100000])
+		}
 		// 当前分钟
 		for i := 1; i <= k; i++ {
 			if _, ok := macdDataMap[tmpKlineM[kKlineM-i].StartTime]; !ok {
@@ -1906,6 +1909,9 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 
 			if macdDataMap[tmpKlineM[kKlineM-i].StartTime].DEA > macdDataMap[tmpKlineM[kKlineM-i].StartTime].DIF &&
 				macdDataMap[tmpKlineM[kKlineM-i].StartTime].DIF > 0 {
+				if vKlineM.StartTime == 1675223100000 {
+					fmt.Println(macdDataMap[tmpKlineM[kKlineM-i].StartTime])
+				}
 				openMoreOne += 1
 			}
 
@@ -1928,9 +1934,11 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 				break
 			}
 
-			fmt.Println(macdM60DataMap[tmpStartTimeKey])
 			if macdM60DataMap[tmpStartTimeKey].DIF > macdM60DataMap[tmpStartTimeKey].DEA &&
 				macdM60DataMap[tmpStartTimeKey].DEA > 0 {
+				if vKlineM.StartTime == 1675223100000 {
+					fmt.Println(macdM60DataMap[tmpStartTimeKey])
+				}
 				openMoreTwo += 1
 			}
 
@@ -2108,8 +2116,8 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 开多
-		fmt.Println(openMoreOne, openMoreTwo, k, macdDataMap[vKlineM.StartTime].DIF, macdDataMap[vKlineM.StartTime].DEA)
 		if openMoreOne >= k && openMoreTwo >= k && macdDataMap[vKlineM.StartTime].DIF > macdDataMap[vKlineM.StartTime].DEA {
+			fmt.Println(openMoreOne, openMoreTwo, k, macdDataMap[vKlineM.StartTime].DIF, macdDataMap[vKlineM.StartTime].DEA)
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2298,11 +2306,15 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			break
 		}
 
+		if k > tmpLastCloseK { // 结束查询到最后一个，默认-1不会被查到
+			break
+		}
+
 		if "open" == vOperationData.Status {
 			res.OperationOrderTotal++
 		}
 
-		if "close" == vOperationData.Status {
+		if "close" == vOperationData.Status || "half" == vOperationData.Status {
 			tmpCloseTotal++
 			if 0 < vOperationData.Rate {
 				tmpWinTotal++
