@@ -1782,17 +1782,17 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		kLineDataMLive   []*KLineMOne
 		kLineData3MLive  []*KLineMOne
 		kLineData60MLive []*KLineMOne
-
-		macdData    []*MACDPoint
-		macdM3Data  []*MACDPoint
-		macdM60Data []*MACDPoint
+		macdData         []*MACDPoint
+		macdM3Data       []*MACDPoint
+		macdM60Data      []*MACDPoint
 	)
 	operationData := make(map[string]*OperationData2, 0)
+	macdDataLiveMap := make(map[int64]*MACDPoint, 0)
+	macdM60DataLiveMap := make(map[int64]*MACDPoint, 0)
 	//tmpKlineM := klineM[maxMxN/m-(k+1):]
 
-	tmpKlineM := klineMOne
 	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
-	for _, vKlineM := range tmpKlineM {
+	for kKlineM, vKlineM := range klineMOne {
 		// 累加数据
 		tmpNow := time.UnixMilli(vKlineM.StartTime).UTC().Add(8 * time.Hour)
 
@@ -1879,13 +1879,32 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			}
 		}
 
-		if reqStartMilli > vKlineM.StartTime {
-			continue
-		}
-
 		lastKeyMLive = len(kLineDataMLive) - 1
 		lastKey3MLive = len(kLineData3MLive) - 1
 		lastKey60MLive = len(kLineData60MLive) - 1
+
+		// 往后是时间范围内的数据处理
+		if reqStartMilli > vKlineM.StartTime {
+
+			// 提前录入参与比较的macd数据
+			if reqStartMilli-int64(k*60000) <= vKlineM.StartTime {
+				// macd数据，取200条k线数据计算
+				macdData, err = b.klineMOneRepo.NewMACDData(kLineDataMLive[lastKeyMLive-199:])
+				if nil != err {
+					continue
+				}
+				macdDataLiveMap[vKlineM.StartTime] = macdData[199]
+
+				// macd数据，取200条60m的k线数据计算
+				macdM60Data, err = b.klineMOneRepo.NewMACDData(kLineData60MLive[lastKey60MLive-199:])
+				if nil != err {
+					continue
+				}
+				macdM60DataLiveMap[vKlineM.StartTime] = macdM60Data[199]
+			}
+			continue
+		}
+
 		//fmt.Println(vKlineM.StartTime, kLineDataMLive[lastKeyMLive], kLineData3MLive[lastKey3MLive], kLineData60MLive[lastKey60MLive])
 
 		// macd数据，取200条k线数据计算
@@ -1893,6 +1912,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		if nil != err {
 			continue
 		}
+		macdDataLiveMap[vKlineM.StartTime] = macdData[199]
 
 		// macd数据，取200条3m的k线数据计算
 		macdM3Data, err = b.klineMOneRepo.NewMACDData(kLineData3MLive[lastKey3MLive-199:])
@@ -1905,6 +1925,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		if nil != err {
 			continue
 		}
+		macdM60DataLiveMap[vKlineM.StartTime] = macdM60Data[199]
 
 		//fmt.Println(macdData[199], macdM3Data[199], macdM60Data[199])
 
@@ -1972,44 +1993,46 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		})
 
 		// 当前分钟
-		for i := 198; i >= 199-k; i-- {
-			if macdData[i].DEA > macdData[i].DIF &&
-				macdData[i].DIF > 0 {
+		for i := 1; i <= k; i++ {
+			tmpMacdData := macdDataLiveMap[klineMOne[kKlineM-i].StartTime]
+			if tmpMacdData.DEA > tmpMacdData.DIF &&
+				tmpMacdData.DIF > 0 {
 				openMoreOne += 1
 			}
 
-			if macdData[i].DEA < macdData[i].DIF &&
-				macdData[i].DIF < 0 {
+			if tmpMacdData.DEA < tmpMacdData.DIF &&
+				tmpMacdData.DIF < 0 {
 				openEmptyOne += 1
 			}
 
 			// 操作时的macd信息，添加到数据中
 			tmpListMacdData = append(tmpListMacdData, &v1.IntervalMKAndMACDDataReply_List2_ListMacd{
-				X31: macdData[i].DIF,
-				X32: macdData[i].DEA,
-				X33: macdData[i].MACD,
-				X34: macdData[i].Time,
+				X31: tmpMacdData.DIF,
+				X32: tmpMacdData.DEA,
+				X33: tmpMacdData.MACD,
+				X34: tmpMacdData.Time,
 			})
 		}
 
-		for i := 198; i >= 199-k; i-- {
+		for i := 1; i <= k; i++ {
+			tmpMacdData60 := macdM60DataLiveMap[klineMOne[kKlineM-i].StartTime]
 			// 60分钟
-			if macdM60Data[i].DIF > macdM60Data[i].DEA &&
-				macdM60Data[i].DEA > 0 {
+			if tmpMacdData60.DIF > tmpMacdData60.DEA &&
+				tmpMacdData60.DEA > 0 {
 				openMoreTwo += 1
 			}
 
-			if macdM60Data[i].DIF < macdM60Data[i].DEA &&
-				macdM60Data[i].DEA < 0 {
+			if tmpMacdData60.DIF < tmpMacdData60.DEA &&
+				tmpMacdData60.DEA < 0 {
 				openEmptyTwo += 1
 			}
 
 			// 操作时的macd信息，添加到数据中
 			tmpListMacdData60 = append(tmpListMacdData60, &v1.IntervalMKAndMACDDataReply_List2_ListMacd60{
-				X31: macdM60Data[i].DIF,
-				X32: macdM60Data[i].DEA,
-				X33: macdM60Data[i].MACD,
-				X34: macdM60Data[i].Time,
+				X31: tmpMacdData60.DIF,
+				X32: tmpMacdData60.DEA,
+				X33: tmpMacdData60.MACD,
+				X34: tmpMacdData60.Time,
 			})
 		}
 
