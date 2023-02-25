@@ -295,18 +295,6 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_k'
-                dataListMacd:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd'
-                dataListMacd3:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd3'
-                dataListMacd60:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_macd60'
                 operationData:
                     type: array
                     items:
@@ -363,49 +351,40 @@ components:
                 x6:
                     type: integer
                     format: int64
-        IntervalMKAndMACDDataReply_List_macd:
-            type: object
-            properties:
-                x1:
+                x31:
                     type: number
                     format: double
-                x2:
+                x32:
                     type: number
                     format: double
-                x3:
+                x33:
                     type: number
                     format: double
-                x4:
+                x34:
                     type: integer
                     format: int64
-        IntervalMKAndMACDDataReply_List_macd3:
-            type: object
-            properties:
-                x1:
+                x151:
                     type: number
                     format: double
-                x2:
+                x152:
                     type: number
                     format: double
-                x3:
+                x153:
                     type: number
                     format: double
-                x4:
+                x154:
                     type: integer
                     format: int64
-        IntervalMKAndMACDDataReply_List_macd60:
-            type: object
-            properties:
-                x1:
+                x601:
                     type: number
                     format: double
-                x2:
+                x602:
                     type: number
                     format: double
-                x3:
+                x603:
                     type: number
                     format: double
-                x4:
+                x604:
                     type: integer
                     format: int64
         IntervalMMACDDataReply:

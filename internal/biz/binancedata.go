@@ -1746,122 +1746,164 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 	res := &v1.IntervalMKAndMACDDataReply{
 		DataListK:     make([]*v1.IntervalMKAndMACDDataReply_ListK, 0),
 		OperationData: make([]*v1.IntervalMKAndMACDDataReply_List2, 0),
-		DataListMacd:  make([]*v1.IntervalMKAndMACDDataReply_ListMacd, 0),
 	}
 
 	m = int(req.M)
 	k = int(req.K)
 	//n = int(req.N)
-	maxMxN := 200 * 60 // macd计算，至少需要数据源头数据条数，本次最大查询60分钟
+	maxMxN := 201 * 60 // macd计算，至少需要数据源头数据条数，本次最大查询60分钟
 
 	// 获取时间范围内的k线分钟数据
-	reqStart = reqStart.Add(-time.Duration(maxMxN-1) * time.Minute)
+	startTime := reqStart.Add(-time.Duration(maxMxN) * time.Minute)
 	// todo 数据时间限制，先应该随着maxMxN改变而改变
 	dataLimitTime := time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)
-	if reqStart.Before(dataLimitTime) {
+	if startTime.Before(dataLimitTime) {
 		return res, nil
 	}
 	// 时间查不出数据
-	if reqStart.After(reqEnd) {
+	if startTime.After(reqEnd) {
 		return res, nil
 	}
-	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
+	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
 	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
-		reqStart.Add(-8*time.Hour).UnixMilli(),
+		startTime.Add(-8*time.Hour).UnixMilli(),
 		reqEnd.Add(-8*time.Hour).UnixMilli(),
 	)
-
-	// 截取掉不需要的数据，之后计算
-	klineM := handleMKData(klineMOne, m)
-	var (
-		macdData []*MACDPoint
-	)
-	// macd返回数据
-	macdData, err = b.klineMOneRepo.NewMACDData(klineM)
-	if nil != err {
-		return res, nil
-	}
-	macdDataMap := make(map[int64]*MACDPoint, 0)
-	for _, vMacdData := range macdData[maxMxN/m-(k+1):] {
-		macdDataMap[vMacdData.Time] = &MACDPoint{
-			Time: vMacdData.Time,
-			DIF:  vMacdData.DIF,
-			DEA:  vMacdData.DEA,
-			MACD: vMacdData.MACD,
-		}
-		res.DataListMacd = append(res.DataListMacd, &v1.IntervalMKAndMACDDataReply_ListMacd{
-			X1: vMacdData.MACD,
-			X2: vMacdData.DIF,
-			X3: vMacdData.DEA,
-			X4: vMacdData.Time,
-		})
-	}
-
-	klineM3 := handleMKData(klineMOne, 3)
-	var (
-		macdM3Data []*MACDPoint
-	)
-	// macd返回数据
-	macdM3Data, err = b.klineMOneRepo.NewMACDData(klineM3)
-	if nil != err {
-		return res, nil
-	}
-	macdM3DataMap := make(map[int64]*MACDPoint, 0)
-	for _, vMacdData := range macdM3Data[maxMxN/3-(k+1):] {
-		macdM3DataMap[vMacdData.Time] = &MACDPoint{
-			Time: vMacdData.Time,
-			DIF:  vMacdData.DIF,
-			DEA:  vMacdData.DEA,
-			MACD: vMacdData.MACD,
-		}
-
-		res.DataListMacd3 = append(res.DataListMacd3, &v1.IntervalMKAndMACDDataReply_ListMacd3{
-			X1: vMacdData.MACD,
-			X2: vMacdData.DIF,
-			X3: vMacdData.DEA,
-			X4: vMacdData.Time,
-		})
-	}
-
-	klineM60 := handleMKData(klineMOne, 60)
-	var (
-		macdM60Data []*MACDPoint
-	)
-	// macd返回数据
-	macdM60Data, err = b.klineMOneRepo.NewMACDData(klineM60)
-	if nil != err {
-		return res, nil
-	}
-	macdM60DataMap := make(map[int64]*MACDPoint, 0)
-	for _, vMacdData := range macdM60Data[maxMxN/60-(k+1):] {
-		macdM60DataMap[vMacdData.Time] = &MACDPoint{
-			Time: vMacdData.Time,
-			DIF:  vMacdData.DIF,
-			DEA:  vMacdData.DEA,
-			MACD: vMacdData.MACD,
-		}
-
-		res.DataListMacd60 = append(res.DataListMacd60, &v1.IntervalMKAndMACDDataReply_ListMacd60{
-			X1: vMacdData.MACD,
-			X2: vMacdData.DIF,
-			X3: vMacdData.DEA,
-			X4: vMacdData.Time,
-		})
-	}
-	//fmt.Println(len(klineM), klineM[199], len(tmpKlineMOne), tmpKlineMOne[199])
 
 	// 遍历数据
 	var (
 		lastActionTag    string
 		tmpLastActionTag string
 		openActionTag    string
+
+		kLineDataMLive   []*KLineMOne
+		kLineData3MLive  []*KLineMOne
+		kLineData60MLive []*KLineMOne
+
+		macdData    []*MACDPoint
+		macdM3Data  []*MACDPoint
+		macdM60Data []*MACDPoint
 	)
 	operationData := make(map[string]*OperationData2, 0)
-	tmpKlineM := klineM[maxMxN/m-(k+1):]
-	for kKlineM, vKlineM := range tmpKlineM {
-		if kKlineM < k {
+	//tmpKlineM := klineM[maxMxN/m-(k+1):]
+
+	tmpKlineM := klineMOne
+	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
+	for _, vKlineM := range tmpKlineM {
+		// 累加数据
+		tmpNow := time.UnixMilli(vKlineM.StartTime).UTC().Add(8 * time.Hour)
+
+		var (
+			lastKeyMLive   int
+			lastKey3MLive  int
+			lastKey60MLive int
+		)
+		if 0 == tmpNow.Minute()%m {
+			//len(kLineData15MLive)-1
+			kLineDataMLive = append(kLineDataMLive, &KLineMOne{
+				StartPrice: vKlineM.StartPrice,
+				StartTime:  vKlineM.StartTime,
+				TopPrice:   vKlineM.TopPrice,
+				LowPrice:   vKlineM.LowPrice,
+				EndPrice:   vKlineM.EndPrice,
+				EndTime:    vKlineM.EndTime,
+			})
+			//if 1675180800000 <= vKlineM.StartTime {
+			//	fmt.Println(vKlineM)
+			//}
+		} else {
+			lastKeyMLive = len(kLineDataMLive) - 1
+			if 0 <= lastKeyMLive {
+				kLineDataMLive[lastKeyMLive].EndPrice = vKlineM.EndPrice
+				kLineDataMLive[lastKeyMLive].EndTime = vKlineM.EndTime
+				if kLineDataMLive[lastKeyMLive].TopPrice < vKlineM.TopPrice {
+					kLineDataMLive[lastKeyMLive].TopPrice = vKlineM.TopPrice
+				}
+				if kLineDataMLive[lastKeyMLive].LowPrice > vKlineM.LowPrice {
+					kLineDataMLive[lastKeyMLive].LowPrice = vKlineM.LowPrice
+				}
+			}
+			//if 1675180800000 <= kLineData15MLive[lastKey].StartTime {
+			//	fmt.Println(kLineData15MLive[lastKey], lastKey)
+			//}
+		}
+
+		if 0 == tmpNow.Minute()%3 {
+			//len(kLineData15MLive)-1
+			kLineData3MLive = append(kLineData3MLive, &KLineMOne{
+				StartPrice: vKlineM.StartPrice,
+				StartTime:  vKlineM.StartTime,
+				TopPrice:   vKlineM.TopPrice,
+				LowPrice:   vKlineM.LowPrice,
+				EndPrice:   vKlineM.EndPrice,
+				EndTime:    vKlineM.EndTime,
+			})
+		} else {
+			lastKey3MLive = len(kLineData3MLive) - 1
+			if 0 <= lastKey3MLive {
+				kLineData3MLive[lastKey3MLive].EndPrice = vKlineM.EndPrice
+				kLineData3MLive[lastKey3MLive].EndTime = vKlineM.EndTime
+				if kLineData3MLive[lastKey3MLive].TopPrice < vKlineM.TopPrice {
+					kLineData3MLive[lastKey3MLive].TopPrice = vKlineM.TopPrice
+				}
+				if kLineData3MLive[lastKey3MLive].LowPrice > vKlineM.LowPrice {
+					kLineData3MLive[lastKey3MLive].LowPrice = vKlineM.LowPrice
+				}
+			}
+		}
+
+		if 0 == tmpNow.Minute()%60 {
+			//len(kLineData15MLive)-1
+			kLineData60MLive = append(kLineData60MLive, &KLineMOne{
+				StartPrice: vKlineM.StartPrice,
+				StartTime:  vKlineM.StartTime,
+				TopPrice:   vKlineM.TopPrice,
+				LowPrice:   vKlineM.LowPrice,
+				EndPrice:   vKlineM.EndPrice,
+				EndTime:    vKlineM.EndTime,
+			})
+		} else {
+			lastKey60MLive = len(kLineData60MLive) - 1
+			if 0 <= lastKey60MLive {
+				kLineData60MLive[lastKey60MLive].EndPrice = vKlineM.EndPrice
+				kLineData60MLive[lastKey60MLive].EndTime = vKlineM.EndTime
+				if kLineData60MLive[lastKey60MLive].TopPrice < vKlineM.TopPrice {
+					kLineData60MLive[lastKey60MLive].TopPrice = vKlineM.TopPrice
+				}
+				if kLineData60MLive[lastKey60MLive].LowPrice > vKlineM.LowPrice {
+					kLineData60MLive[lastKey60MLive].LowPrice = vKlineM.LowPrice
+				}
+			}
+		}
+
+		if reqStartMilli > vKlineM.StartTime {
 			continue
 		}
+
+		lastKeyMLive = len(kLineDataMLive) - 1
+		lastKey3MLive = len(kLineData3MLive) - 1
+		lastKey60MLive = len(kLineData60MLive) - 1
+		//fmt.Println(vKlineM.StartTime, kLineDataMLive[lastKeyMLive], kLineData3MLive[lastKey3MLive], kLineData60MLive[lastKey60MLive])
+
+		// macd数据，取200条k线数据计算
+		macdData, err = b.klineMOneRepo.NewMACDData(kLineDataMLive[lastKeyMLive-199:])
+		if nil != err {
+			continue
+		}
+
+		// macd数据，取200条3m的k线数据计算
+		macdM3Data, err = b.klineMOneRepo.NewMACDData(kLineData3MLive[lastKey3MLive-199:])
+		if nil != err {
+			continue
+		}
+
+		// macd数据，取200条60m的k线数据计算
+		macdM60Data, err = b.klineMOneRepo.NewMACDData(kLineData60MLive[lastKey60MLive-199:])
+		if nil != err {
+			continue
+		}
+
+		//fmt.Println(macdData[199], macdM3Data[199], macdM60Data[199])
 
 		var tagNum int64
 
@@ -1873,15 +1915,31 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			X4: vKlineM.LowPrice,
 			X5: vKlineM.EndTime,
 			X6: vKlineM.StartTime,
+
+			X31: macdM3Data[199].DIF,
+			X32: macdM3Data[199].DEA,
+			X33: macdM3Data[199].MACD,
+			X34: macdM3Data[199].Time,
+
+			X151: macdData[199].DIF,
+			X152: macdData[199].DEA,
+			X153: macdData[199].MACD,
+			X154: macdData[199].Time,
+
+			X601: macdM60Data[199].DIF,
+			X602: macdM60Data[199].DEA,
+			X603: macdM60Data[199].MACD,
+			X604: macdM60Data[199].Time,
 		})
 
-		if _, ok := macdDataMap[vKlineM.StartTime]; !ok {
-			continue
-		}
-
-		if _, ok := macdM3DataMap[vKlineM.StartTime]; !ok {
-			continue
-		}
+		//
+		//if _, ok := macdDataMap[vKlineM.StartTime]; !ok {
+		//	continue
+		//}
+		//
+		//if _, ok := macdM3DataMap[vKlineM.StartTime]; !ok {
+		//	continue
+		//}
 
 		var (
 			openMoreOne  int
@@ -1898,58 +1956,40 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		//	}
 		//}
 
-		if vKlineM.StartTime == 1675223100000 {
-			fmt.Println(macdDataMap[1675223100000])
-		}
 		// 当前分钟
-		for i := 1; i <= k; i++ {
-			if _, ok := macdDataMap[tmpKlineM[kKlineM-i].StartTime]; !ok {
-				break
-			}
-
-			if macdDataMap[tmpKlineM[kKlineM-i].StartTime].DEA > macdDataMap[tmpKlineM[kKlineM-i].StartTime].DIF &&
-				macdDataMap[tmpKlineM[kKlineM-i].StartTime].DIF > 0 {
-				if vKlineM.StartTime == 1675223100000 {
-					fmt.Println(macdDataMap[tmpKlineM[kKlineM-i].StartTime])
-				}
+		for i := 198; i >= 199-k; i-- {
+			if macdData[i].DEA > macdData[i].DIF &&
+				macdData[i].DIF > 0 {
 				openMoreOne += 1
 			}
 
-			if macdDataMap[tmpKlineM[kKlineM-i].StartTime].DEA < macdDataMap[tmpKlineM[kKlineM-i].StartTime].DIF &&
-				macdDataMap[tmpKlineM[kKlineM-i].StartTime].DIF < 0 {
+			if macdData[i].DEA < macdData[i].DIF &&
+				macdData[i].DIF < 0 {
 				openEmptyOne += 1
 			}
 		}
 
 		// 60分钟
-		tmpNow := time.UnixMilli(vKlineM.StartTime).UTC()
-		tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC).UnixMilli()
-		if vKlineM.StartTime == tmpNow0 {
-			tmpNow0 -= int64(60 * 60000)
-		}
-		for i := 0; i < k; i++ {
+		//tmpNow := time.UnixMilli(vKlineM.StartTime).UTC()
+		//tmpNow0 := time.Date(tmpNow.Year(), tmpNow.Month(), tmpNow.Day(), tmpNow.Hour(), 0, 0, 0, time.UTC).UnixMilli()
+		//if vKlineM.StartTime == tmpNow0 {
+		//	tmpNow0 -= int64(60 * 60000)
+		//}
+		for i := 198; i >= 199-k; i-- {
 			// 60分钟
-			tmpStartTimeKey := tmpNow0 - int64(60*60000*i)
-			if _, ok := macdM60DataMap[tmpStartTimeKey]; !ok {
-				break
-			}
-
-			if macdM60DataMap[tmpStartTimeKey].DIF > macdM60DataMap[tmpStartTimeKey].DEA &&
-				macdM60DataMap[tmpStartTimeKey].DEA > 0 {
-				if vKlineM.StartTime == 1675223100000 {
-					fmt.Println(macdM60DataMap[tmpStartTimeKey])
-				}
+			if macdM60Data[i].DIF > macdM60Data[i].DEA &&
+				macdM60Data[i].DEA > 0 {
 				openMoreTwo += 1
 			}
 
-			if macdM60DataMap[tmpStartTimeKey].DIF < macdM60DataMap[tmpStartTimeKey].DEA &&
-				macdM60DataMap[tmpStartTimeKey].DEA < 0 {
+			if macdM60Data[i].DIF < macdM60Data[i].DEA &&
+				macdM60Data[i].DEA < 0 {
 				openEmptyTwo += 1
 			}
 		}
 
 		// 平多仓
-		if macdM3DataMap[vKlineM.StartTime].DIF < 0 {
+		if macdM3Data[199].DIF < 0 {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if ("open" == tmpOpenLastOperationData2.Status || "half" == tmpOpenLastOperationData2.Status) && "more" == tmpOpenLastOperationData2.Type {
 
@@ -1973,7 +2013,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 				}
 			}
 		}
-		if macdDataMap[vKlineM.StartTime].DIF < macdM3DataMap[vKlineM.StartTime].DEA {
+		if macdData[199].DIF < macdM3Data[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if ("open" == tmpOpenLastOperationData2.Status || "half" == tmpOpenLastOperationData2.Status) && "more" == tmpOpenLastOperationData2.Type {
 					tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -1998,7 +2038,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 平空仓
-		if macdM3DataMap[vKlineM.StartTime].DIF > 0 {
+		if macdM3Data[199].DIF > 0 {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if ("open" == tmpOpenLastOperationData2.Status || "half" == tmpOpenLastOperationData2.Status) && "empty" == tmpOpenLastOperationData2.Type {
 					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2021,7 +2061,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 				}
 			}
 		}
-		if macdDataMap[vKlineM.StartTime].DIF > macdM3DataMap[vKlineM.StartTime].DEA {
+		if macdData[199].DIF > macdM3Data[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if ("open" == tmpOpenLastOperationData2.Status || "half" == tmpOpenLastOperationData2.Status) && "empty" == tmpOpenLastOperationData2.Type {
 					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2046,7 +2086,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 平多半仓
-		if macdM3DataMap[vKlineM.StartTime].DIF < macdM3DataMap[vKlineM.StartTime].DEA {
+		if macdM3Data[199].DIF < macdM3Data[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "open" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
 					tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2070,7 +2110,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 平空半仓
-		if macdM3DataMap[vKlineM.StartTime].DIF > macdM3DataMap[vKlineM.StartTime].DEA {
+		if macdM3Data[199].DIF > macdM3Data[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "open" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
 					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2094,7 +2134,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 加多半仓
-		if macdM3DataMap[vKlineM.StartTime].DIF > macdM3DataMap[vKlineM.StartTime].DEA {
+		if macdM3Data[199].DIF > macdM3Data[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "half" == tmpOpenLastOperationData2.Status && "more" == tmpOpenLastOperationData2.Type {
 					tmpCloseLastOperationData := &OperationData2{
@@ -2116,8 +2156,8 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 开多
-		if openMoreOne >= k && openMoreTwo >= k && macdDataMap[vKlineM.StartTime].DIF > macdDataMap[vKlineM.StartTime].DEA {
-			fmt.Println(openMoreOne, openMoreTwo, k, macdDataMap[vKlineM.StartTime].DIF, macdDataMap[vKlineM.StartTime].DEA)
+		if openMoreOne >= k && openMoreTwo >= k && macdData[199].DIF > macdData[199].DEA {
+			fmt.Println(openMoreOne, openMoreTwo, k, macdData[199].DIF, macdData[199].DEA)
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2184,7 +2224,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 加空半仓
-		if macdM3DataMap[vKlineM.StartTime].DIF < macdM3DataMap[vKlineM.StartTime].DEA {
+		if macdM3Data[199].DIF < macdM3Data[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "half" == tmpOpenLastOperationData2.Status && "empty" == tmpOpenLastOperationData2.Type {
 					tmpCloseLastOperationData := &OperationData2{
@@ -2206,7 +2246,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 开空
-		if openEmptyOne >= k && openEmptyTwo >= k && macdDataMap[vKlineM.StartTime].DIF < macdDataMap[vKlineM.StartTime].DEA {
+		if openEmptyOne >= k && openEmptyTwo >= k && macdData[199].DIF < macdData[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice

@@ -295,30 +295,21 @@ message IntervalMKAndMACDDataReply {
 		double x4 = 4;
 		int64 x5 = 5;
 		int64 x6 = 6;
-	}
 
-	repeated List_macd dataListMacd = 2;
-	message List_macd{
-		double x1 = 1;
-		double x2 = 2;
-		double x3 = 3;
-		int64 x4 = 4;
-	}
+		double x31 = 7;
+		double x32 = 8;
+		double x33 = 9;
+		int64 x34 = 10;
 
-	repeated List_macd3 dataListMacd3 = 7;
-	message List_macd3{
-		double x1 = 1;
-		double x2 = 2;
-		double x3 = 3;
-		int64 x4 = 4;
-	}
+		double x151 = 11;
+		double x152 = 12;
+		double x153 = 13;
+		int64 x154 = 14;
 
-	repeated List_macd60 dataListMacd60 = 8;
-	message List_macd60{
-		double x1 = 1;
-		double x2 = 2;
-		double x3 = 3;
-		int64 x4 = 4;
+		double x601 = 15;
+		double x602 = 16;
+		double x603 = 17;
+		int64 x604 = 18;
 	}
 
 	repeated List2 operationData = 6;
