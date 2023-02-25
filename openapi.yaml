@@ -330,6 +330,18 @@ components:
                     format: double
                 action:
                     type: string
+                macd3Data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/List2_ListMacd3'
+                macdData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/List2_ListMacd'
+                macd60Data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/List2_ListMacd60'
         IntervalMKAndMACDDataReply_List_k:
             type: object
             properties:
@@ -592,6 +604,51 @@ components:
                 closeCondition2Rate:
                     type: number
                     format: double
+        List2_ListMacd:
+            type: object
+            properties:
+                x31:
+                    type: number
+                    format: double
+                x32:
+                    type: number
+                    format: double
+                x33:
+                    type: number
+                    format: double
+                x34:
+                    type: integer
+                    format: int64
+        List2_ListMacd3:
+            type: object
+            properties:
+                x31:
+                    type: number
+                    format: double
+                x32:
+                    type: number
+                    format: double
+                x33:
+                    type: number
+                    format: double
+                x34:
+                    type: integer
+                    format: int64
+        List2_ListMacd60:
+            type: object
+            properties:
+                x31:
+                    type: number
+                    format: double
+                x32:
+                    type: number
+                    format: double
+                x33:
+                    type: number
+                    format: double
+                x34:
+                    type: integer
+                    format: int64
         PullBinanceDataReply:
             type: object
             properties: {}

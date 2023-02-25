@@ -322,6 +322,30 @@ message IntervalMKAndMACDDataReply {
 		string status = 8;
 		double rate = 9;
 		string action = 10;
+
+		repeated ListMacd3 macd3Data = 11;
+		message ListMacd3 {
+			double x31 = 7;
+			double x32 = 8;
+			double x33 = 9;
+			int64 x34 = 10;
+		}
+
+		repeated ListMacd macdData = 12;
+		message ListMacd {
+			double x31 = 7;
+			double x32 = 8;
+			double x33 = 9;
+			int64 x34 = 10;
+		}
+
+		repeated ListMacd60 macd60Data = 13;
+		message ListMacd60 {
+			double x31 = 7;
+			double x32 = 8;
+			double x33 = 9;
+			int64 x34 = 10;
+		}
 	}
 
 	int64 operationOrderTotal = 3;
