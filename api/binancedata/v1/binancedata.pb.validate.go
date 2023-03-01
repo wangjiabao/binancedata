@@ -1381,6 +1381,40 @@ func (m *AreaPointIntervalMAvgEndPriceDataReply) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetDataListSubPoint() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("DataListSubPoint[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("DataListSubPoint[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("DataListSubPoint[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	for idx, item := range m.GetOperationData() {
 		_, _ = idx, item
 
@@ -4609,6 +4643,122 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError{}
+
+// Validate checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPointMultiError, or nil if
+// none found.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X1
+
+	if len(errors) > 0 {
+		return AreaPointIntervalMAvgEndPriceDataReply_ListSubPointMultiError(errors)
+	}
+
+	return nil
+}
+
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPointMultiError is an error
+// wrapping multiple validation errors returned by
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint.ValidateAll() if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_ListSubPointMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AreaPointIntervalMAvgEndPriceDataReply_ListSubPointMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AreaPointIntervalMAvgEndPriceDataReply_ListSubPointMultiError) AllErrors() []error { return m }
+
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError is the
+// validation error returned by
+// AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint.Validate if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError) ErrorName() string {
+	return "AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAreaPointIntervalMAvgEndPriceDataReply_ListSubPoint.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AreaPointIntervalMAvgEndPriceDataReply_ListSubPointValidationError{}
 
 // Validate checks the field values on
 // AreaPointIntervalMAvgEndPriceDataReply_List2 with the rules defined in the

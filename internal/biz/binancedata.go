@@ -2545,6 +2545,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 	res := &v1.AreaPointIntervalMAvgEndPriceDataReply{
 		DataListK:         make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListK, 0),
 		DataListMaNMFirst: make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst, 0),
+		DataListSubPoint:  make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint, 0),
 	}
 
 	m = int(req.M)
@@ -2665,15 +2666,16 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 			X6: kLineDataMLive[lastKeyMLive].StartTime,
 		}
 
-		tmpResDataListMaNMFirst := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpAvgEndPrice}
-		if m-1 == tmpNow.Minute()%m {
-			res.DataListK = append(res.DataListK, tmpResDataListK)
-			res.DataListMaNMFirst = append(res.DataListMaNMFirst, tmpResDataListMaNMFirst)
-		}
-
 		// 比较入单
 		tmpPointFirstSub := maNDataMLiveMap[kLineDataMLive[lastKeyMLive].StartTime].AvgEndPrice - maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice
 		tmpPointSecondSub := maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice - maNDataMLiveMap[kLineDataMLive[lastKeyMLive-2].StartTime].AvgEndPrice
+
+		tmpResDataListMaNMFirst := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpAvgEndPrice}
+		tmpResDataListSubPoint := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint{X1: tmpPointFirstSub}
+
+		res.DataListK = append(res.DataListK, tmpResDataListK)
+		res.DataListMaNMFirst = append(res.DataListMaNMFirst, tmpResDataListMaNMFirst)
+		res.DataListSubPoint = append(res.DataListSubPoint, tmpResDataListSubPoint)
 
 		// 震荡区间，由上穿下，开空
 		if tmpPointSecondSub > pointFirst && pointFirst > tmpPointFirstSub {
