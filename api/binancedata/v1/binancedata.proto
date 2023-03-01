@@ -223,6 +223,11 @@ message AreaPointIntervalMAvgEndPriceDataReply {
 		double x1 = 1;
 	}
 
+	repeated List_sub_point dataListSubPoint = 8;
+	message List_sub_point{
+		double x1 = 1;
+	}
+
 	repeated List2 operationData = 6;
 	message List2 {
 		double start_price = 1;
