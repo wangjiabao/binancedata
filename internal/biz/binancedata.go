@@ -1957,12 +1957,12 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		tmpResDataListK3 := &v1.IntervalMKAndMACDDataReply_ListKMacd3{
-			X1: kLineData3MLive[lastKeyMLive].StartPrice,
-			X2: kLineData3MLive[lastKeyMLive].EndPrice,
-			X3: kLineData3MLive[lastKeyMLive].TopPrice,
-			X4: kLineData3MLive[lastKeyMLive].LowPrice,
-			X5: kLineData3MLive[lastKeyMLive].EndTime,
-			X6: kLineData3MLive[lastKeyMLive].StartTime,
+			X1: kLineData3MLive[lastKey3MLive].StartPrice,
+			X2: kLineData3MLive[lastKey3MLive].EndPrice,
+			X3: kLineData3MLive[lastKey3MLive].TopPrice,
+			X4: kLineData3MLive[lastKey3MLive].LowPrice,
+			X5: kLineData3MLive[lastKey3MLive].EndTime,
+			X6: kLineData3MLive[lastKey3MLive].StartTime,
 
 			X31: macdM3Data[199].DIF,
 			X32: macdM3Data[199].DEA,
@@ -1980,12 +1980,12 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		tmpResDataListK60 := &v1.IntervalMKAndMACDDataReply_ListKMacd60{
-			X1: kLineData60MLive[lastKeyMLive].StartPrice,
-			X2: kLineData60MLive[lastKeyMLive].EndPrice,
-			X3: kLineData60MLive[lastKeyMLive].TopPrice,
-			X4: kLineData60MLive[lastKeyMLive].LowPrice,
-			X5: kLineData60MLive[lastKeyMLive].EndTime,
-			X6: kLineData60MLive[lastKeyMLive].StartTime,
+			X1: kLineData60MLive[lastKey60MLive].StartPrice,
+			X2: kLineData60MLive[lastKey60MLive].EndPrice,
+			X3: kLineData60MLive[lastKey60MLive].TopPrice,
+			X4: kLineData60MLive[lastKey60MLive].LowPrice,
+			X5: kLineData60MLive[lastKey60MLive].EndTime,
+			X6: kLineData60MLive[lastKey60MLive].StartTime,
 
 			X601: macdM60Data[199].DIF,
 			X602: macdM60Data[199].DEA,
