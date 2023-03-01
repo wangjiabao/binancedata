@@ -38,9 +38,9 @@ func (b *BinanceDataService) IntervalMKAndMACDData(ctx context.Context, req *v1.
 	return b.uc.IntervalMKAndMACDData(ctx, req)
 }
 
-func (b *BinanceDataService) AreaPointIntervalMAvgEndPriceData(ctx context.Context, req *v1.AreaPointIntervalMAvgEndPriceDataRequest) (*v1.AreaPointIntervalMAvgEndPriceDataReply, error) {
-	return b.uc.AreaPointIntervalMAvgEndPriceData(ctx, req)
-}
+//func (b *BinanceDataService) AreaPointIntervalMAvgEndPriceData(ctx context.Context, req *v1.AreaPointIntervalMAvgEndPriceDataRequest) (*v1.AreaPointIntervalMAvgEndPriceDataReply, error) {
+//	return b.uc.AreaPointIntervalMAvgEndPriceData(ctx, req)
+//}
 
 func (b *BinanceDataService) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
 	return b.uc.PullBinanceData(ctx, req)
