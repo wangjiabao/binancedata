@@ -855,11 +855,13 @@ type IntervalMKAndMACDDataReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DataListK           []*IntervalMKAndMACDDataReply_ListK `protobuf:"bytes,1,rep,name=dataListK,proto3" json:"dataListK,omitempty"`
-	OperationData       []*IntervalMKAndMACDDataReply_List2 `protobuf:"bytes,6,rep,name=operationData,proto3" json:"operationData,omitempty"`
-	OperationOrderTotal int64                               `protobuf:"varint,3,opt,name=operationOrderTotal,proto3" json:"operationOrderTotal,omitempty"`
-	OperationWinRate    string                              `protobuf:"bytes,4,opt,name=operationWinRate,proto3" json:"operationWinRate,omitempty"`
-	OperationWinAmount  string                              `protobuf:"bytes,5,opt,name=operationWinAmount,proto3" json:"operationWinAmount,omitempty"`
+	DataListK           []*IntervalMKAndMACDDataReply_ListK       `protobuf:"bytes,1,rep,name=dataListK,proto3" json:"dataListK,omitempty"`
+	DataListKMacd3      []*IntervalMKAndMACDDataReply_ListKMacd3  `protobuf:"bytes,2,rep,name=dataListKMacd3,proto3" json:"dataListKMacd3,omitempty"`
+	DataListKMacd60     []*IntervalMKAndMACDDataReply_ListKMacd60 `protobuf:"bytes,3,rep,name=dataListKMacd60,proto3" json:"dataListKMacd60,omitempty"`
+	OperationData       []*IntervalMKAndMACDDataReply_List2       `protobuf:"bytes,6,rep,name=operationData,proto3" json:"operationData,omitempty"`
+	OperationOrderTotal int64                                     `protobuf:"varint,4,opt,name=operationOrderTotal,proto3" json:"operationOrderTotal,omitempty"`
+	OperationWinRate    string                                    `protobuf:"bytes,5,opt,name=operationWinRate,proto3" json:"operationWinRate,omitempty"`
+	OperationWinAmount  string                                    `protobuf:"bytes,7,opt,name=operationWinAmount,proto3" json:"operationWinAmount,omitempty"`
 }
 
 func (x *IntervalMKAndMACDDataReply) Reset() {
@@ -897,6 +899,20 @@ func (*IntervalMKAndMACDDataReply) Descriptor() ([]byte, []int) {
 func (x *IntervalMKAndMACDDataReply) GetDataListK() []*IntervalMKAndMACDDataReply_ListK {
 	if x != nil {
 		return x.DataListK
+	}
+	return nil
+}
+
+func (x *IntervalMKAndMACDDataReply) GetDataListKMacd3() []*IntervalMKAndMACDDataReply_ListKMacd3 {
+	if x != nil {
+		return x.DataListKMacd3
+	}
+	return nil
+}
+
+func (x *IntervalMKAndMACDDataReply) GetDataListKMacd60() []*IntervalMKAndMACDDataReply_ListKMacd60 {
+	if x != nil {
+		return x.DataListKMacd60
 	}
 	return nil
 }
@@ -2494,18 +2510,10 @@ type IntervalMKAndMACDDataReply_ListK struct {
 	X4   float64 `protobuf:"fixed64,4,opt,name=x4,proto3" json:"x4,omitempty"`
 	X5   int64   `protobuf:"varint,5,opt,name=x5,proto3" json:"x5,omitempty"`
 	X6   int64   `protobuf:"varint,6,opt,name=x6,proto3" json:"x6,omitempty"`
-	X31  float64 `protobuf:"fixed64,7,opt,name=x31,proto3" json:"x31,omitempty"`
-	X32  float64 `protobuf:"fixed64,8,opt,name=x32,proto3" json:"x32,omitempty"`
-	X33  float64 `protobuf:"fixed64,9,opt,name=x33,proto3" json:"x33,omitempty"`
-	X34  int64   `protobuf:"varint,10,opt,name=x34,proto3" json:"x34,omitempty"`
 	X151 float64 `protobuf:"fixed64,11,opt,name=x151,proto3" json:"x151,omitempty"`
 	X152 float64 `protobuf:"fixed64,12,opt,name=x152,proto3" json:"x152,omitempty"`
 	X153 float64 `protobuf:"fixed64,13,opt,name=x153,proto3" json:"x153,omitempty"`
 	X154 int64   `protobuf:"varint,14,opt,name=x154,proto3" json:"x154,omitempty"`
-	X601 float64 `protobuf:"fixed64,15,opt,name=x601,proto3" json:"x601,omitempty"`
-	X602 float64 `protobuf:"fixed64,16,opt,name=x602,proto3" json:"x602,omitempty"`
-	X603 float64 `protobuf:"fixed64,17,opt,name=x603,proto3" json:"x603,omitempty"`
-	X604 int64   `protobuf:"varint,18,opt,name=x604,proto3" json:"x604,omitempty"`
 }
 
 func (x *IntervalMKAndMACDDataReply_ListK) Reset() {
@@ -2582,34 +2590,6 @@ func (x *IntervalMKAndMACDDataReply_ListK) GetX6() int64 {
 	return 0
 }
 
-func (x *IntervalMKAndMACDDataReply_ListK) GetX31() float64 {
-	if x != nil {
-		return x.X31
-	}
-	return 0
-}
-
-func (x *IntervalMKAndMACDDataReply_ListK) GetX32() float64 {
-	if x != nil {
-		return x.X32
-	}
-	return 0
-}
-
-func (x *IntervalMKAndMACDDataReply_ListK) GetX33() float64 {
-	if x != nil {
-		return x.X33
-	}
-	return 0
-}
-
-func (x *IntervalMKAndMACDDataReply_ListK) GetX34() int64 {
-	if x != nil {
-		return x.X34
-	}
-	return 0
-}
-
 func (x *IntervalMKAndMACDDataReply_ListK) GetX151() float64 {
 	if x != nil {
 		return x.X151
@@ -2638,28 +2618,238 @@ func (x *IntervalMKAndMACDDataReply_ListK) GetX154() int64 {
 	return 0
 }
 
-func (x *IntervalMKAndMACDDataReply_ListK) GetX601() float64 {
+type IntervalMKAndMACDDataReply_ListKMacd3 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	X1  float64 `protobuf:"fixed64,1,opt,name=x1,proto3" json:"x1,omitempty"`
+	X2  float64 `protobuf:"fixed64,2,opt,name=x2,proto3" json:"x2,omitempty"`
+	X3  float64 `protobuf:"fixed64,3,opt,name=x3,proto3" json:"x3,omitempty"`
+	X4  float64 `protobuf:"fixed64,4,opt,name=x4,proto3" json:"x4,omitempty"`
+	X5  int64   `protobuf:"varint,5,opt,name=x5,proto3" json:"x5,omitempty"`
+	X6  int64   `protobuf:"varint,6,opt,name=x6,proto3" json:"x6,omitempty"`
+	X31 float64 `protobuf:"fixed64,7,opt,name=x31,proto3" json:"x31,omitempty"`
+	X32 float64 `protobuf:"fixed64,8,opt,name=x32,proto3" json:"x32,omitempty"`
+	X33 float64 `protobuf:"fixed64,9,opt,name=x33,proto3" json:"x33,omitempty"`
+	X34 int64   `protobuf:"varint,10,opt,name=x34,proto3" json:"x34,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) Reset() {
+	*x = IntervalMKAndMACDDataReply_ListKMacd3{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[35]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataReply_ListKMacd3) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[35]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataReply_ListKMacd3.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataReply_ListKMacd3) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 1}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX1() float64 {
+	if x != nil {
+		return x.X1
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX2() float64 {
+	if x != nil {
+		return x.X2
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX3() float64 {
+	if x != nil {
+		return x.X3
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX4() float64 {
+	if x != nil {
+		return x.X4
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX5() int64 {
+	if x != nil {
+		return x.X5
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX6() int64 {
+	if x != nil {
+		return x.X6
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX31() float64 {
+	if x != nil {
+		return x.X31
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX32() float64 {
+	if x != nil {
+		return x.X32
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX33() float64 {
+	if x != nil {
+		return x.X33
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd3) GetX34() int64 {
+	if x != nil {
+		return x.X34
+	}
+	return 0
+}
+
+type IntervalMKAndMACDDataReply_ListKMacd60 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	X1   float64 `protobuf:"fixed64,1,opt,name=x1,proto3" json:"x1,omitempty"`
+	X2   float64 `protobuf:"fixed64,2,opt,name=x2,proto3" json:"x2,omitempty"`
+	X3   float64 `protobuf:"fixed64,3,opt,name=x3,proto3" json:"x3,omitempty"`
+	X4   float64 `protobuf:"fixed64,4,opt,name=x4,proto3" json:"x4,omitempty"`
+	X5   int64   `protobuf:"varint,5,opt,name=x5,proto3" json:"x5,omitempty"`
+	X6   int64   `protobuf:"varint,6,opt,name=x6,proto3" json:"x6,omitempty"`
+	X601 float64 `protobuf:"fixed64,15,opt,name=x601,proto3" json:"x601,omitempty"`
+	X602 float64 `protobuf:"fixed64,16,opt,name=x602,proto3" json:"x602,omitempty"`
+	X603 float64 `protobuf:"fixed64,17,opt,name=x603,proto3" json:"x603,omitempty"`
+	X604 int64   `protobuf:"varint,18,opt,name=x604,proto3" json:"x604,omitempty"`
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) Reset() {
+	*x = IntervalMKAndMACDDataReply_ListKMacd60{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[36]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntervalMKAndMACDDataReply_ListKMacd60) ProtoMessage() {}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) ProtoReflect() protoreflect.Message {
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[36]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntervalMKAndMACDDataReply_ListKMacd60.ProtoReflect.Descriptor instead.
+func (*IntervalMKAndMACDDataReply_ListKMacd60) Descriptor() ([]byte, []int) {
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 2}
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX1() float64 {
+	if x != nil {
+		return x.X1
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX2() float64 {
+	if x != nil {
+		return x.X2
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX3() float64 {
+	if x != nil {
+		return x.X3
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX4() float64 {
+	if x != nil {
+		return x.X4
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX5() int64 {
+	if x != nil {
+		return x.X5
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX6() int64 {
+	if x != nil {
+		return x.X6
+	}
+	return 0
+}
+
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX601() float64 {
 	if x != nil {
 		return x.X601
 	}
 	return 0
 }
 
-func (x *IntervalMKAndMACDDataReply_ListK) GetX602() float64 {
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX602() float64 {
 	if x != nil {
 		return x.X602
 	}
 	return 0
 }
 
-func (x *IntervalMKAndMACDDataReply_ListK) GetX603() float64 {
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX603() float64 {
 	if x != nil {
 		return x.X603
 	}
 	return 0
 }
 
-func (x *IntervalMKAndMACDDataReply_ListK) GetX604() int64 {
+func (x *IntervalMKAndMACDDataReply_ListKMacd60) GetX604() int64 {
 	if x != nil {
 		return x.X604
 	}
@@ -2687,7 +2877,7 @@ type IntervalMKAndMACDDataReply_List2 struct {
 func (x *IntervalMKAndMACDDataReply_List2) Reset() {
 	*x = IntervalMKAndMACDDataReply_List2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[35]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[37]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2700,7 +2890,7 @@ func (x *IntervalMKAndMACDDataReply_List2) String() string {
 func (*IntervalMKAndMACDDataReply_List2) ProtoMessage() {}
 
 func (x *IntervalMKAndMACDDataReply_List2) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[35]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[37]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2713,7 +2903,7 @@ func (x *IntervalMKAndMACDDataReply_List2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IntervalMKAndMACDDataReply_List2.ProtoReflect.Descriptor instead.
 func (*IntervalMKAndMACDDataReply_List2) Descriptor() ([]byte, []int) {
-	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 1}
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 3}
 }
 
 func (x *IntervalMKAndMACDDataReply_List2) GetStartPrice() float64 {
@@ -2807,7 +2997,7 @@ type IntervalMKAndMACDDataReply_List2_ListMacd3 struct {
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd3) Reset() {
 	*x = IntervalMKAndMACDDataReply_List2_ListMacd3{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[36]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2820,7 +3010,7 @@ func (x *IntervalMKAndMACDDataReply_List2_ListMacd3) String() string {
 func (*IntervalMKAndMACDDataReply_List2_ListMacd3) ProtoMessage() {}
 
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd3) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[36]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2833,7 +3023,7 @@ func (x *IntervalMKAndMACDDataReply_List2_ListMacd3) ProtoReflect() protoreflect
 
 // Deprecated: Use IntervalMKAndMACDDataReply_List2_ListMacd3.ProtoReflect.Descriptor instead.
 func (*IntervalMKAndMACDDataReply_List2_ListMacd3) Descriptor() ([]byte, []int) {
-	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 1, 0}
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 3, 0}
 }
 
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd3) GetX31() float64 {
@@ -2878,7 +3068,7 @@ type IntervalMKAndMACDDataReply_List2_ListMacd struct {
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd) Reset() {
 	*x = IntervalMKAndMACDDataReply_List2_ListMacd{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[37]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2891,7 +3081,7 @@ func (x *IntervalMKAndMACDDataReply_List2_ListMacd) String() string {
 func (*IntervalMKAndMACDDataReply_List2_ListMacd) ProtoMessage() {}
 
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[37]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2904,7 +3094,7 @@ func (x *IntervalMKAndMACDDataReply_List2_ListMacd) ProtoReflect() protoreflect.
 
 // Deprecated: Use IntervalMKAndMACDDataReply_List2_ListMacd.ProtoReflect.Descriptor instead.
 func (*IntervalMKAndMACDDataReply_List2_ListMacd) Descriptor() ([]byte, []int) {
-	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 1, 1}
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 3, 1}
 }
 
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd) GetX31() float64 {
@@ -2949,7 +3139,7 @@ type IntervalMKAndMACDDataReply_List2_ListMacd60 struct {
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd60) Reset() {
 	*x = IntervalMKAndMACDDataReply_List2_ListMacd60{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[38]
+		mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2962,7 +3152,7 @@ func (x *IntervalMKAndMACDDataReply_List2_ListMacd60) String() string {
 func (*IntervalMKAndMACDDataReply_List2_ListMacd60) ProtoMessage() {}
 
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd60) ProtoReflect() protoreflect.Message {
-	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[38]
+	mi := &file_api_binancedata_v1_binancedata_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2975,7 +3165,7 @@ func (x *IntervalMKAndMACDDataReply_List2_ListMacd60) ProtoReflect() protoreflec
 
 // Deprecated: Use IntervalMKAndMACDDataReply_List2_ListMacd60.ProtoReflect.Descriptor instead.
 func (*IntervalMKAndMACDDataReply_List2_ListMacd60) Descriptor() ([]byte, []int) {
-	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 1, 2}
+	return file_api_binancedata_v1_binancedata_proto_rawDescGZIP(), []int{11, 3, 2}
 }
 
 func (x *IntervalMKAndMACDDataReply_List2_ListMacd60) GetX31() float64 {
@@ -3373,45 +3563,72 @@ var file_api_binancedata_v1_binancedata_proto_rawDesc = []byte{
 	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x65, 0x6e, 0x64, 0x12, 0x0c, 0x0a, 0x01, 0x6d, 0x18,
 	0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x01, 0x6d, 0x12, 0x0c, 0x0a, 0x01, 0x6e, 0x18, 0x04, 0x20,
 	0x01, 0x28, 0x05, 0x52, 0x01, 0x6e, 0x12, 0x0c, 0x0a, 0x01, 0x6b, 0x18, 0x05, 0x20, 0x01, 0x28,
-	0x05, 0x52, 0x01, 0x6b, 0x22, 0xa1, 0x0b, 0x0a, 0x1a, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
+	0x05, 0x52, 0x01, 0x6b, 0x22, 0xd1, 0x0e, 0x0a, 0x1a, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
 	0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65,
 	0x70, 0x6c, 0x79, 0x12, 0x53, 0x0a, 0x09, 0x64, 0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b,
 	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x35, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e,
 	0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65,
 	0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74,
 	0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x52, 0x09, 0x64,
-	0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b, 0x12, 0x5a, 0x0a, 0x0d, 0x6f, 0x70, 0x65, 0x72,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x34, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74,
-	0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41,
-	0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x32, 0x52, 0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x44, 0x61, 0x74, 0x61, 0x12, 0x30, 0x0a, 0x13, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x13, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4f, 0x72, 0x64, 0x65,
-	0x72, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x12, 0x2a, 0x0a, 0x10, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74,
-	0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x52, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x10, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x52, 0x61,
-	0x74, 0x65, 0x12, 0x2e, 0x0a, 0x12, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57,
-	0x69, 0x6e, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12,
-	0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x41, 0x6d, 0x6f, 0x75,
-	0x6e, 0x74, 0x1a, 0xd0, 0x02, 0x0a, 0x06, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x12, 0x0e, 0x0a,
-	0x02, 0x78, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x31, 0x12, 0x0e, 0x0a,
-	0x02, 0x78, 0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x32, 0x12, 0x0e, 0x0a,
-	0x02, 0x78, 0x33, 0x18, 0x03, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x33, 0x12, 0x0e, 0x0a,
-	0x02, 0x78, 0x34, 0x18, 0x04, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x34, 0x12, 0x0e, 0x0a,
-	0x02, 0x78, 0x35, 0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x35, 0x12, 0x0e, 0x0a,
-	0x02, 0x78, 0x36, 0x18, 0x06, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x36, 0x12, 0x10, 0x0a,
-	0x03, 0x78, 0x33, 0x31, 0x18, 0x07, 0x20, 0x01, 0x28, 0x01, 0x52, 0x03, 0x78, 0x33, 0x31, 0x12,
-	0x10, 0x0a, 0x03, 0x78, 0x33, 0x32, 0x18, 0x08, 0x20, 0x01, 0x28, 0x01, 0x52, 0x03, 0x78, 0x33,
-	0x32, 0x12, 0x10, 0x0a, 0x03, 0x78, 0x33, 0x33, 0x18, 0x09, 0x20, 0x01, 0x28, 0x01, 0x52, 0x03,
-	0x78, 0x33, 0x33, 0x12, 0x10, 0x0a, 0x03, 0x78, 0x33, 0x34, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x03, 0x78, 0x33, 0x34, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x31, 0x35, 0x31, 0x18, 0x0b, 0x20,
-	0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x31, 0x35, 0x31, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x31, 0x35,
-	0x32, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x31, 0x35, 0x32, 0x12, 0x12, 0x0a,
-	0x04, 0x78, 0x31, 0x35, 0x33, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x31, 0x35,
-	0x33, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x31, 0x35, 0x34, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x03, 0x52,
-	0x04, 0x78, 0x31, 0x35, 0x34, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x36, 0x30, 0x31, 0x18, 0x0f, 0x20,
+	0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b, 0x12, 0x63, 0x0a, 0x0e, 0x64, 0x61, 0x74, 0x61,
+	0x4c, 0x69, 0x73, 0x74, 0x4b, 0x4d, 0x61, 0x63, 0x64, 0x33, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x3b, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61,
+	0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b,
+	0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x33, 0x52, 0x0e, 0x64,
+	0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b, 0x4d, 0x61, 0x63, 0x64, 0x33, 0x12, 0x66, 0x0a,
+	0x0f, 0x64, 0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b, 0x4d, 0x61, 0x63, 0x64, 0x36, 0x30,
+	0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x3c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e,
+	0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65,
+	0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d, 0x41, 0x43, 0x44, 0x44, 0x61, 0x74,
+	0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x5f, 0x6d, 0x61,
+	0x63, 0x64, 0x36, 0x30, 0x52, 0x0f, 0x64, 0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x4b, 0x4d,
+	0x61, 0x63, 0x64, 0x36, 0x30, 0x12, 0x5a, 0x0a, 0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x34, 0x2e, 0x61,
+	0x70, 0x69, 0x2e, 0x62, 0x69, 0x6e, 0x61, 0x6e, 0x63, 0x65, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x76,
+	0x31, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x4d, 0x4b, 0x41, 0x6e, 0x64, 0x4d,
+	0x41, 0x43, 0x44, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x32, 0x52, 0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x44, 0x61, 0x74,
+	0x61, 0x12, 0x30, 0x0a, 0x13, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4f, 0x72,
+	0x64, 0x65, 0x72, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x13,
+	0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x54, 0x6f,
+	0x74, 0x61, 0x6c, 0x12, 0x2a, 0x0a, 0x10, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x57, 0x69, 0x6e, 0x52, 0x61, 0x74, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x10, 0x6f,
+	0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x52, 0x61, 0x74, 0x65, 0x12,
+	0x2e, 0x0a, 0x12, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x41,
+	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12, 0x6f, 0x70, 0x65,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x57, 0x69, 0x6e, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x1a,
+	0xb8, 0x01, 0x0a, 0x06, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x31,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x31, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x32,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x32, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x33,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x33, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x34,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x34, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x35,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x35, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x36,
+	0x18, 0x06, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x36, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x31,
+	0x35, 0x31, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x31, 0x35, 0x31, 0x12, 0x12,
+	0x0a, 0x04, 0x78, 0x31, 0x35, 0x32, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x31,
+	0x35, 0x32, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x31, 0x35, 0x33, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x01,
+	0x52, 0x04, 0x78, 0x31, 0x35, 0x33, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x31, 0x35, 0x34, 0x18, 0x0e,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x04, 0x78, 0x31, 0x35, 0x34, 0x1a, 0xb6, 0x01, 0x0a, 0x0c, 0x4c,
+	0x69, 0x73, 0x74, 0x5f, 0x6b, 0x5f, 0x6d, 0x61, 0x63, 0x64, 0x33, 0x12, 0x0e, 0x0a, 0x02, 0x78,
+	0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x31, 0x12, 0x0e, 0x0a, 0x02, 0x78,
+	0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x32, 0x12, 0x0e, 0x0a, 0x02, 0x78,
+	0x33, 0x18, 0x03, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x33, 0x12, 0x0e, 0x0a, 0x02, 0x78,
+	0x34, 0x18, 0x04, 0x20, 0x01, 0x28, 0x01, 0x52, 0x02, 0x78, 0x34, 0x12, 0x0e, 0x0a, 0x02, 0x78,
+	0x35, 0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x35, 0x12, 0x0e, 0x0a, 0x02, 0x78,
+	0x36, 0x18, 0x06, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x78, 0x36, 0x12, 0x10, 0x0a, 0x03, 0x78,
+	0x33, 0x31, 0x18, 0x07, 0x20, 0x01, 0x28, 0x01, 0x52, 0x03, 0x78, 0x33, 0x31, 0x12, 0x10, 0x0a,
+	0x03, 0x78, 0x33, 0x32, 0x18, 0x08, 0x20, 0x01, 0x28, 0x01, 0x52, 0x03, 0x78, 0x33, 0x32, 0x12,
+	0x10, 0x0a, 0x03, 0x78, 0x33, 0x33, 0x18, 0x09, 0x20, 0x01, 0x28, 0x01, 0x52, 0x03, 0x78, 0x33,
+	0x33, 0x12, 0x10, 0x0a, 0x03, 0x78, 0x33, 0x34, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x03, 0x52, 0x03,
+	0x78, 0x33, 0x34, 0x1a, 0xbf, 0x01, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x5f, 0x6b, 0x5f, 0x6d,
+	0x61, 0x63, 0x64, 0x36, 0x30, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x01, 0x52, 0x02, 0x78, 0x31, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x32, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x01, 0x52, 0x02, 0x78, 0x32, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x33, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x01, 0x52, 0x02, 0x78, 0x33, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x34, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x01, 0x52, 0x02, 0x78, 0x34, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x35, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x02, 0x78, 0x35, 0x12, 0x0e, 0x0a, 0x02, 0x78, 0x36, 0x18, 0x06, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x02, 0x78, 0x36, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x36, 0x30, 0x31, 0x18, 0x0f, 0x20,
 	0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x36, 0x30, 0x31, 0x12, 0x12, 0x0a, 0x04, 0x78, 0x36, 0x30,
 	0x32, 0x18, 0x10, 0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x36, 0x30, 0x32, 0x12, 0x12, 0x0a,
 	0x04, 0x78, 0x36, 0x30, 0x33, 0x18, 0x11, 0x20, 0x01, 0x28, 0x01, 0x52, 0x04, 0x78, 0x36, 0x30,
@@ -3552,7 +3769,7 @@ func file_api_binancedata_v1_binancedata_proto_rawDescGZIP() []byte {
 	return file_api_binancedata_v1_binancedata_proto_rawDescData
 }
 
-var file_api_binancedata_v1_binancedata_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
+var file_api_binancedata_v1_binancedata_proto_msgTypes = make([]protoimpl.MessageInfo, 41)
 var file_api_binancedata_v1_binancedata_proto_goTypes = []interface{}{
 	(*PullBinanceDataRequest)(nil),                             // 0: api.binancedata.v1.PullBinanceDataRequest
 	(*PullBinanceDataReply)(nil),                               // 1: api.binancedata.v1.PullBinanceDataReply
@@ -3589,10 +3806,12 @@ var file_api_binancedata_v1_binancedata_proto_goTypes = []interface{}{
 	(*IntervalMMACDDataReply_ListMacd)(nil),                    // 32: api.binancedata.v1.IntervalMMACDDataReply.List_macd
 	(*IntervalMMACDDataReply_List2)(nil),                       // 33: api.binancedata.v1.IntervalMMACDDataReply.List2
 	(*IntervalMKAndMACDDataReply_ListK)(nil),                   // 34: api.binancedata.v1.IntervalMKAndMACDDataReply.List_k
-	(*IntervalMKAndMACDDataReply_List2)(nil),                   // 35: api.binancedata.v1.IntervalMKAndMACDDataReply.List2
-	(*IntervalMKAndMACDDataReply_List2_ListMacd3)(nil),         // 36: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd3
-	(*IntervalMKAndMACDDataReply_List2_ListMacd)(nil),          // 37: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd
-	(*IntervalMKAndMACDDataReply_List2_ListMacd60)(nil),        // 38: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd60
+	(*IntervalMKAndMACDDataReply_ListKMacd3)(nil),              // 35: api.binancedata.v1.IntervalMKAndMACDDataReply.List_k_macd3
+	(*IntervalMKAndMACDDataReply_ListKMacd60)(nil),             // 36: api.binancedata.v1.IntervalMKAndMACDDataReply.List_k_macd60
+	(*IntervalMKAndMACDDataReply_List2)(nil),                   // 37: api.binancedata.v1.IntervalMKAndMACDDataReply.List2
+	(*IntervalMKAndMACDDataReply_List2_ListMacd3)(nil),         // 38: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd3
+	(*IntervalMKAndMACDDataReply_List2_ListMacd)(nil),          // 39: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd
+	(*IntervalMKAndMACDDataReply_List2_ListMacd60)(nil),        // 40: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd60
 }
 var file_api_binancedata_v1_binancedata_proto_depIdxs = []int32{
 	12, // 0: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.send_body:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody
@@ -3617,28 +3836,30 @@ var file_api_binancedata_v1_binancedata_proto_depIdxs = []int32{
 	32, // 19: api.binancedata.v1.IntervalMMACDDataReply.dataListMacd:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List_macd
 	33, // 20: api.binancedata.v1.IntervalMMACDDataReply.operationData:type_name -> api.binancedata.v1.IntervalMMACDDataReply.List2
 	34, // 21: api.binancedata.v1.IntervalMKAndMACDDataReply.dataListK:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List_k
-	35, // 22: api.binancedata.v1.IntervalMKAndMACDDataReply.operationData:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2
-	13, // 23: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.x:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.List
-	36, // 24: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.macd3Data:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd3
-	37, // 25: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.macdData:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd
-	38, // 26: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.macd60Data:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd60
-	2,  // 27: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest
-	4,  // 28: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest
-	0,  // 29: api.binancedata.v1.BinanceData.PullBinanceData:input_type -> api.binancedata.v1.PullBinanceDataRequest
-	6,  // 30: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:input_type -> api.binancedata.v1.IntervalMAvgEndPriceDataRequest
-	8,  // 31: api.binancedata.v1.BinanceData.IntervalMMACDData:input_type -> api.binancedata.v1.IntervalMMACDDataRequest
-	10, // 32: api.binancedata.v1.BinanceData.IntervalMKAndMACDData:input_type -> api.binancedata.v1.IntervalMKAndMACDDataRequest
-	3,  // 33: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply
-	5,  // 34: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply
-	1,  // 35: api.binancedata.v1.BinanceData.PullBinanceData:output_type -> api.binancedata.v1.PullBinanceDataReply
-	7,  // 36: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:output_type -> api.binancedata.v1.IntervalMAvgEndPriceDataReply
-	9,  // 37: api.binancedata.v1.BinanceData.IntervalMMACDData:output_type -> api.binancedata.v1.IntervalMMACDDataReply
-	11, // 38: api.binancedata.v1.BinanceData.IntervalMKAndMACDData:output_type -> api.binancedata.v1.IntervalMKAndMACDDataReply
-	33, // [33:39] is the sub-list for method output_type
-	27, // [27:33] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	35, // 22: api.binancedata.v1.IntervalMKAndMACDDataReply.dataListKMacd3:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List_k_macd3
+	36, // 23: api.binancedata.v1.IntervalMKAndMACDDataReply.dataListKMacd60:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List_k_macd60
+	37, // 24: api.binancedata.v1.IntervalMKAndMACDDataReply.operationData:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2
+	13, // 25: api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.x:type_name -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest.SendBody.List
+	38, // 26: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.macd3Data:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd3
+	39, // 27: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.macdData:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd
+	40, // 28: api.binancedata.v1.IntervalMKAndMACDDataReply.List2.macd60Data:type_name -> api.binancedata.v1.IntervalMKAndMACDDataReply.List2.ListMacd60
+	2,  // 29: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataRequest
+	4,  // 30: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:input_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataRequest
+	0,  // 31: api.binancedata.v1.BinanceData.PullBinanceData:input_type -> api.binancedata.v1.PullBinanceDataRequest
+	6,  // 32: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:input_type -> api.binancedata.v1.IntervalMAvgEndPriceDataRequest
+	8,  // 33: api.binancedata.v1.BinanceData.IntervalMMACDData:input_type -> api.binancedata.v1.IntervalMMACDDataRequest
+	10, // 34: api.binancedata.v1.BinanceData.IntervalMKAndMACDData:input_type -> api.binancedata.v1.IntervalMKAndMACDDataRequest
+	3,  // 35: api.binancedata.v1.BinanceData.XNIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.XNIntervalMAvgEndPriceDataReply
+	5,  // 36: api.binancedata.v1.BinanceData.KAnd2NIntervalMAvgEndPriceData:output_type -> api.binancedata.v1.KAnd2NIntervalMAvgEndPriceDataReply
+	1,  // 37: api.binancedata.v1.BinanceData.PullBinanceData:output_type -> api.binancedata.v1.PullBinanceDataReply
+	7,  // 38: api.binancedata.v1.BinanceData.IntervalMAvgEndPriceData:output_type -> api.binancedata.v1.IntervalMAvgEndPriceDataReply
+	9,  // 39: api.binancedata.v1.BinanceData.IntervalMMACDData:output_type -> api.binancedata.v1.IntervalMMACDDataReply
+	11, // 40: api.binancedata.v1.BinanceData.IntervalMKAndMACDData:output_type -> api.binancedata.v1.IntervalMKAndMACDDataReply
+	35, // [35:41] is the sub-list for method output_type
+	29, // [29:35] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_api_binancedata_v1_binancedata_proto_init() }
@@ -4068,7 +4289,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMKAndMACDDataReply_List2); i {
+			switch v := v.(*IntervalMKAndMACDDataReply_ListKMacd3); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -4080,7 +4301,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMKAndMACDDataReply_List2_ListMacd3); i {
+			switch v := v.(*IntervalMKAndMACDDataReply_ListKMacd60); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -4092,7 +4313,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IntervalMKAndMACDDataReply_List2_ListMacd); i {
+			switch v := v.(*IntervalMKAndMACDDataReply_List2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -4104,6 +4325,30 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			}
 		}
 		file_api_binancedata_v1_binancedata_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMKAndMACDDataReply_List2_ListMacd3); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntervalMKAndMACDDataReply_List2_ListMacd); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_binancedata_v1_binancedata_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*IntervalMKAndMACDDataReply_List2_ListMacd60); i {
 			case 0:
 				return &v.state
@@ -4122,7 +4367,7 @@ func file_api_binancedata_v1_binancedata_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_binancedata_v1_binancedata_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   39,
+			NumMessages:   41,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

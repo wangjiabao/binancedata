@@ -1941,27 +1941,64 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			X5: kLineDataMLive[lastKeyMLive].EndTime,
 			X6: kLineDataMLive[lastKeyMLive].StartTime,
 
-			X31: macdM3Data[199].DIF,
-			X32: macdM3Data[199].DEA,
-			X33: macdM3Data[199].MACD,
-			X34: macdM3Data[199].Time,
-
 			X151: macdData[199].DIF,
 			X152: macdData[199].DEA,
 			X153: macdData[199].MACD,
 			X154: macdData[199].Time,
-
-			X601: macdM60Data[199].DIF,
-			X602: macdM60Data[199].DEA,
-			X603: macdM60Data[199].MACD,
-			X604: macdM60Data[199].Time,
 		}
+
 		lastResDataListKKey := len(res.DataListK) - 1
 		if 0 == tmpNow.Minute()%m {
 			res.DataListK = append(res.DataListK, tmpResDataListK)
 		} else {
 			if 0 <= lastResDataListKKey {
 				res.DataListK[lastResDataListKKey] = tmpResDataListK
+			}
+		}
+
+		tmpResDataListK3 := &v1.IntervalMKAndMACDDataReply_ListKMacd3{
+			X1: kLineDataMLive[lastKeyMLive].StartPrice,
+			X2: kLineDataMLive[lastKeyMLive].EndPrice,
+			X3: kLineDataMLive[lastKeyMLive].TopPrice,
+			X4: kLineDataMLive[lastKeyMLive].LowPrice,
+			X5: kLineDataMLive[lastKeyMLive].EndTime,
+			X6: kLineDataMLive[lastKeyMLive].StartTime,
+
+			X31: macdM3Data[199].DIF,
+			X32: macdM3Data[199].DEA,
+			X33: macdM3Data[199].MACD,
+			X34: macdM3Data[199].Time,
+		}
+
+		lastResDataListKMacd3Key := len(res.DataListKMacd3) - 1
+		if 0 == tmpNow.Minute()%3 {
+			res.DataListKMacd3 = append(res.DataListKMacd3, tmpResDataListK3)
+		} else {
+			if 0 <= lastResDataListKMacd3Key {
+				res.DataListKMacd3[lastResDataListKMacd3Key] = tmpResDataListK3
+			}
+		}
+
+		tmpResDataListK60 := &v1.IntervalMKAndMACDDataReply_ListKMacd60{
+			X1: kLineDataMLive[lastKeyMLive].StartPrice,
+			X2: kLineDataMLive[lastKeyMLive].EndPrice,
+			X3: kLineDataMLive[lastKeyMLive].TopPrice,
+			X4: kLineDataMLive[lastKeyMLive].LowPrice,
+			X5: kLineDataMLive[lastKeyMLive].EndTime,
+			X6: kLineDataMLive[lastKeyMLive].StartTime,
+
+			X601: macdM60Data[199].DIF,
+			X602: macdM60Data[199].DEA,
+			X603: macdM60Data[199].MACD,
+			X604: macdM60Data[199].Time,
+		}
+
+		lastResDataListKMacd60Key := len(res.DataListKMacd60) - 1
+		if 0 == tmpNow.Minute()%60 {
+			res.DataListKMacd60 = append(res.DataListKMacd60, tmpResDataListK60)
+		} else {
+			if 0 <= lastResDataListKMacd60Key {
+				res.DataListKMacd60[lastResDataListKMacd60Key] = tmpResDataListK60
 			}
 		}
 
@@ -2481,6 +2518,57 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 	res.OperationWinAmount = strconv.FormatFloat(tmpRate, 'f', -1, 64)
 	return res, nil
 }
+
+//// IntervalMKAndMACDData k线和间隔m时间的平均收盘价数据 .
+//func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.IntervalMKAndMACDDataRequest) (*v1.IntervalMKAndMACDDataReply, error) {
+//	var (
+//		resOperationData OperationData2Slice
+//		klineMOne        []*KLineMOne
+//		reqStart         time.Time
+//		reqEnd           time.Time
+//		m                int
+//		k                int
+//		//n                int
+//		err error
+//	)
+//
+//	reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
+//	if nil != err {
+//		return nil, err
+//	}
+//	reqEnd, err = time.Parse("2006-01-02 15:04:05", req.End) // 时间进行格式校验
+//	if nil != err {
+//		return nil, err
+//	}
+//
+//	res := &v1.IntervalMKAndMACDDataReply{
+//		DataListK:     make([]*v1.IntervalMKAndMACDDataReply_ListK, 0),
+//		OperationData: make([]*v1.IntervalMKAndMACDDataReply_List2, 0),
+//	}
+//
+//	m = int(req.M)
+//	k = int(req.K)
+//	//n = int(req.N)
+//	maxMxN := 201 * 60 // macd计算，至少需要数据源头数据条数，本次最大查询60分钟
+//
+//	// 获取时间范围内的k线分钟数据
+//	startTime := reqStart.Add(-time.Duration(maxMxN) * time.Minute)
+//	// todo 数据时间限制，先应该随着maxMxN改变而改变
+//	dataLimitTime := time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)
+//	if startTime.Before(dataLimitTime) {
+//		return res, nil
+//	}
+//	// 时间查不出数据
+//	if startTime.After(reqEnd) {
+//		return res, nil
+//	}
+//	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
+//	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+//		startTime.Add(-8*time.Hour).UnixMilli(),
+//		reqEnd.Add(-8*time.Hour).UnixMilli(),
+//	)
+//
+//}
 
 func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
 	var (

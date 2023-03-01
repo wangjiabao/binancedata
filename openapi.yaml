@@ -295,6 +295,14 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_k'
+                dataListKMacd3:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_k_macd3'
+                dataListKMacd60:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMKAndMACDDataReply_List_k_macd60'
                 operationData:
                     type: array
                     items:
@@ -363,6 +371,39 @@ components:
                 x6:
                     type: integer
                     format: int64
+                x151:
+                    type: number
+                    format: double
+                x152:
+                    type: number
+                    format: double
+                x153:
+                    type: number
+                    format: double
+                x154:
+                    type: integer
+                    format: int64
+        IntervalMKAndMACDDataReply_List_k_macd3:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: number
+                    format: double
+                x5:
+                    type: integer
+                    format: int64
+                x6:
+                    type: integer
+                    format: int64
                 x31:
                     type: number
                     format: double
@@ -375,16 +416,25 @@ components:
                 x34:
                     type: integer
                     format: int64
-                x151:
+        IntervalMKAndMACDDataReply_List_k_macd60:
+            type: object
+            properties:
+                x1:
                     type: number
                     format: double
-                x152:
+                x2:
                     type: number
                     format: double
-                x153:
+                x3:
                     type: number
                     format: double
-                x154:
+                x4:
+                    type: number
+                    format: double
+                x5:
+                    type: integer
+                    format: int64
+                x6:
                     type: integer
                     format: int64
                 x601:

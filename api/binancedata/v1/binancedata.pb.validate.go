@@ -1988,6 +1988,74 @@ func (m *IntervalMKAndMACDDataReply) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetDataListKMacd3() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, IntervalMKAndMACDDataReplyValidationError{
+						field:  fmt.Sprintf("DataListKMacd3[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, IntervalMKAndMACDDataReplyValidationError{
+						field:  fmt.Sprintf("DataListKMacd3[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return IntervalMKAndMACDDataReplyValidationError{
+					field:  fmt.Sprintf("DataListKMacd3[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetDataListKMacd60() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, IntervalMKAndMACDDataReplyValidationError{
+						field:  fmt.Sprintf("DataListKMacd60[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, IntervalMKAndMACDDataReplyValidationError{
+						field:  fmt.Sprintf("DataListKMacd60[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return IntervalMKAndMACDDataReplyValidationError{
+					field:  fmt.Sprintf("DataListKMacd60[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	for idx, item := range m.GetOperationData() {
 		_, _ = idx, item
 
@@ -4699,14 +4767,6 @@ func (m *IntervalMKAndMACDDataReply_ListK) validate(all bool) error {
 
 	// no validation rules for X6
 
-	// no validation rules for X31
-
-	// no validation rules for X32
-
-	// no validation rules for X33
-
-	// no validation rules for X34
-
 	// no validation rules for X151
 
 	// no validation rules for X152
@@ -4714,14 +4774,6 @@ func (m *IntervalMKAndMACDDataReply_ListK) validate(all bool) error {
 	// no validation rules for X153
 
 	// no validation rules for X154
-
-	// no validation rules for X601
-
-	// no validation rules for X602
-
-	// no validation rules for X603
-
-	// no validation rules for X604
 
 	if len(errors) > 0 {
 		return IntervalMKAndMACDDataReply_ListKMultiError(errors)
@@ -4804,6 +4856,257 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = IntervalMKAndMACDDataReply_ListKValidationError{}
+
+// Validate checks the field values on IntervalMKAndMACDDataReply_ListKMacd3
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *IntervalMKAndMACDDataReply_ListKMacd3) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IntervalMKAndMACDDataReply_ListKMacd3
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// IntervalMKAndMACDDataReply_ListKMacd3MultiError, or nil if none found.
+func (m *IntervalMKAndMACDDataReply_ListKMacd3) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IntervalMKAndMACDDataReply_ListKMacd3) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X1
+
+	// no validation rules for X2
+
+	// no validation rules for X3
+
+	// no validation rules for X4
+
+	// no validation rules for X5
+
+	// no validation rules for X6
+
+	// no validation rules for X31
+
+	// no validation rules for X32
+
+	// no validation rules for X33
+
+	// no validation rules for X34
+
+	if len(errors) > 0 {
+		return IntervalMKAndMACDDataReply_ListKMacd3MultiError(errors)
+	}
+
+	return nil
+}
+
+// IntervalMKAndMACDDataReply_ListKMacd3MultiError is an error wrapping
+// multiple validation errors returned by
+// IntervalMKAndMACDDataReply_ListKMacd3.ValidateAll() if the designated
+// constraints aren't met.
+type IntervalMKAndMACDDataReply_ListKMacd3MultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IntervalMKAndMACDDataReply_ListKMacd3MultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IntervalMKAndMACDDataReply_ListKMacd3MultiError) AllErrors() []error { return m }
+
+// IntervalMKAndMACDDataReply_ListKMacd3ValidationError is the validation error
+// returned by IntervalMKAndMACDDataReply_ListKMacd3.Validate if the
+// designated constraints aren't met.
+type IntervalMKAndMACDDataReply_ListKMacd3ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IntervalMKAndMACDDataReply_ListKMacd3ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IntervalMKAndMACDDataReply_ListKMacd3ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IntervalMKAndMACDDataReply_ListKMacd3ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IntervalMKAndMACDDataReply_ListKMacd3ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IntervalMKAndMACDDataReply_ListKMacd3ValidationError) ErrorName() string {
+	return "IntervalMKAndMACDDataReply_ListKMacd3ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IntervalMKAndMACDDataReply_ListKMacd3ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIntervalMKAndMACDDataReply_ListKMacd3.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IntervalMKAndMACDDataReply_ListKMacd3ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IntervalMKAndMACDDataReply_ListKMacd3ValidationError{}
+
+// Validate checks the field values on IntervalMKAndMACDDataReply_ListKMacd60
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *IntervalMKAndMACDDataReply_ListKMacd60) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// IntervalMKAndMACDDataReply_ListKMacd60 with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// IntervalMKAndMACDDataReply_ListKMacd60MultiError, or nil if none found.
+func (m *IntervalMKAndMACDDataReply_ListKMacd60) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IntervalMKAndMACDDataReply_ListKMacd60) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X1
+
+	// no validation rules for X2
+
+	// no validation rules for X3
+
+	// no validation rules for X4
+
+	// no validation rules for X5
+
+	// no validation rules for X6
+
+	// no validation rules for X601
+
+	// no validation rules for X602
+
+	// no validation rules for X603
+
+	// no validation rules for X604
+
+	if len(errors) > 0 {
+		return IntervalMKAndMACDDataReply_ListKMacd60MultiError(errors)
+	}
+
+	return nil
+}
+
+// IntervalMKAndMACDDataReply_ListKMacd60MultiError is an error wrapping
+// multiple validation errors returned by
+// IntervalMKAndMACDDataReply_ListKMacd60.ValidateAll() if the designated
+// constraints aren't met.
+type IntervalMKAndMACDDataReply_ListKMacd60MultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IntervalMKAndMACDDataReply_ListKMacd60MultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IntervalMKAndMACDDataReply_ListKMacd60MultiError) AllErrors() []error { return m }
+
+// IntervalMKAndMACDDataReply_ListKMacd60ValidationError is the validation
+// error returned by IntervalMKAndMACDDataReply_ListKMacd60.Validate if the
+// designated constraints aren't met.
+type IntervalMKAndMACDDataReply_ListKMacd60ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IntervalMKAndMACDDataReply_ListKMacd60ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IntervalMKAndMACDDataReply_ListKMacd60ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IntervalMKAndMACDDataReply_ListKMacd60ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IntervalMKAndMACDDataReply_ListKMacd60ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IntervalMKAndMACDDataReply_ListKMacd60ValidationError) ErrorName() string {
+	return "IntervalMKAndMACDDataReply_ListKMacd60ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IntervalMKAndMACDDataReply_ListKMacd60ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIntervalMKAndMACDDataReply_ListKMacd60.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IntervalMKAndMACDDataReply_ListKMacd60ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IntervalMKAndMACDDataReply_ListKMacd60ValidationError{}
 
 // Validate checks the field values on IntervalMKAndMACDDataReply_List2 with
 // the rules defined in the proto definition for this message. If any rules
