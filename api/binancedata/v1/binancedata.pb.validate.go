@@ -1171,6 +1171,338 @@ var _ interface {
 	ErrorName() string
 } = KAnd2NIntervalMAvgEndPriceDataReplyValidationError{}
 
+// Validate checks the field values on AreaPointIntervalMAvgEndPriceDataRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AreaPointIntervalMAvgEndPriceDataRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AreaPointIntervalMAvgEndPriceDataRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AreaPointIntervalMAvgEndPriceDataRequestMultiError, or nil if none found.
+func (m *AreaPointIntervalMAvgEndPriceDataRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AreaPointIntervalMAvgEndPriceDataRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Start
+
+	// no validation rules for End
+
+	// no validation rules for M
+
+	// no validation rules for N
+
+	// no validation rules for PointFirst
+
+	// no validation rules for PointInterval
+
+	if len(errors) > 0 {
+		return AreaPointIntervalMAvgEndPriceDataRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AreaPointIntervalMAvgEndPriceDataRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AreaPointIntervalMAvgEndPriceDataRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AreaPointIntervalMAvgEndPriceDataRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AreaPointIntervalMAvgEndPriceDataRequestMultiError) AllErrors() []error { return m }
+
+// AreaPointIntervalMAvgEndPriceDataRequestValidationError is the validation
+// error returned by AreaPointIntervalMAvgEndPriceDataRequest.Validate if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AreaPointIntervalMAvgEndPriceDataRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AreaPointIntervalMAvgEndPriceDataRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AreaPointIntervalMAvgEndPriceDataRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AreaPointIntervalMAvgEndPriceDataRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AreaPointIntervalMAvgEndPriceDataRequestValidationError) ErrorName() string {
+	return "AreaPointIntervalMAvgEndPriceDataRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AreaPointIntervalMAvgEndPriceDataRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAreaPointIntervalMAvgEndPriceDataRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AreaPointIntervalMAvgEndPriceDataRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AreaPointIntervalMAvgEndPriceDataRequestValidationError{}
+
+// Validate checks the field values on AreaPointIntervalMAvgEndPriceDataReply
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AreaPointIntervalMAvgEndPriceDataReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// AreaPointIntervalMAvgEndPriceDataReplyMultiError, or nil if none found.
+func (m *AreaPointIntervalMAvgEndPriceDataReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AreaPointIntervalMAvgEndPriceDataReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetDataListK() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("DataListK[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("DataListK[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("DataListK[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetDataListMaNMFirst() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("DataListMaNMFirst[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("DataListMaNMFirst[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("DataListMaNMFirst[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetOperationData() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("OperationData[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+						field:  fmt.Sprintf("OperationData[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AreaPointIntervalMAvgEndPriceDataReplyValidationError{
+					field:  fmt.Sprintf("OperationData[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for OperationOrderTotal
+
+	// no validation rules for OperationWinRate
+
+	// no validation rules for OperationWinAmount
+
+	if len(errors) > 0 {
+		return AreaPointIntervalMAvgEndPriceDataReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// AreaPointIntervalMAvgEndPriceDataReplyMultiError is an error wrapping
+// multiple validation errors returned by
+// AreaPointIntervalMAvgEndPriceDataReply.ValidateAll() if the designated
+// constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AreaPointIntervalMAvgEndPriceDataReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AreaPointIntervalMAvgEndPriceDataReplyMultiError) AllErrors() []error { return m }
+
+// AreaPointIntervalMAvgEndPriceDataReplyValidationError is the validation
+// error returned by AreaPointIntervalMAvgEndPriceDataReply.Validate if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AreaPointIntervalMAvgEndPriceDataReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AreaPointIntervalMAvgEndPriceDataReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AreaPointIntervalMAvgEndPriceDataReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AreaPointIntervalMAvgEndPriceDataReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AreaPointIntervalMAvgEndPriceDataReplyValidationError) ErrorName() string {
+	return "AreaPointIntervalMAvgEndPriceDataReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AreaPointIntervalMAvgEndPriceDataReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAreaPointIntervalMAvgEndPriceDataReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AreaPointIntervalMAvgEndPriceDataReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AreaPointIntervalMAvgEndPriceDataReplyValidationError{}
+
 // Validate checks the field values on IntervalMAvgEndPriceDataRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -4042,6 +4374,364 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = KAnd2NIntervalMAvgEndPriceDataReply_List2ValidationError{}
+
+// Validate checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_ListK with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListK) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_ListK with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AreaPointIntervalMAvgEndPriceDataReply_ListKMultiError, or nil if none found.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListK) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListK) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X1
+
+	// no validation rules for X2
+
+	// no validation rules for X3
+
+	// no validation rules for X4
+
+	// no validation rules for X5
+
+	// no validation rules for X6
+
+	if len(errors) > 0 {
+		return AreaPointIntervalMAvgEndPriceDataReply_ListKMultiError(errors)
+	}
+
+	return nil
+}
+
+// AreaPointIntervalMAvgEndPriceDataReply_ListKMultiError is an error wrapping
+// multiple validation errors returned by
+// AreaPointIntervalMAvgEndPriceDataReply_ListK.ValidateAll() if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_ListKMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AreaPointIntervalMAvgEndPriceDataReply_ListKMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AreaPointIntervalMAvgEndPriceDataReply_ListKMultiError) AllErrors() []error { return m }
+
+// AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError is the
+// validation error returned by
+// AreaPointIntervalMAvgEndPriceDataReply_ListK.Validate if the designated
+// constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError) ErrorName() string {
+	return "AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAreaPointIntervalMAvgEndPriceDataReply_ListK.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AreaPointIntervalMAvgEndPriceDataReply_ListKValidationError{}
+
+// Validate checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstMultiError, or nil if
+// none found.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X1
+
+	if len(errors) > 0 {
+		return AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstMultiError(errors)
+	}
+
+	return nil
+}
+
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstMultiError is an error
+// wrapping multiple validation errors returned by
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst.ValidateAll() if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstMultiError) AllErrors() []error { return m }
+
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError is the
+// validation error returned by
+// AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst.Validate if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError) ErrorName() string {
+	return "AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirstValidationError{}
+
+// Validate checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_List2 with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_List2) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AreaPointIntervalMAvgEndPriceDataReply_List2 with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AreaPointIntervalMAvgEndPriceDataReply_List2MultiError, or nil if none found.
+func (m *AreaPointIntervalMAvgEndPriceDataReply_List2) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AreaPointIntervalMAvgEndPriceDataReply_List2) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StartPrice
+
+	// no validation rules for EndPrice
+
+	// no validation rules for StartTime
+
+	// no validation rules for EndTime
+
+	// no validation rules for Type
+
+	// no validation rules for Status
+
+	// no validation rules for Rate
+
+	// no validation rules for Action
+
+	if len(errors) > 0 {
+		return AreaPointIntervalMAvgEndPriceDataReply_List2MultiError(errors)
+	}
+
+	return nil
+}
+
+// AreaPointIntervalMAvgEndPriceDataReply_List2MultiError is an error wrapping
+// multiple validation errors returned by
+// AreaPointIntervalMAvgEndPriceDataReply_List2.ValidateAll() if the
+// designated constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_List2MultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AreaPointIntervalMAvgEndPriceDataReply_List2MultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AreaPointIntervalMAvgEndPriceDataReply_List2MultiError) AllErrors() []error { return m }
+
+// AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError is the
+// validation error returned by
+// AreaPointIntervalMAvgEndPriceDataReply_List2.Validate if the designated
+// constraints aren't met.
+type AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError) ErrorName() string {
+	return "AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAreaPointIntervalMAvgEndPriceDataReply_List2.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AreaPointIntervalMAvgEndPriceDataReply_List2ValidationError{}
 
 // Validate checks the field values on IntervalMAvgEndPriceDataReply_ListK with
 // the rules defined in the proto definition for this message. If any rules

@@ -28,6 +28,7 @@ type BinanceDataClient interface {
 	IntervalMAvgEndPriceData(ctx context.Context, in *IntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceDataReply, error)
 	IntervalMMACDData(ctx context.Context, in *IntervalMMACDDataRequest, opts ...grpc.CallOption) (*IntervalMMACDDataReply, error)
 	IntervalMKAndMACDData(ctx context.Context, in *IntervalMKAndMACDDataRequest, opts ...grpc.CallOption) (*IntervalMKAndMACDDataReply, error)
+	AreaPointIntervalMAvgEndPriceData(ctx context.Context, in *AreaPointIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*AreaPointIntervalMAvgEndPriceDataReply, error)
 }
 
 type binanceDataClient struct {
@@ -92,6 +93,15 @@ func (c *binanceDataClient) IntervalMKAndMACDData(ctx context.Context, in *Inter
 	return out, nil
 }
 
+func (c *binanceDataClient) AreaPointIntervalMAvgEndPriceData(ctx context.Context, in *AreaPointIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*AreaPointIntervalMAvgEndPriceDataReply, error) {
+	out := new(AreaPointIntervalMAvgEndPriceDataReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/AreaPointIntervalMAvgEndPriceData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BinanceDataServer is the server API for BinanceData service.
 // All implementations must embed UnimplementedBinanceDataServer
 // for forward compatibility
@@ -102,6 +112,7 @@ type BinanceDataServer interface {
 	IntervalMAvgEndPriceData(context.Context, *IntervalMAvgEndPriceDataRequest) (*IntervalMAvgEndPriceDataReply, error)
 	IntervalMMACDData(context.Context, *IntervalMMACDDataRequest) (*IntervalMMACDDataReply, error)
 	IntervalMKAndMACDData(context.Context, *IntervalMKAndMACDDataRequest) (*IntervalMKAndMACDDataReply, error)
+	AreaPointIntervalMAvgEndPriceData(context.Context, *AreaPointIntervalMAvgEndPriceDataRequest) (*AreaPointIntervalMAvgEndPriceDataReply, error)
 	mustEmbedUnimplementedBinanceDataServer()
 }
 
@@ -126,6 +137,9 @@ func (UnimplementedBinanceDataServer) IntervalMMACDData(context.Context, *Interv
 }
 func (UnimplementedBinanceDataServer) IntervalMKAndMACDData(context.Context, *IntervalMKAndMACDDataRequest) (*IntervalMKAndMACDDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IntervalMKAndMACDData not implemented")
+}
+func (UnimplementedBinanceDataServer) AreaPointIntervalMAvgEndPriceData(context.Context, *AreaPointIntervalMAvgEndPriceDataRequest) (*AreaPointIntervalMAvgEndPriceDataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AreaPointIntervalMAvgEndPriceData not implemented")
 }
 func (UnimplementedBinanceDataServer) mustEmbedUnimplementedBinanceDataServer() {}
 
@@ -248,6 +262,24 @@ func _BinanceData_IntervalMKAndMACDData_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BinanceData_AreaPointIntervalMAvgEndPriceData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AreaPointIntervalMAvgEndPriceDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinanceDataServer).AreaPointIntervalMAvgEndPriceData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.binancedata.v1.BinanceData/AreaPointIntervalMAvgEndPriceData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinanceDataServer).AreaPointIntervalMAvgEndPriceData(ctx, req.(*AreaPointIntervalMAvgEndPriceDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BinanceData_ServiceDesc is the grpc.ServiceDesc for BinanceData service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +310,10 @@ var BinanceData_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IntervalMKAndMACDData",
 			Handler:    _BinanceData_IntervalMKAndMACDData_Handler,
+		},
+		{
+			MethodName: "AreaPointIntervalMAvgEndPriceData",
+			Handler:    _BinanceData_AreaPointIntervalMAvgEndPriceData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

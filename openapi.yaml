@@ -6,6 +6,53 @@ info:
     title: BinanceData API
     version: 0.0.1
 paths:
+    /api/binancedata/area_point_interval_m_avg_end_price_data:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_AreaPointIntervalMAvgEndPriceData
+            parameters:
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+                - name: end
+                  in: query
+                  schema:
+                    type: string
+                - name: m
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: n
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pointFirst
+                  in: query
+                  schema:
+                    type: number
+                    format: double
+                - name: pointInterval
+                  in: query
+                  schema:
+                    type: number
+                    format: double
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AreaPointIntervalMAvgEndPriceDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/binancedata/interval_m_avg_end_price_data:
         get:
             tags:
@@ -210,6 +257,79 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
+        AreaPointIntervalMAvgEndPriceDataReply:
+            type: object
+            properties:
+                dataListK:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/AreaPointIntervalMAvgEndPriceDataReply_List_k'
+                dataListMaNMFirst:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/AreaPointIntervalMAvgEndPriceDataReply_List_maNMFirst'
+                operationData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/AreaPointIntervalMAvgEndPriceDataReply_List2'
+                operationOrderTotal:
+                    type: integer
+                    format: int64
+                operationWinRate:
+                    type: string
+                operationWinAmount:
+                    type: string
+        AreaPointIntervalMAvgEndPriceDataReply_List2:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                startTime:
+                    type: integer
+                    format: int64
+                endTime:
+                    type: integer
+                    format: int64
+                type:
+                    type: string
+                status:
+                    type: string
+                rate:
+                    type: number
+                    format: double
+                action:
+                    type: string
+        AreaPointIntervalMAvgEndPriceDataReply_List_k:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: number
+                    format: double
+                x5:
+                    type: integer
+                    format: int64
+                x6:
+                    type: integer
+                    format: int64
+        AreaPointIntervalMAvgEndPriceDataReply_List_maNMFirst:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
         GoogleProtobufAny:
             type: object
             properties:
