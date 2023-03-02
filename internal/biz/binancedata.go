@@ -2032,6 +2032,9 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		// 当前分钟
 		for i := 1; i <= k; i++ {
 			tmpMacdData := macdDataLiveMap[klineMOne[kKlineM-i].StartTime]
+			//if 1675683900000 == vKlineM.StartTime {
+			//	fmt.Println(tmpMacdData, 3, i)
+			//}
 			if tmpMacdData.DEA > tmpMacdData.DIF &&
 				tmpMacdData.DIF > 0 {
 				openMoreOne += 1
@@ -2053,6 +2056,9 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 
 		for i := 1; i <= k; i++ {
 			tmpMacdData60 := macdM60DataLiveMap[klineMOne[kKlineM-i].StartTime]
+			//if 1675683900000 == vKlineM.StartTime {
+			//	fmt.Println(tmpMacdData60, 2, i)
+			//}
 			// 60分钟
 			if tmpMacdData60.DIF > tmpMacdData60.DEA &&
 				tmpMacdData60.DEA > 0 {
@@ -2263,6 +2269,9 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		}
 
 		// 开多
+		//if 1675683900000 == vKlineM.StartTime {
+		//	fmt.Println(macdData[199])
+		//}
 		if openMoreOne >= k && openMoreTwo >= k && macdData[199].DIF > macdData[199].DEA {
 			//fmt.Println(openMoreOne, openMoreTwo, k, macdData[199].DIF, macdData[199].DEA)
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
