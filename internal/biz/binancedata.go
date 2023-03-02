@@ -2101,7 +2101,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 				}
 			}
 		}
-		if macdData[199].DIF < macdM3Data[199].DEA {
+		if macdData[199].DIF < macdData[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if ("open" == tmpOpenLastOperationData2.Status || "half" == tmpOpenLastOperationData2.Status) && "more" == tmpOpenLastOperationData2.Type {
 					tmpRate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2155,7 +2155,8 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 				}
 			}
 		}
-		if macdData[199].DIF > macdM3Data[199].DEA {
+
+		if macdData[199].DIF > macdData[199].DEA {
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if ("open" == tmpOpenLastOperationData2.Status || "half" == tmpOpenLastOperationData2.Status) && "empty" == tmpOpenLastOperationData2.Type {
 					tmpRate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
@@ -2318,7 +2319,6 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 					tmpLastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					openActionTag = tmpLastActionTag
 					operationData[tmpLastActionTag] = currentOperationData
-					openActionTag = ""
 				}
 
 			} else {
@@ -2388,7 +2388,6 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 					tagNum++
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = tmpCloseLastOperationData
-					openActionTag = ""
 
 					currentOperationData := &OperationData2{
 						StartTime:      vKlineM.StartTime,
