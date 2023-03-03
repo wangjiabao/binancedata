@@ -3083,7 +3083,9 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 		kLineDataMLive []*KLineMOne
 	)
 	operationData := make(map[string]*OperationData2, 0)
-	operationDataToPointSecond := make(map[string]int, 0)
+	operationDataToPointSecond := make(map[string]int, 0)     // 换仓点位确认
+	operationDataToPointSecondKeep := make(map[string]int, 0) // 持仓点位确认
+	operationDataToPointThirdKeep := make(map[string]int, 0)  // 持仓点位确认
 	maNDataMLiveMap := make(map[int64]*Ma, 0)
 
 	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
@@ -3184,34 +3186,44 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 		if tmpPointSecondSub > pointFirst && pointFirst > tmpPointFirstSub {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
-					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     0,
-						Type:       "more",
-						Status:     "close",
-						Rate:       rate,
+					// 有没有开仓的持仓确认点位
+					tmpOpen := false
+					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 == operationDataToPointSecondKeep[lastActionTag] {
+						tmpOpen = true
+					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
+						tmpOpen = true
 					}
 
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = tmpCloseLastOperationData
+					if tmpOpen {
+						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+						tmpCloseLastOperationData := &OperationData2{
+							StartTime:  vKlineM.StartTime,
+							EndTime:    vKlineM.EndTime,
+							StartPrice: vKlineM.StartPrice,
+							EndPrice:   vKlineM.EndPrice,
+							Amount:     0,
+							Type:       "more",
+							Status:     "close",
+							Rate:       rate,
+						}
 
-					currentOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     2,
-						Type:       "empty",
-						Status:     "open", // 全开状态
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+						operationData[lastActionTag] = tmpCloseLastOperationData
+
+						currentOperationData := &OperationData2{
+							StartTime:  vKlineM.StartTime,
+							EndTime:    vKlineM.EndTime,
+							StartPrice: vKlineM.StartPrice,
+							EndPrice:   vKlineM.EndPrice,
+							Amount:     2,
+							Type:       "empty",
+							Status:     "open", // 全开状态
+						}
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+						operationData[lastActionTag] = currentOperationData
 					}
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = currentOperationData
 
 				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 此时正拿着空单，如果曾经到达过二档，清空
@@ -3246,6 +3258,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
+						operationDataToPointSecond[lastActionTag] = 2
 						// 第二次到达，换单
 						rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
 						rate = -rate - 0.0003
@@ -3276,6 +3289,15 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 						tagNum++
 						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 						operationData[lastActionTag] = currentOperationData
+					}
+				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+					// 拿空时，到达下方区域确认点位
+
+					// 第一次到达
+					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; !okTwo {
+						operationDataToPointSecondKeep[lastActionTag] = 1 // 第一次到达
+					} else {
+						operationDataToPointSecondKeep[lastActionTag] = 2 // 第n次到达
 					}
 				}
 			}
@@ -3315,6 +3337,10 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 					tagNum++
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = currentOperationData
+				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+					if _, okThird := operationDataToPointThirdKeep[lastActionTag]; !okThird {
+						operationDataToPointThirdKeep[lastActionTag] = 1 // 第一次到达
+					}
 				}
 			}
 		}
@@ -3323,39 +3349,50 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 		if tmpPointSecondSub < -pointFirst && -pointFirst < tmpPointFirstSub {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
-					rate = -rate - 0.0003
-					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     0,
-						Type:       "empty",
-						Status:     "close",
-						Rate:       rate,
+
+					// 有没有开仓的持仓确认点位
+					tmpOpen := false
+					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 == operationDataToPointSecondKeep[lastActionTag] {
+						tmpOpen = true
+					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
+						tmpOpen = true
 					}
 
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = tmpCloseLastOperationData
+					if tmpOpen {
+						rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
+						rate = -rate - 0.0003
+						tmpCloseLastOperationData := &OperationData2{
+							StartTime:  vKlineM.StartTime,
+							EndTime:    vKlineM.EndTime,
+							StartPrice: vKlineM.StartPrice,
+							EndPrice:   vKlineM.EndPrice,
+							Amount:     0,
+							Type:       "empty",
+							Status:     "close",
+							Rate:       rate,
+						}
 
-					currentOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     2,
-						Type:       "more",
-						Status:     "open", // 全开状态
-					}
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = currentOperationData
-				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 此时正拿着空单，如果曾经到达过二档，清空
-					if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
-						operationDataToPointSecond[lastActionTag] = 0
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+						operationData[lastActionTag] = tmpCloseLastOperationData
+
+						currentOperationData := &OperationData2{
+							StartTime:  vKlineM.StartTime,
+							EndTime:    vKlineM.EndTime,
+							StartPrice: vKlineM.StartPrice,
+							EndPrice:   vKlineM.EndPrice,
+							Amount:     2,
+							Type:       "more",
+							Status:     "open", // 全开状态
+						}
+						tagNum++
+						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+						operationData[lastActionTag] = currentOperationData
+					} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+						// 此时正拿着空单，如果曾经到达过二档，清空
+						if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
+							operationDataToPointSecond[lastActionTag] = 0
+						}
 					}
 				}
 
@@ -3378,6 +3415,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 		// 到达二档
 		if (-pointFirst - pointInterval) > tmpPointFirstSub {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+				// 拿多时，到达下方区域确认换仓点位
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 拿着多单，第一次记录
 
@@ -3385,6 +3423,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
+						operationDataToPointSecond[lastActionTag] = 2
 						// 第二次到达，换单
 						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
@@ -3414,6 +3453,14 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 						tagNum++
 						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 						operationData[lastActionTag] = currentOperationData
+					}
+				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+					// 拿空时，到达下方区域确认点位
+
+					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; !okTwo {
+						operationDataToPointSecondKeep[lastActionTag] = 1 // 第一次到达
+					} else {
+						operationDataToPointSecondKeep[lastActionTag] = 2 // 第n次到达
 					}
 				}
 			}
@@ -3452,6 +3499,10 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 					tagNum++
 					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 					operationData[lastActionTag] = currentOperationData
+				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+					if _, okThird := operationDataToPointThirdKeep[lastActionTag]; !okThird {
+						operationDataToPointThirdKeep[lastActionTag] = 1 // 第一次到达
+					}
 				}
 			}
 		}
