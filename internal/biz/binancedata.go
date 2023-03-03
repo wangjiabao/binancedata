@@ -2587,6 +2587,8 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 	)
 	operationData := make(map[string]*OperationData2, 0)
 	operationDataToPointSecond := make(map[string]int, 0)
+	operationDataToPointSecondKeep := make(map[string]int, 0) // 持仓点位确认
+	operationDataToPointThirdKeep := make(map[string]int, 0)  // 持仓点位确认
 	maNDataMLiveMap := make(map[int64]*Ma, 0)
 
 	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
@@ -2684,503 +2686,6 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 		res.DataListK = append(res.DataListK, tmpResDataListK)
 		res.DataListMaNMFirst = append(res.DataListMaNMFirst, tmpResDataListMaNMFirst)
 		res.DataListSubPoint = append(res.DataListSubPoint, tmpResDataListSubPoint)
-
-		// 震荡区间，由上穿下，开空
-		if tmpPointSecondSub > pointFirst && pointFirst > tmpPointFirstSub {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
-					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     0,
-						Type:       "more",
-						Status:     "close",
-						Rate:       rate,
-					}
-
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = tmpCloseLastOperationData
-
-					currentOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     2,
-						Type:       "empty",
-						Status:     "open", // 全开状态
-					}
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = currentOperationData
-
-				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 此时正拿着空单，如果曾经到达过二档，清空
-					if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
-						operationDataToPointSecond[lastActionTag] = 0
-					}
-				}
-
-			} else {
-				currentOperationData := &OperationData2{
-					StartTime:  vKlineM.StartTime,
-					EndTime:    vKlineM.EndTime,
-					StartPrice: vKlineM.StartPrice,
-					EndPrice:   vKlineM.EndPrice,
-					Amount:     2,
-					Type:       "empty",
-					Status:     "open", // 全开状态
-				}
-				tagNum++
-				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-				operationData[lastActionTag] = currentOperationData
-			}
-		}
-
-		// 到达二档
-		if pointFirst+pointInterval < tmpPointFirstSub {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 拿着空单，第一次记录
-
-					// 第一次到达
-					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
-						operationDataToPointSecond[lastActionTag] = 1
-					} else {
-						// 第二次到达，换单
-						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
-						fmt.Println(vKlineM.EndPrice, tmpOpenLastOperationData2.EndPrice)
-						tmpCloseLastOperationData := &OperationData2{
-							StartTime:  vKlineM.StartTime,
-							EndTime:    vKlineM.EndTime,
-							StartPrice: vKlineM.StartPrice,
-							EndPrice:   vKlineM.EndPrice,
-							Amount:     0,
-							Type:       "empty",
-							Status:     "close",
-							Rate:       rate,
-						}
-
-						tagNum++
-						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-						operationData[lastActionTag] = tmpCloseLastOperationData
-
-						currentOperationData := &OperationData2{
-							StartTime:  vKlineM.StartTime,
-							EndTime:    vKlineM.EndTime,
-							StartPrice: vKlineM.StartPrice,
-							EndPrice:   vKlineM.EndPrice,
-							Amount:     2,
-							Type:       "more",
-							Status:     "open", // 全开状态
-						}
-						tagNum++
-						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-						operationData[lastActionTag] = currentOperationData
-					}
-				}
-			}
-		}
-
-		// 到达三档，直接换单
-		if pointFirst+2*pointInterval < tmpPointFirstSub {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 第二次到达，换单
-					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
-					fmt.Println(vKlineM.EndPrice, tmpOpenLastOperationData2.EndPrice)
-					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     0,
-						Type:       "empty",
-						Status:     "close",
-						Rate:       rate,
-					}
-
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = tmpCloseLastOperationData
-
-					currentOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     2,
-						Type:       "more",
-						Status:     "open", // 全开状态
-					}
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = currentOperationData
-				}
-			}
-		}
-
-		// 震荡区间，由下穿下，开多
-		if tmpPointSecondSub < -pointFirst && -pointFirst < tmpPointFirstSub {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
-					fmt.Println(vKlineM.EndPrice, tmpOpenLastOperationData2.EndPrice)
-					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     0,
-						Type:       "empty",
-						Status:     "close",
-						Rate:       rate,
-					}
-
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = tmpCloseLastOperationData
-
-					currentOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     2,
-						Type:       "more",
-						Status:     "open", // 全开状态
-					}
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = currentOperationData
-				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 此时正拿着多单，如果曾经到达过二档，清空
-					if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
-						operationDataToPointSecond[lastActionTag] = 0
-					}
-				}
-
-			} else {
-				currentOperationData := &OperationData2{
-					StartTime:  vKlineM.StartTime,
-					EndTime:    vKlineM.EndTime,
-					StartPrice: vKlineM.StartPrice,
-					EndPrice:   vKlineM.EndPrice,
-					Amount:     2,
-					Type:       "more",
-					Status:     "open", // 全开状态
-				}
-				tagNum++
-				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-				operationData[lastActionTag] = currentOperationData
-			}
-		}
-
-		// 到达二档
-		if -pointFirst-pointInterval > tmpPointFirstSub {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 拿着多单，第一次记录
-
-					// 第一次到达
-					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
-						operationDataToPointSecond[lastActionTag] = 1
-					} else {
-						// 第二次到达，换单
-						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
-						fmt.Println(vKlineM.EndPrice, tmpOpenLastOperationData2.EndPrice)
-						tmpCloseLastOperationData := &OperationData2{
-							StartTime:  vKlineM.StartTime,
-							EndTime:    vKlineM.EndTime,
-							StartPrice: vKlineM.StartPrice,
-							EndPrice:   vKlineM.EndPrice,
-							Amount:     0,
-							Type:       "more",
-							Status:     "close",
-							Rate:       rate,
-						}
-
-						tagNum++
-						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-						operationData[lastActionTag] = tmpCloseLastOperationData
-
-						currentOperationData := &OperationData2{
-							StartTime:  vKlineM.StartTime,
-							EndTime:    vKlineM.EndTime,
-							StartPrice: vKlineM.StartPrice,
-							EndPrice:   vKlineM.EndPrice,
-							Amount:     2,
-							Type:       "empty",
-							Status:     "open", // 全开状态
-						}
-						tagNum++
-						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-						operationData[lastActionTag] = currentOperationData
-					}
-				}
-			}
-		}
-
-		// 到达三档，直接换单
-		if -pointFirst-2*pointInterval > tmpPointFirstSub {
-			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
-				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					// 第二次到达，换单
-					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
-					fmt.Println(vKlineM.EndPrice, tmpOpenLastOperationData2.EndPrice)
-					tmpCloseLastOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     0,
-						Type:       "more",
-						Status:     "close",
-						Rate:       rate,
-					}
-
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = tmpCloseLastOperationData
-
-					currentOperationData := &OperationData2{
-						StartTime:  vKlineM.StartTime,
-						EndTime:    vKlineM.EndTime,
-						StartPrice: vKlineM.StartPrice,
-						EndPrice:   vKlineM.EndPrice,
-						Amount:     2,
-						Type:       "empty",
-						Status:     "open", // 全开状态
-					}
-					tagNum++
-					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
-					operationData[lastActionTag] = currentOperationData
-				}
-			}
-		}
-
-	}
-
-	// 排序
-	for _, vOperationData := range operationData {
-		resOperationData = append(resOperationData, vOperationData)
-	}
-	sort.Sort(resOperationData)
-
-	var (
-		tmpWinTotal   int64
-		tmpCloseTotal int64
-		tmpRate       float64
-		winRate       float64
-		tmpLastCloseK = -1
-	)
-
-	// 得到最后一个关仓
-	for i := len(resOperationData) - 1; i >= 0; i-- {
-		if "close" == resOperationData[i].Status {
-			tmpLastCloseK = i
-			break
-		}
-	}
-
-	for kOperationData, vOperationData := range resOperationData {
-		if kOperationData > tmpLastCloseK { // 结束查询到最后一个，默认-1不会被查到
-			break
-		}
-
-		if "open" == vOperationData.Status {
-			res.OperationOrderTotal++
-		}
-
-		if "close" == vOperationData.Status {
-			tmpCloseTotal++
-			if 0 < vOperationData.Rate {
-				tmpWinTotal++
-			}
-		}
-
-		tmpRate += vOperationData.Rate
-
-		res.OperationData = append(res.OperationData, &v1.AreaPointIntervalMAvgEndPriceDataReply_List2{
-			StartPrice: vOperationData.StartPrice,
-			EndPrice:   vOperationData.EndPrice,
-			StartTime:  vOperationData.StartTime,
-			EndTime:    vOperationData.EndTime,
-			Type:       vOperationData.Type,
-			Action:     vOperationData.Action,
-			Status:     vOperationData.Status,
-			Rate:       vOperationData.Rate,
-		})
-	}
-
-	if 0 < tmpWinTotal && 0 < tmpCloseTotal {
-		winRate = float64(tmpWinTotal) / float64(tmpCloseTotal)
-	}
-	res.OperationWinRate = fmt.Sprintf("%.2f", winRate)
-	res.OperationWinAmount = strconv.FormatFloat(tmpRate, 'f', -1, 64)
-	return res, nil
-}
-
-// AreaPointIntervalMAvgEndPriceDataBack k线和间隔m时间的平均收盘价数据 .
-func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.Context, req *v1.AreaPointIntervalMAvgEndPriceDataRequest) (*v1.AreaPointIntervalMAvgEndPriceDataReply, error) {
-	var (
-		resOperationData OperationData2Slice
-		klineMOne        []*KLineMOne
-		reqStart         time.Time
-		reqEnd           time.Time
-		m                int
-		n                int
-		pointFirst       float64
-		pointInterval    float64
-		err              error
-	)
-
-	reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
-	if nil != err {
-		return nil, err
-	}
-	reqEnd, err = time.Parse("2006-01-02 15:04:05", req.End) // 时间进行格式校验
-	if nil != err {
-		return nil, err
-	}
-
-	res := &v1.AreaPointIntervalMAvgEndPriceDataReply{
-		DataListK:         make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListK, 0),
-		DataListMaNMFirst: make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst, 0),
-	}
-
-	m = int(req.M)
-	n = int(req.N)
-	pointFirst = req.PointFirst
-	pointInterval = req.PointInterval
-
-	maxMxN := 4 * 60 // macd计算，至少需要数据源头数据条数，本次最大查询60分钟
-
-	// 获取时间范围内的k线分钟数据
-	startTime := reqStart.Add(-time.Duration(maxMxN) * time.Minute)
-	// todo 数据时间限制，先应该随着maxMxN改变而改变
-	dataLimitTime := time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)
-	if startTime.Before(dataLimitTime) {
-		return res, nil
-	}
-	// 时间查不出数据
-	if startTime.After(reqEnd) {
-		return res, nil
-	}
-	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
-		startTime.Add(-8*time.Hour).UnixMilli(),
-		reqEnd.Add(-8*time.Hour).UnixMilli(),
-	)
-	// 遍历数据
-	var (
-		lastActionTag string
-
-		kLineDataMLive []*KLineMOne
-	)
-	operationData := make(map[string]*OperationData2, 0)
-	operationDataToPointSecond := make(map[string]int, 0)     // 换仓点位确认
-	operationDataToPointSecondKeep := make(map[string]int, 0) // 持仓点位确认
-	operationDataToPointThirdKeep := make(map[string]int, 0)  // 持仓点位确认
-	maNDataMLiveMap := make(map[int64]*Ma, 0)
-
-	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
-	for kKlineM, vKlineM := range klineMOne {
-		// 累加数据
-		tmpNow := time.UnixMilli(vKlineM.StartTime).UTC().Add(8 * time.Hour)
-		var (
-			lastKeyMLive int
-		)
-		if 0 == tmpNow.Minute()%m {
-			kLineDataMLive = append(kLineDataMLive, &KLineMOne{
-				StartPrice: vKlineM.StartPrice,
-				StartTime:  vKlineM.StartTime,
-				TopPrice:   vKlineM.TopPrice,
-				LowPrice:   vKlineM.LowPrice,
-				EndPrice:   vKlineM.EndPrice,
-				EndTime:    vKlineM.EndTime,
-			})
-			//if 1675180800000 <= vKlineM.StartTime {
-			//	fmt.Println(vKlineM)
-			//}
-		} else {
-			lastKeyMLive = len(kLineDataMLive) - 1
-			if 0 <= lastKeyMLive { // 舍弃掉了不能统计的不满n分钟的开始数据
-				kLineDataMLive[lastKeyMLive].EndPrice = vKlineM.EndPrice
-				kLineDataMLive[lastKeyMLive].EndTime = vKlineM.EndTime
-				if kLineDataMLive[lastKeyMLive].TopPrice < vKlineM.TopPrice {
-					kLineDataMLive[lastKeyMLive].TopPrice = vKlineM.TopPrice
-				}
-				if kLineDataMLive[lastKeyMLive].LowPrice > vKlineM.LowPrice {
-					kLineDataMLive[lastKeyMLive].LowPrice = vKlineM.LowPrice
-				}
-			}
-			//if 1675180800000 <= kLineData15MLive[lastKey].StartTime {
-			//	fmt.Println(kLineData15MLive[lastKey], lastKey)
-			//}
-		}
-		lastKeyMLive = len(kLineDataMLive) - 1 // 最新索引
-
-		// 往后是时间范围内的数据处理
-		if reqStartMilli > vKlineM.StartTime {
-			// 提前录入3个参与比较的ma线
-			if reqStartMilli-int64(3*60000) <= vKlineM.StartTime {
-				var tmpTotalEndPrice float64
-				var tmpAvgEndPrice float64
-
-				for i := 0; i < n; i++ {
-					// 第i根m分钟级别的k线
-					tmpTotalEndPrice += kLineDataMLive[lastKeyMLive-i].EndPrice
-				}
-				tmpAvgEndPrice, _ = strconv.ParseFloat(fmt.Sprintf("%.8f", tmpTotalEndPrice/float64(n)), 64)
-				maNDataMLiveMap[vKlineM.StartTime] = &Ma{AvgEndPrice: tmpAvgEndPrice}
-			}
-
-			continue
-		}
-
-		//fmt.Println(vKlineM.StartTime, kLineDataMLive[lastKeyMLive], kLineData3MLive[lastKey3MLive], kLineData60MLive[lastKey60MLive])
-
-		// 计算当前时间ma数据
-		var tmpTotalEndPrice float64
-		var tmpAvgEndPrice float64
-		for i := 0; i < n; i++ {
-			// 第i根m分钟级别的k线
-			tmpTotalEndPrice += kLineDataMLive[lastKeyMLive-i].EndPrice
-		}
-		tmpAvgEndPrice, _ = strconv.ParseFloat(fmt.Sprintf("%.8f", tmpTotalEndPrice/float64(n)), 64)
-		maNDataMLiveMap[vKlineM.StartTime] = &Ma{AvgEndPrice: tmpAvgEndPrice}
-
-		var tagNum int64
-		// 结果
-		tmpResDataListK := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListK{
-			X1: kLineDataMLive[lastKeyMLive].StartPrice,
-			X2: kLineDataMLive[lastKeyMLive].EndPrice,
-			X3: kLineDataMLive[lastKeyMLive].TopPrice,
-			X4: kLineDataMLive[lastKeyMLive].LowPrice,
-			X5: kLineDataMLive[lastKeyMLive].EndTime,
-			X6: kLineDataMLive[lastKeyMLive].StartTime,
-		}
-
-		tmpResDataListMaNMFirst := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpAvgEndPrice}
-		lastResDataListKKey := len(res.DataListK) - 1
-		if 0 == tmpNow.Minute()%m {
-			res.DataListK = append(res.DataListK, tmpResDataListK)
-			res.DataListMaNMFirst = append(res.DataListMaNMFirst, tmpResDataListMaNMFirst)
-		} else {
-			if 0 <= lastResDataListKKey {
-				res.DataListK[lastResDataListKKey] = tmpResDataListK
-				res.DataListMaNMFirst[lastResDataListKKey] = tmpResDataListMaNMFirst
-			}
-		}
-
-		// 比较入单
-		tmpPointFirstSub := maNDataMLiveMap[vKlineM.StartTime].AvgEndPrice - maNDataMLiveMap[klineMOne[kKlineM-1].StartTime].AvgEndPrice
-		tmpPointSecondSub := maNDataMLiveMap[klineMOne[kKlineM-1].StartTime].AvgEndPrice - maNDataMLiveMap[klineMOne[kKlineM-2].StartTime].AvgEndPrice
 
 		// 震荡区间，由上穿下，开空
 		if tmpPointSecondSub > pointFirst && pointFirst > tmpPointFirstSub {
@@ -3568,6 +3073,552 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 	res.OperationWinAmount = strconv.FormatFloat(tmpRate, 'f', -1, 64)
 	return res, nil
 }
+
+// AreaPointIntervalMAvgEndPriceDataBack k线和间隔m时间的平均收盘价数据 .
+//func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.Context, req *v1.AreaPointIntervalMAvgEndPriceDataRequest) (*v1.AreaPointIntervalMAvgEndPriceDataReply, error) {
+//	var (
+//		resOperationData OperationData2Slice
+//		klineMOne        []*KLineMOne
+//		reqStart         time.Time
+//		reqEnd           time.Time
+//		m                int
+//		n                int
+//		pointFirst       float64
+//		pointInterval    float64
+//		err              error
+//	)
+//
+//	reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
+//	if nil != err {
+//		return nil, err
+//	}
+//	reqEnd, err = time.Parse("2006-01-02 15:04:05", req.End) // 时间进行格式校验
+//	if nil != err {
+//		return nil, err
+//	}
+//
+//	res := &v1.AreaPointIntervalMAvgEndPriceDataReply{
+//		DataListK:         make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListK, 0),
+//		DataListMaNMFirst: make([]*v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst, 0),
+//	}
+//
+//	m = int(req.M)
+//	n = int(req.N)
+//	pointFirst = req.PointFirst
+//	pointInterval = req.PointInterval
+//
+//	maxMxN := 4 * 60 // macd计算，至少需要数据源头数据条数，本次最大查询60分钟
+//
+//	// 获取时间范围内的k线分钟数据
+//	startTime := reqStart.Add(-time.Duration(maxMxN) * time.Minute)
+//	// todo 数据时间限制，先应该随着maxMxN改变而改变
+//	dataLimitTime := time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)
+//	if startTime.Before(dataLimitTime) {
+//		return res, nil
+//	}
+//	// 时间查不出数据
+//	if startTime.After(reqEnd) {
+//		return res, nil
+//	}
+//	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
+//	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+//		startTime.Add(-8*time.Hour).UnixMilli(),
+//		reqEnd.Add(-8*time.Hour).UnixMilli(),
+//	)
+//	// 遍历数据
+//	var (
+//		lastActionTag string
+//
+//		kLineDataMLive []*KLineMOne
+//	)
+//	operationData := make(map[string]*OperationData2, 0)
+//	operationDataToPointSecond := make(map[string]int, 0)     // 换仓点位确认
+//	operationDataToPointSecondKeep := make(map[string]int, 0) // 持仓点位确认
+//	operationDataToPointThirdKeep := make(map[string]int, 0)  // 持仓点位确认
+//	maNDataMLiveMap := make(map[int64]*Ma, 0)
+//
+//	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
+//	for kKlineM, vKlineM := range klineMOne {
+//		// 累加数据
+//		tmpNow := time.UnixMilli(vKlineM.StartTime).UTC().Add(8 * time.Hour)
+//		var (
+//			lastKeyMLive int
+//		)
+//		if 0 == tmpNow.Minute()%m {
+//			kLineDataMLive = append(kLineDataMLive, &KLineMOne{
+//				StartPrice: vKlineM.StartPrice,
+//				StartTime:  vKlineM.StartTime,
+//				TopPrice:   vKlineM.TopPrice,
+//				LowPrice:   vKlineM.LowPrice,
+//				EndPrice:   vKlineM.EndPrice,
+//				EndTime:    vKlineM.EndTime,
+//			})
+//			//if 1675180800000 <= vKlineM.StartTime {
+//			//	fmt.Println(vKlineM)
+//			//}
+//		} else {
+//			lastKeyMLive = len(kLineDataMLive) - 1
+//			if 0 <= lastKeyMLive { // 舍弃掉了不能统计的不满n分钟的开始数据
+//				kLineDataMLive[lastKeyMLive].EndPrice = vKlineM.EndPrice
+//				kLineDataMLive[lastKeyMLive].EndTime = vKlineM.EndTime
+//				if kLineDataMLive[lastKeyMLive].TopPrice < vKlineM.TopPrice {
+//					kLineDataMLive[lastKeyMLive].TopPrice = vKlineM.TopPrice
+//				}
+//				if kLineDataMLive[lastKeyMLive].LowPrice > vKlineM.LowPrice {
+//					kLineDataMLive[lastKeyMLive].LowPrice = vKlineM.LowPrice
+//				}
+//			}
+//			//if 1675180800000 <= kLineData15MLive[lastKey].StartTime {
+//			//	fmt.Println(kLineData15MLive[lastKey], lastKey)
+//			//}
+//		}
+//		lastKeyMLive = len(kLineDataMLive) - 1 // 最新索引
+//
+//		// 往后是时间范围内的数据处理
+//		if reqStartMilli > vKlineM.StartTime {
+//			// 提前录入3个参与比较的ma线
+//			if reqStartMilli-int64(3*60000) <= vKlineM.StartTime {
+//				var tmpTotalEndPrice float64
+//				var tmpAvgEndPrice float64
+//
+//				for i := 0; i < n; i++ {
+//					// 第i根m分钟级别的k线
+//					tmpTotalEndPrice += kLineDataMLive[lastKeyMLive-i].EndPrice
+//				}
+//				tmpAvgEndPrice, _ = strconv.ParseFloat(fmt.Sprintf("%.8f", tmpTotalEndPrice/float64(n)), 64)
+//				maNDataMLiveMap[vKlineM.StartTime] = &Ma{AvgEndPrice: tmpAvgEndPrice}
+//			}
+//
+//			continue
+//		}
+//
+//		//fmt.Println(vKlineM.StartTime, kLineDataMLive[lastKeyMLive], kLineData3MLive[lastKey3MLive], kLineData60MLive[lastKey60MLive])
+//
+//		// 计算当前时间ma数据
+//		var tmpTotalEndPrice float64
+//		var tmpAvgEndPrice float64
+//		for i := 0; i < n; i++ {
+//			// 第i根m分钟级别的k线
+//			tmpTotalEndPrice += kLineDataMLive[lastKeyMLive-i].EndPrice
+//		}
+//		tmpAvgEndPrice, _ = strconv.ParseFloat(fmt.Sprintf("%.8f", tmpTotalEndPrice/float64(n)), 64)
+//		maNDataMLiveMap[vKlineM.StartTime] = &Ma{AvgEndPrice: tmpAvgEndPrice}
+//
+//		var tagNum int64
+//		// 结果
+//		tmpResDataListK := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListK{
+//			X1: kLineDataMLive[lastKeyMLive].StartPrice,
+//			X2: kLineDataMLive[lastKeyMLive].EndPrice,
+//			X3: kLineDataMLive[lastKeyMLive].TopPrice,
+//			X4: kLineDataMLive[lastKeyMLive].LowPrice,
+//			X5: kLineDataMLive[lastKeyMLive].EndTime,
+//			X6: kLineDataMLive[lastKeyMLive].StartTime,
+//		}
+//
+//		tmpResDataListMaNMFirst := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpAvgEndPrice}
+//		lastResDataListKKey := len(res.DataListK) - 1
+//		if 0 == tmpNow.Minute()%m {
+//			res.DataListK = append(res.DataListK, tmpResDataListK)
+//			res.DataListMaNMFirst = append(res.DataListMaNMFirst, tmpResDataListMaNMFirst)
+//		} else {
+//			if 0 <= lastResDataListKKey {
+//				res.DataListK[lastResDataListKKey] = tmpResDataListK
+//				res.DataListMaNMFirst[lastResDataListKKey] = tmpResDataListMaNMFirst
+//			}
+//		}
+//
+//		// 比较入单
+//		tmpPointFirstSub := maNDataMLiveMap[vKlineM.StartTime].AvgEndPrice - maNDataMLiveMap[klineMOne[kKlineM-1].StartTime].AvgEndPrice
+//		tmpPointSecondSub := maNDataMLiveMap[klineMOne[kKlineM-1].StartTime].AvgEndPrice - maNDataMLiveMap[klineMOne[kKlineM-2].StartTime].AvgEndPrice
+//
+//		// 震荡区间，由上穿下，开空
+//		if tmpPointSecondSub > pointFirst && pointFirst > tmpPointFirstSub {
+//			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+//				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 有没有开仓的持仓确认点位
+//					tmpOpen := false
+//					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 == operationDataToPointSecondKeep[lastActionTag] {
+//						tmpOpen = true
+//					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
+//						tmpOpen = true
+//					}
+//
+//					if tmpOpen {
+//						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+//						tmpCloseLastOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     0,
+//							Type:       "more",
+//							Status:     "close",
+//							Rate:       rate,
+//						}
+//
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = tmpCloseLastOperationData
+//
+//						currentOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     2,
+//							Type:       "empty",
+//							Status:     "open", // 全开状态
+//						}
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = currentOperationData
+//					}
+//
+//				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 此时正拿着空单，如果曾经到达过二档，清空
+//					if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
+//						operationDataToPointSecond[lastActionTag] = 0
+//					}
+//				}
+//
+//			} else {
+//				currentOperationData := &OperationData2{
+//					StartTime:  vKlineM.StartTime,
+//					EndTime:    vKlineM.EndTime,
+//					StartPrice: vKlineM.StartPrice,
+//					EndPrice:   vKlineM.EndPrice,
+//					Amount:     2,
+//					Type:       "empty",
+//					Status:     "open", // 全开状态
+//				}
+//				tagNum++
+//				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//				operationData[lastActionTag] = currentOperationData
+//			}
+//		}
+//
+//		// 到达二档
+//		if (pointFirst + pointInterval) < tmpPointFirstSub {
+//			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+//				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 拿着空单，第一次记录
+//
+//					// 第一次到达
+//					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
+//						operationDataToPointSecond[lastActionTag] = 1
+//					} else {
+//						operationDataToPointSecond[lastActionTag] = 2
+//						// 第二次到达，换单
+//						rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
+//						rate = -rate - 0.0003
+//						tmpCloseLastOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     0,
+//							Type:       "empty",
+//							Status:     "close",
+//							Rate:       rate,
+//						}
+//
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = tmpCloseLastOperationData
+//
+//						currentOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     2,
+//							Type:       "more",
+//							Status:     "open", // 全开状态
+//						}
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = currentOperationData
+//					}
+//				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 拿空时，到达下方区域确认点位
+//
+//					// 第一次到达
+//					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; !okTwo {
+//						operationDataToPointSecondKeep[lastActionTag] = 1 // 第一次到达
+//					} else {
+//						operationDataToPointSecondKeep[lastActionTag] = 2 // 第n次到达
+//					}
+//				}
+//			}
+//		}
+//
+//		// 到达三档，直接换单
+//		if (pointFirst + 2*pointInterval) < tmpPointFirstSub {
+//			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+//				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 第二次到达，换单
+//					rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
+//					rate = -rate - 0.0003
+//					tmpCloseLastOperationData := &OperationData2{
+//						StartTime:  vKlineM.StartTime,
+//						EndTime:    vKlineM.EndTime,
+//						StartPrice: vKlineM.StartPrice,
+//						EndPrice:   vKlineM.EndPrice,
+//						Amount:     0,
+//						Type:       "empty",
+//						Status:     "close",
+//						Rate:       rate,
+//					}
+//
+//					tagNum++
+//					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//					operationData[lastActionTag] = tmpCloseLastOperationData
+//
+//					currentOperationData := &OperationData2{
+//						StartTime:  vKlineM.StartTime,
+//						EndTime:    vKlineM.EndTime,
+//						StartPrice: vKlineM.StartPrice,
+//						EndPrice:   vKlineM.EndPrice,
+//						Amount:     2,
+//						Type:       "more",
+//						Status:     "open", // 全开状态
+//					}
+//					tagNum++
+//					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//					operationData[lastActionTag] = currentOperationData
+//				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					if _, okThird := operationDataToPointThirdKeep[lastActionTag]; !okThird {
+//						operationDataToPointThirdKeep[lastActionTag] = 1 // 第一次到达
+//					}
+//				}
+//			}
+//		}
+//
+//		// 震荡区间，由下穿下，开多
+//		if tmpPointSecondSub < -pointFirst && -pointFirst < tmpPointFirstSub {
+//			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+//				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//
+//					// 有没有开仓的持仓确认点位
+//					tmpOpen := false
+//					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 == operationDataToPointSecondKeep[lastActionTag] {
+//						tmpOpen = true
+//						fmt.Println(111, vKlineM.EndTime)
+//					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
+//						tmpOpen = true
+//						fmt.Println(222, vKlineM.EndTime)
+//					}
+//
+//					if tmpOpen {
+//						rate := (vKlineM.EndPrice - tmpOpenLastOperationData2.EndPrice) / tmpOpenLastOperationData2.EndPrice
+//						rate = -rate - 0.0003
+//						tmpCloseLastOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     0,
+//							Type:       "empty",
+//							Status:     "close",
+//							Rate:       rate,
+//						}
+//
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = tmpCloseLastOperationData
+//
+//						currentOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     2,
+//							Type:       "more",
+//							Status:     "open", // 全开状态
+//						}
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = currentOperationData
+//					} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//						// 此时正拿着空单，如果曾经到达过二档，清空
+//						if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
+//							operationDataToPointSecond[lastActionTag] = 0
+//						}
+//					}
+//				}
+//
+//			} else {
+//				currentOperationData := &OperationData2{
+//					StartTime:  vKlineM.StartTime,
+//					EndTime:    vKlineM.EndTime,
+//					StartPrice: vKlineM.StartPrice,
+//					EndPrice:   vKlineM.EndPrice,
+//					Amount:     2,
+//					Type:       "more",
+//					Status:     "open", // 全开状态
+//				}
+//				tagNum++
+//				lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//				operationData[lastActionTag] = currentOperationData
+//			}
+//		}
+//
+//		// 到达二档
+//		if (-pointFirst - pointInterval) > tmpPointFirstSub {
+//			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+//				// 拿多时，到达下方区域确认换仓点位
+//				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 拿着多单，第一次记录
+//
+//					// 第一次到达
+//					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
+//						operationDataToPointSecond[lastActionTag] = 1
+//					} else {
+//						operationDataToPointSecond[lastActionTag] = 2
+//						// 第二次到达，换单
+//						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+//						tmpCloseLastOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     0,
+//							Type:       "more",
+//							Status:     "close",
+//							Rate:       rate,
+//						}
+//
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = tmpCloseLastOperationData
+//
+//						currentOperationData := &OperationData2{
+//							StartTime:  vKlineM.StartTime,
+//							EndTime:    vKlineM.EndTime,
+//							StartPrice: vKlineM.StartPrice,
+//							EndPrice:   vKlineM.EndPrice,
+//							Amount:     2,
+//							Type:       "empty",
+//							Status:     "open", // 全开状态
+//						}
+//						tagNum++
+//						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//						operationData[lastActionTag] = currentOperationData
+//					}
+//				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 拿空时，到达下方区域确认点位
+//
+//					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; !okTwo {
+//						operationDataToPointSecondKeep[lastActionTag] = 1 // 第一次到达
+//					} else {
+//						operationDataToPointSecondKeep[lastActionTag] = 2 // 第n次到达
+//					}
+//				}
+//			}
+//		}
+//
+//		// 到达三档，直接换单
+//		if (-pointFirst - 2*pointInterval) > tmpPointFirstSub {
+//			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
+//				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					// 第二次到达，换单
+//					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+//					tmpCloseLastOperationData := &OperationData2{
+//						StartTime:  vKlineM.StartTime,
+//						EndTime:    vKlineM.EndTime,
+//						StartPrice: vKlineM.StartPrice,
+//						EndPrice:   vKlineM.EndPrice,
+//						Amount:     0,
+//						Type:       "more",
+//						Status:     "close",
+//						Rate:       rate,
+//					}
+//
+//					tagNum++
+//					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//					operationData[lastActionTag] = tmpCloseLastOperationData
+//
+//					currentOperationData := &OperationData2{
+//						StartTime:  vKlineM.StartTime,
+//						EndTime:    vKlineM.EndTime,
+//						StartPrice: vKlineM.StartPrice,
+//						EndPrice:   vKlineM.EndPrice,
+//						Amount:     2,
+//						Type:       "empty",
+//						Status:     "open", // 全开状态
+//					}
+//					tagNum++
+//					lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
+//					operationData[lastActionTag] = currentOperationData
+//				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+//					if _, okThird := operationDataToPointThirdKeep[lastActionTag]; !okThird {
+//						operationDataToPointThirdKeep[lastActionTag] = 1 // 第一次到达
+//					}
+//				}
+//			}
+//		}
+//
+//	}
+//
+//	// 排序
+//	for _, vOperationData := range operationData {
+//		resOperationData = append(resOperationData, vOperationData)
+//	}
+//	sort.Sort(resOperationData)
+//
+//	var (
+//		tmpWinTotal   int64
+//		tmpCloseTotal int64
+//		tmpRate       float64
+//		winRate       float64
+//		tmpLastCloseK = -1
+//	)
+//
+//	// 得到最后一个关仓
+//	for i := len(resOperationData) - 1; i >= 0; i-- {
+//		if "close" == resOperationData[i].Status {
+//			tmpLastCloseK = i
+//			break
+//		}
+//	}
+//
+//	for kOperationData, vOperationData := range resOperationData {
+//		if kOperationData > tmpLastCloseK { // 结束查询到最后一个，默认-1不会被查到
+//			break
+//		}
+//
+//		if "open" == vOperationData.Status {
+//			res.OperationOrderTotal++
+//		}
+//
+//		if "close" == vOperationData.Status {
+//			tmpCloseTotal++
+//			if 0 < vOperationData.Rate {
+//				tmpWinTotal++
+//			}
+//		}
+//
+//		tmpRate += vOperationData.Rate
+//
+//		res.OperationData = append(res.OperationData, &v1.AreaPointIntervalMAvgEndPriceDataReply_List2{
+//			StartPrice: vOperationData.StartPrice,
+//			EndPrice:   vOperationData.EndPrice,
+//			StartTime:  vOperationData.StartTime,
+//			EndTime:    vOperationData.EndTime,
+//			Type:       vOperationData.Type,
+//			Action:     vOperationData.Action,
+//			Status:     vOperationData.Status,
+//			Rate:       vOperationData.Rate,
+//		})
+//	}
+//
+//	if 0 < tmpWinTotal && 0 < tmpCloseTotal {
+//		winRate = float64(tmpWinTotal) / float64(tmpCloseTotal)
+//	}
+//	res.OperationWinRate = fmt.Sprintf("%.2f", winRate)
+//	res.OperationWinAmount = strconv.FormatFloat(tmpRate, 'f', -1, 64)
+//	return res, nil
+//}
 
 func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBinanceDataRequest) (*v1.PullBinanceDataReply, error) {
 	var (
