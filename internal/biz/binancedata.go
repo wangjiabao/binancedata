@@ -2276,7 +2276,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 			//fmt.Println(openMoreOne, openMoreTwo, k, macdData[199].DIF, macdData[199].DEA)
 			if tmpOpenLastOperationData2, ok := operationData[openActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:      vKlineM.StartTime,
 						EndTime:        vKlineM.EndTime,
@@ -2755,7 +2755,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
 						// 第二次到达，换单
-						rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineM.StartTime,
 							EndTime:    vKlineM.EndTime,
@@ -2793,7 +2793,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 第二次到达，换单
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
@@ -2829,7 +2829,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 		if tmpPointSecondSub < -pointFirst && -pointFirst < tmpPointFirstSub {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
@@ -2891,7 +2891,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
 						// 第二次到达，换单
-						rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineM.StartTime,
 							EndTime:    vKlineM.EndTime,
@@ -2929,7 +2929,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 第二次到达，换单
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
@@ -3245,7 +3245,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
 						// 第二次到达，换单
-						rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineM.StartTime,
 							EndTime:    vKlineM.EndTime,
@@ -3283,7 +3283,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 第二次到达，换单
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
@@ -3319,7 +3319,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 		if tmpPointSecondSub < -pointFirst && -pointFirst < tmpPointFirstSub {
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
@@ -3381,7 +3381,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
 						// 第二次到达，换单
-						rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+						rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 						tmpCloseLastOperationData := &OperationData2{
 							StartTime:  vKlineM.StartTime,
 							EndTime:    vKlineM.EndTime,
@@ -3419,7 +3419,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceDataBack(ctx context.C
 			if tmpOpenLastOperationData2, ok := operationData[lastActionTag]; ok && nil != tmpOpenLastOperationData2 {
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 第二次到达，换单
-					rate := (tmpOpenLastOperationData2.EndPrice-vKlineM.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
+					rate := (vKlineM.EndPrice-tmpOpenLastOperationData2.EndPrice)/tmpOpenLastOperationData2.EndPrice - 0.0003
 					tmpCloseLastOperationData := &OperationData2{
 						StartTime:  vKlineM.StartTime,
 						EndTime:    vKlineM.EndTime,
