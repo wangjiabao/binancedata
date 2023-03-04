@@ -59,6 +59,8 @@ func (m *PullBinanceDataRequest) validate(all bool) error {
 
 	// no validation rules for Start
 
+	// no validation rules for Coin
+
 	if len(errors) > 0 {
 		return PullBinanceDataRequestMultiError(errors)
 	}

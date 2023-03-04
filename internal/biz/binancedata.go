@@ -91,8 +91,10 @@ type BinanceDataRepo interface {
 
 type KLineMOneRepo interface {
 	GetKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
+	GetFilKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
 	GetKLineMOneByStartTime(start int64, end int64) ([]*KLineMOne, error)
 	InsertKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
+	InsertFilKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
 	RequestBinanceMinuteKLinesData(symbol string, startTime string, endTime string, interval string, limit string) ([]*KLineMOne, error)
 	NewMACDData(list []*KLineMOne) ([]*MACDPoint, error)
 }
@@ -3657,7 +3659,11 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 	fmt.Println(start, end)
 
 	// 获取数据库最后一条数据的时间
-	lastKlineMOne, err = b.klineMOneRepo.GetKLineMOneOrderByEndTimeLast()
+	if "BTCUSDT" == req.Coin {
+		lastKlineMOne, err = b.klineMOneRepo.GetKLineMOneOrderByEndTimeLast()
+	} else if "FILUSDT" == req.Coin {
+		lastKlineMOne, err = b.klineMOneRepo.GetFilKLineMOneOrderByEndTimeLast()
+	}
 	if nil != lastKlineMOne {
 		lastKlineMOneEndTime = time.UnixMilli(lastKlineMOne.EndTime).UTC().Add(8 * time.Hour).Add(1 * time.Millisecond)
 		if start.Before(lastKlineMOneEndTime) { // 置换时间，数据库中已有数据
@@ -3678,7 +3684,8 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 			break
 		}
 
-		tmpKlineMOne, err = b.klineMOneRepo.RequestBinanceMinuteKLinesData("BTCUSDT",
+		// BTCUSDT
+		tmpKlineMOne, err = b.klineMOneRepo.RequestBinanceMinuteKLinesData(req.Coin,
 			strconv.FormatInt(tmpStart.Add(-8*time.Hour).UnixMilli(), 10),
 			strconv.FormatInt(tmpEnd.Add(-8*time.Hour).UnixMilli(), 10),
 			strconv.FormatInt(m, 10)+"m",
@@ -3688,7 +3695,13 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 		}
 
 		if err = b.tx.ExecTx(ctx, func(ctx context.Context) error { // 事务
-			_, err = b.klineMOneRepo.InsertKLineMOne(ctx, tmpKlineMOne)
+
+			if "BTCUSDT" == req.Coin {
+				_, err = b.klineMOneRepo.InsertKLineMOne(ctx, tmpKlineMOne)
+			} else if "FILUSDT" == req.Coin {
+				_, err = b.klineMOneRepo.InsertFilKLineMOne(ctx, tmpKlineMOne)
+			}
+
 			if nil != err {
 				return err
 			}

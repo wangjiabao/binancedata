@@ -57,6 +57,7 @@ service BinanceData {
 
 message PullBinanceDataRequest {
 	string start = 1;
+	string coin = 2;
 }
 
 message PullBinanceDataReply {}
