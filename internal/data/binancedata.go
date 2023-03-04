@@ -238,7 +238,8 @@ func (k *KLineMOneRepo) InsertFilKLineMOne(ctx context.Context, kLineMOne []*biz
 // GetKLineMOneByStartTime .
 func (k *KLineMOneRepo) GetKLineMOneByStartTime(start int64, end int64) ([]*biz.KLineMOne, error) {
 	var kLineMOnes []*KLineMOne
-	if err := k.data.db.Where("start_time>=? and start_time<=?", start, end).Table("kline_m_one_btc_usdt").Find(&kLineMOnes).Error; err != nil {
+	// btc
+	if err := k.data.db.Where("start_time>=? and start_time<=?", start, end).Table("kline_m_one_fil_usdt").Find(&kLineMOnes).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.NotFound("KLINE_M_ONE_NOT_FOUND", "kline m one not found")
 		}
