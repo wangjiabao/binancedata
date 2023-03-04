@@ -2797,7 +2797,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 							operationData[lastActionTag] = currentOperationData
 
 							// 拿确认点
-							operationDataToPointSecondKeep[lastActionTag] = 1
+							operationDataToPointSecondKeep[lastActionTag] = 2
 						}
 					}
 				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
@@ -2969,7 +2969,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 							operationData[lastActionTag] = currentOperationData
 
 							// 拿确认点
-							operationDataToPointSecondKeep[lastActionTag] = 1
+							operationDataToPointSecondKeep[lastActionTag] = 2
 						}
 					}
 				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
@@ -2978,7 +2978,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; !okTwo {
 						operationDataToPointSecondKeep[lastActionTag] = 1 // 第一次到达
 					} else {
-						operationDataToPointSecondKeep[lastActionTag] += 1 // 第n次到达
+						operationDataToPointSecondKeep[lastActionTag] += 2 // 第n次到达
 					}
 				}
 			}
