@@ -206,6 +206,7 @@ message AreaPointIntervalMAvgEndPriceDataRequest {
 	int32 n = 4;
 	double point_first = 5;
 	double point_interval = 6;
+	string coin_type = 7;
 }
 
 message AreaPointIntervalMAvgEndPriceDataReply {

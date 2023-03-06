@@ -93,7 +93,9 @@ type KLineMOneRepo interface {
 	GetKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
 	GetEthKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
 	GetFilKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
-	GetKLineMOneByStartTime(start int64, end int64) ([]*KLineMOne, error)
+	GetKLineMOneBtcByStartTime(start int64, end int64) ([]*KLineMOne, error)
+	GetKLineMOneFilByStartTime(start int64, end int64) ([]*KLineMOne, error)
+	GetKLineMOneEthByStartTime(start int64, end int64) ([]*KLineMOne, error)
 	InsertKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
 	InsertFilKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
 	InsertEthKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
@@ -169,7 +171,7 @@ func (b *BinanceDataUsecase) XNIntervalMAvgEndPriceData(ctx context.Context, req
 	reqStart = reqStart.Add(-time.Duration(maxMxN-1) * time.Minute)
 	//}
 	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
 		reqStart.Add(-8*time.Hour).UnixMilli(),
 		reqEnd.Add(-8*time.Hour).UnixMilli(),
 	)
@@ -701,7 +703,7 @@ func (b *BinanceDataUsecase) KAnd2NIntervalMAvgEndPriceData(ctx context.Context,
 	}
 
 	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
 		reqStart.Add(-8*time.Hour).UnixMilli(),
 		reqEnd.Add(-8*time.Hour).UnixMilli(),
 	)
@@ -1095,7 +1097,7 @@ func (b *BinanceDataUsecase) IntervalMAvgEndPriceData(ctx context.Context, req *
 		return res, nil
 	}
 	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
 		reqStart.Add(-8*time.Hour).UnixMilli(),
 		reqEnd.Add(-8*time.Hour).UnixMilli(),
 	)
@@ -1415,7 +1417,7 @@ func (b *BinanceDataUsecase) IntervalMMACDData(ctx context.Context, req *v1.Inte
 		return res, nil
 	}
 	fmt.Println(maxMxN, reqStart, reqEnd, reqStart.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
 		reqStart.Add(-8*time.Hour).UnixMilli(),
 		reqEnd.Add(-8*time.Hour).UnixMilli(),
 	)
@@ -1772,7 +1774,7 @@ func (b *BinanceDataUsecase) IntervalMKAndMACDData(ctx context.Context, req *v1.
 		return res, nil
 	}
 	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+	klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
 		startTime.Add(-8*time.Hour).UnixMilli(),
 		reqEnd.Add(-8*time.Hour).UnixMilli(),
 	)
@@ -2579,10 +2581,23 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 		return res, nil
 	}
 	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
-		startTime.Add(-8*time.Hour).UnixMilli(),
-		reqEnd.Add(-8*time.Hour).UnixMilli(),
-	)
+	if "BTC" == req.CoinType {
+		klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
+			startTime.Add(-8*time.Hour).UnixMilli(),
+			reqEnd.Add(-8*time.Hour).UnixMilli(),
+		)
+	} else if "ETH" == req.CoinType {
+		klineMOne, err = b.klineMOneRepo.GetKLineMOneEthByStartTime(
+			startTime.Add(-8*time.Hour).UnixMilli(),
+			reqEnd.Add(-8*time.Hour).UnixMilli(),
+		)
+	} else if "FIL" == req.CoinType {
+		klineMOne, err = b.klineMOneRepo.GetKLineMOneFilByStartTime(
+			startTime.Add(-8*time.Hour).UnixMilli(),
+			reqEnd.Add(-8*time.Hour).UnixMilli(),
+		)
+	}
+
 	// 遍历数据
 	var (
 		lastActionTag string
@@ -3141,7 +3156,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 //		return res, nil
 //	}
 //	fmt.Println(maxMxN, startTime, reqEnd, startTime.Add(-8*time.Hour).UnixMilli(), reqEnd.Add(-8*time.Hour).UnixMilli())
-//	klineMOne, err = b.klineMOneRepo.GetKLineMOneByStartTime(
+//	klineMOne, err = b.klineMOneRepo.GetKLineMOneBtcByStartTime(
 //		startTime.Add(-8*time.Hour).UnixMilli(),
 //		reqEnd.Add(-8*time.Hour).UnixMilli(),
 //	)

@@ -1209,6 +1209,8 @@ func (m *AreaPointIntervalMAvgEndPriceDataRequest) validate(all bool) error {
 
 	// no validation rules for PointInterval
 
+	// no validation rules for CoinType
+
 	if len(errors) > 0 {
 		return AreaPointIntervalMAvgEndPriceDataRequestMultiError(errors)
 	}

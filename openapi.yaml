@@ -40,6 +40,10 @@ paths:
                   schema:
                     type: number
                     format: double
+                - name: coinType
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK
