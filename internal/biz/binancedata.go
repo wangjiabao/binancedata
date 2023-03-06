@@ -2997,7 +2997,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; !okTwo {
 						operationDataToPointSecondKeep[lastActionTag] = 1 // 第一次到达
 					} else {
-						operationDataToPointSecondKeep[lastActionTag] += 2 // 第n次到达
+						operationDataToPointSecondKeep[lastActionTag] += 1 // 第n次到达
 					}
 				}
 			}
