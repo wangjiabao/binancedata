@@ -2608,6 +2608,9 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 	operationDataToPointSecond := make(map[string]int, 0)
 	operationDataToPointSecondKeep := make(map[string]int, 0) // 持仓点位确认
 	operationDataToPointThirdKeep := make(map[string]int, 0)  // 持仓点位确认
+
+	operationDataToPointSecondConfirm := make(map[string]int, 0) // 持仓点位确认
+	operationDataToPointThirdConfirm := make(map[string]int, 0)  // 持仓点位确认
 	maNDataMLiveMap := make(map[int64]*Ma, 0)
 
 	reqStartMilli := reqStart.Add(-8 * time.Hour).UnixMilli()
@@ -2716,6 +2719,10 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 						tmpOpen = true
 					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
 						tmpOpen = true
+					} else if _, okThirdConfirm := operationDataToPointThirdConfirm[lastActionTag]; okThirdConfirm {
+						tmpOpen = true
+					} else if _, okSecondConfirm := operationDataToPointSecondConfirm[lastActionTag]; okSecondConfirm {
+						tmpOpen = true
 					}
 
 					if tmpOpen {
@@ -2781,6 +2788,8 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					// 第一次到达
 					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
 						operationDataToPointSecond[lastActionTag] = 1
+					} else if 0 == operationDataToPointSecond[lastActionTag] {
+						operationDataToPointSecond[lastActionTag] = 1
 					} else {
 						operationDataToPointSecond[lastActionTag] += 1
 						if 2 <= operationDataToPointSecond[lastActionTag] {
@@ -2816,7 +2825,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 							operationData[lastActionTag] = currentOperationData
 
 							// 拿确认点
-							operationDataToPointSecondKeep[lastActionTag] = 2
+							operationDataToPointSecondConfirm[lastActionTag] = 1
 						}
 					}
 				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
@@ -2868,7 +2877,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					operationData[lastActionTag] = currentOperationData
 
 					// 拿确认点
-					operationDataToPointThirdKeep[lastActionTag] = 1
+					operationDataToPointThirdConfirm[lastActionTag] = 1
 				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					if _, okThird := operationDataToPointThirdKeep[lastActionTag]; !okThird {
 						operationDataToPointThirdKeep[lastActionTag] = 1 // 第一次到达
@@ -2887,6 +2896,10 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 <= operationDataToPointSecondKeep[lastActionTag] {
 						tmpOpen = true
 					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
+						tmpOpen = true
+					} else if _, okThirdConfirm := operationDataToPointThirdConfirm[lastActionTag]; okThirdConfirm {
+						tmpOpen = true
+					} else if _, okSecondConfirm := operationDataToPointSecondConfirm[lastActionTag]; okSecondConfirm {
 						tmpOpen = true
 					}
 
@@ -2920,11 +2933,12 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 						tagNum++
 						lastActionTag = strconv.FormatInt(tagNum, 10) + strconv.FormatInt(vKlineM.EndTime, 10)
 						operationData[lastActionTag] = currentOperationData
-					} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
-						// 此时正拿着空单，如果曾经到达过二档，清空
-						if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
-							operationDataToPointSecond[lastActionTag] = 0
-						}
+					}
+
+				} else if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
+					// 此时正拿着空单，如果曾经到达过二档，清空
+					if _, okTwo := operationDataToPointSecond[lastActionTag]; okTwo {
+						operationDataToPointSecond[lastActionTag] = 0
 					}
 				}
 
@@ -2953,6 +2967,8 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 
 					// 第一次到达
 					if _, okTwo := operationDataToPointSecond[lastActionTag]; !okTwo {
+						operationDataToPointSecond[lastActionTag] = 1
+					} else if 0 == operationDataToPointSecond[lastActionTag] {
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
 						operationDataToPointSecond[lastActionTag] += 1
@@ -2988,7 +3004,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 							operationData[lastActionTag] = currentOperationData
 
 							// 拿确认点
-							operationDataToPointSecondKeep[lastActionTag] = 2
+							operationDataToPointSecondConfirm[lastActionTag] = 2
 						}
 					}
 				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
@@ -3038,7 +3054,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					operationData[lastActionTag] = currentOperationData
 
 					// 拿确认点
-					operationDataToPointThirdKeep[lastActionTag] = 1
+					operationDataToPointThirdConfirm[lastActionTag] = 1
 				} else if "empty" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					if _, okThird := operationDataToPointThirdKeep[lastActionTag]; !okThird {
 						operationDataToPointThirdKeep[lastActionTag] = 1 // 第一次到达
