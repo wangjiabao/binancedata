@@ -91,10 +91,12 @@ type BinanceDataRepo interface {
 
 type KLineMOneRepo interface {
 	GetKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
+	GetEthKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
 	GetFilKLineMOneOrderByEndTimeLast() (*KLineMOne, error)
 	GetKLineMOneByStartTime(start int64, end int64) ([]*KLineMOne, error)
 	InsertKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
 	InsertFilKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
+	InsertEthKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
 	RequestBinanceMinuteKLinesData(symbol string, startTime string, endTime string, interval string, limit string) ([]*KLineMOne, error)
 	NewMACDData(list []*KLineMOne) ([]*MACDPoint, error)
 }
@@ -3663,6 +3665,8 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 		lastKlineMOne, err = b.klineMOneRepo.GetKLineMOneOrderByEndTimeLast()
 	} else if "FILUSDT" == req.Coin {
 		lastKlineMOne, err = b.klineMOneRepo.GetFilKLineMOneOrderByEndTimeLast()
+	} else if "ETHUSDT" == req.Coin {
+		lastKlineMOne, err = b.klineMOneRepo.GetEthKLineMOneOrderByEndTimeLast()
 	}
 	if nil != lastKlineMOne {
 		lastKlineMOneEndTime = time.UnixMilli(lastKlineMOne.EndTime).UTC().Add(8 * time.Hour).Add(1 * time.Millisecond)
@@ -3700,6 +3704,8 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 				_, err = b.klineMOneRepo.InsertKLineMOne(ctx, tmpKlineMOne)
 			} else if "FILUSDT" == req.Coin {
 				_, err = b.klineMOneRepo.InsertFilKLineMOne(ctx, tmpKlineMOne)
+			} else if "ETHUSDT" == req.Coin {
+				_, err = b.klineMOneRepo.InsertEthKLineMOne(ctx, tmpKlineMOne)
 			}
 
 			if nil != err {

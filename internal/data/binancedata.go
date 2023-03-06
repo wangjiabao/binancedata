@@ -161,7 +161,34 @@ func (k *KLineMOneRepo) GetFilKLineMOneOrderByEndTimeLast() (*biz.KLineMOne, err
 	var kLineMOne KLineMOne
 	if err := k.data.db.Order("end_time desc").Table("kline_m_one_fil_usdt").First(&kLineMOne).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.NotFound("KLINE_M_ONE_NOT_FOUND", "kline m one not found")
+			return nil, errors.NotFound("KLINE_M_ONE_FIL_NOT_FOUND", "kline m one fil not found")
+		}
+
+		return nil, errors.New(500, "KLINE M ONE ERROR", err.Error())
+	}
+
+	return &biz.KLineMOne{
+		ID:                  kLineMOne.ID,
+		StartTime:           kLineMOne.StartTime,
+		EndTime:             kLineMOne.EndTime,
+		StartPrice:          kLineMOne.StartPrice,
+		TopPrice:            kLineMOne.TopPrice,
+		LowPrice:            kLineMOne.LowPrice,
+		EndPrice:            kLineMOne.EndPrice,
+		DealTotalAmount:     kLineMOne.DealTotalAmount,
+		DealAmount:          kLineMOne.DealAmount,
+		DealTotal:           kLineMOne.DealTotal,
+		DealSelfTotalAmount: kLineMOne.DealSelfTotalAmount,
+		DealSelfAmount:      kLineMOne.DealSelfAmount,
+	}, nil
+}
+
+// GetEthKLineMOneOrderByEndTimeLast .
+func (k *KLineMOneRepo) GetEthKLineMOneOrderByEndTimeLast() (*biz.KLineMOne, error) {
+	var kLineMOne KLineMOne
+	if err := k.data.db.Order("end_time desc").Table("kline_m_one_eth_usdt").First(&kLineMOne).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.NotFound("KLINE_M_ONE_ETH_NOT_FOUND", "kline m one eth not found")
 		}
 
 		return nil, errors.New(500, "KLINE M ONE ERROR", err.Error())
@@ -230,6 +257,32 @@ func (k *KLineMOneRepo) InsertFilKLineMOne(ctx context.Context, kLineMOne []*biz
 	res := k.data.DB(ctx).Table("kline_m_one_fil_usdt").Create(&insertKLineMOne)
 	if res.Error != nil {
 		return false, errors.New(500, "CREATE_KLINE_M_ONE_FIL_USEDT_ERROR", "创建k线数据失败")
+	}
+
+	return true, nil
+}
+
+// InsertEthKLineMOne .
+func (k *KLineMOneRepo) InsertEthKLineMOne(ctx context.Context, kLineMOne []*biz.KLineMOne) (bool, error) {
+	var insertKLineMOne []*KLineMOne
+	for _, v := range kLineMOne {
+		insertKLineMOne = append(insertKLineMOne, &KLineMOne{
+			StartTime:           v.StartTime,
+			EndTime:             v.EndTime,
+			StartPrice:          v.StartPrice,
+			TopPrice:            v.TopPrice,
+			LowPrice:            v.LowPrice,
+			EndPrice:            v.EndPrice,
+			DealTotalAmount:     v.DealTotalAmount,
+			DealAmount:          v.DealAmount,
+			DealTotal:           v.DealTotal,
+			DealSelfTotalAmount: v.DealSelfTotalAmount,
+			DealSelfAmount:      v.DealSelfAmount,
+		})
+	}
+	res := k.data.DB(ctx).Table("kline_m_one_eth_usdt").Create(&insertKLineMOne)
+	if res.Error != nil {
+		return false, errors.New(500, "CREATE_KLINE_M_ONE_ETH_USEDT_ERROR", "创建k线数据失败")
 	}
 
 	return true, nil
