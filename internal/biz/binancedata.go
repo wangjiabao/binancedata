@@ -2715,8 +2715,12 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 				if "more" == tmpOpenLastOperationData2.Type && "open" == tmpOpenLastOperationData2.Status {
 					// 有没有开仓的持仓确认点位
 					tmpOpen := false
-					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 <= operationDataToPointSecondKeep[lastActionTag] {
-						tmpOpen = true
+					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo {
+						if 2 <= operationDataToPointSecondKeep[lastActionTag] {
+							tmpOpen = true
+						} else { // 清0进了区间未达标
+							operationDataToPointSecond[lastActionTag] = 0
+						}
 					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
 						tmpOpen = true
 					} else if _, okThirdConfirm := operationDataToPointThirdConfirm[lastActionTag]; okThirdConfirm {
@@ -2791,6 +2795,7 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					} else if 0 == operationDataToPointSecond[lastActionTag] {
 						operationDataToPointSecond[lastActionTag] = 1
 					} else {
+						// 换仓
 						operationDataToPointSecond[lastActionTag] += 1
 						if 2 <= operationDataToPointSecond[lastActionTag] {
 							// 第二次到达，换单
@@ -2893,8 +2898,13 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 
 					// 有没有开仓的持仓确认点位
 					tmpOpen := false
-					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo && 2 <= operationDataToPointSecondKeep[lastActionTag] {
-						tmpOpen = true
+					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo {
+						if 2 <= operationDataToPointSecondKeep[lastActionTag] {
+							tmpOpen = true
+						} else { // 清0进了区间未达标
+							operationDataToPointSecond[lastActionTag] = 0
+						}
+
 					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
 						tmpOpen = true
 					} else if _, okThirdConfirm := operationDataToPointThirdConfirm[lastActionTag]; okThirdConfirm {
