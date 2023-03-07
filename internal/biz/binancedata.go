@@ -2718,8 +2718,8 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo {
 						if 2 <= operationDataToPointSecondKeep[lastActionTag] {
 							tmpOpen = true
-						} else { // 清0进了区间未达标
-							operationDataToPointSecond[lastActionTag] = 0
+						} else {
+							operationDataToPointSecondKeep[lastActionTag] = 0
 						}
 					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {
 						tmpOpen = true
@@ -2901,8 +2901,8 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 					if _, okTwo := operationDataToPointSecondKeep[lastActionTag]; okTwo {
 						if 2 <= operationDataToPointSecondKeep[lastActionTag] {
 							tmpOpen = true
-						} else { // 清0进了区间未达标
-							operationDataToPointSecond[lastActionTag] = 0
+						} else {
+							operationDataToPointSecondKeep[lastActionTag] = 0
 						}
 
 					} else if _, okThird := operationDataToPointThirdKeep[lastActionTag]; okThird {

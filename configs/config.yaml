@@ -8,7 +8,7 @@ server:
 data:
   database:
     driver: mysql
-    source: root:wang111000@tcp(127.0.0.1:3306)/binance?parseTime=true
+    source: binance:s7ihaasdbzwrLyWf@tcp(39.109.13.242:3306)/binance?parseTime=true
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
