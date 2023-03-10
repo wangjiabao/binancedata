@@ -153,7 +153,7 @@ func (k *KLineMOneRepo) RequestBinanceOrder(symbol string, side string, orderTyp
 		resp      *http.Response
 		b         []byte
 		err       error
-		apiUrl    = "https://fapi.binance.com/fapi/v1/order"
+		apiUrl    = "https://fapi.binance.com//fapi/v1/order/test"
 		apiKey    = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
 		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	)
