@@ -134,7 +134,7 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 }
 
 func (k *KLineMOneRepo) RequestBinanceOrder() ([]*biz.KLineMOne, error) {
-	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 64)
+	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 10)
 
 	apiUrl := "https://fapi.binance.com/fapi/v1/order"
 	apiKey := "o2PiuMTJbfK7D5xG3hS82ij6AL16Qc5c06llDgj2uN6LgXajEZODji5uV3gMwpjr"
