@@ -25,6 +25,19 @@ type BinanceData struct {
 	DealSelfAmount      string
 }
 
+type Order struct {
+	ID            int64
+	OrderId       string
+	ClientOrderId string
+	Symbol        string
+	Status        string
+	OrigQty       string
+	Side          string
+	PositionSide  string
+	OrderType     string
+	OrderOrigType string
+}
+
 type OperationData2 struct {
 	StartTime      int64
 	EndTime        int64
@@ -123,7 +136,7 @@ type KLineMOneRepo interface {
 	InsertEthKLineMOne(ctx context.Context, kLineMOne []*KLineMOne) (bool, error)
 	RequestBinanceMinuteKLinesData(symbol string, startTime string, endTime string, interval string, limit string) ([]*KLineMOne, error)
 	NewMACDData(list []*KLineMOne) ([]*MACDPoint, error)
-	RequestBinanceOrder() ([]*KLineMOne, error)
+	RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string) (*Order, error)
 }
 
 // BinanceDataUsecase is a BinanceData usecase.
@@ -4084,9 +4097,8 @@ func (b *BinanceDataUsecase) Order(ctx context.Context, req *v1.OrderRequest) (*
 	var (
 		err error
 	)
-
 	// 下单
-	_, err = b.klineMOneRepo.RequestBinanceOrder()
+	_, err = b.klineMOneRepo.RequestBinanceOrder("BTCUSDT", "BUY", "MARKET", "LONG", "0.01")
 	if nil != err {
 		return nil, err
 	}

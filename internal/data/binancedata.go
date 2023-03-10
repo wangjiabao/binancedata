@@ -37,6 +37,19 @@ type KLineMOne struct {
 	UpdatedAt           time.Time `gorm:"type:datetime;not null"`
 }
 
+type Order struct {
+	ID            int64
+	OrderId       string
+	ClientOrderId string
+	Symbol        string
+	Status        string
+	OrigQty       string
+	Side          string
+	PositionSide  string
+	OrderType     string
+	OrderOrigType string
+}
+
 type BinanceDataRepo struct {
 	data *Data
 	log  *log.Helper
@@ -133,48 +146,74 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 	return res, err
 }
 
-func (k *KLineMOneRepo) RequestBinanceOrder() ([]*biz.KLineMOne, error) {
+func (k *KLineMOneRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string) (*biz.Order, error) {
+	var (
+		client    *http.Client
+		req       *http.Request
+		resp      *http.Response
+		b         []byte
+		err       error
+		apiUrl    = "https://fapi.binance.com/fapi/v1/order"
+		apiKey    = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
+		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
+	)
+	// 时间
 	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 10)
-
-	apiUrl := "https://fapi.binance.com/fapi/v1/order"
-	apiKey := "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
-	secretKey := "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
-	data := "symbol=BTCUSDT&side=BUY&type=MARKET&positionSide=LONG&quantity=0.01&timestamp=" + now
-
+	// 拼请求数据
+	data := "symbol=" + symbol + "&side=" + side + "&type=" + orderType + "&positionSide=" + positionSide + "&quantity=" + quantity + "&timestamp=" + now
+	// 加密
 	h := hmac.New(sha256.New, []byte(secretKey))
 	h.Write([]byte(data))
 	signature := hex.EncodeToString(h.Sum(nil))
+	// 构造请求
 
-	req, _ := http.NewRequest("POST", apiUrl, strings.NewReader(data+"&signature="+signature))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("X-MBX-APIKEY", apiKey)
-
-	resp, err := (&http.Client{}).Do(req)
-
+	req, err = http.NewRequest("POST", apiUrl, strings.NewReader(data+"&signature="+signature))
 	if err != nil {
 		return nil, err
 	}
+	// 添加头信息
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("X-MBX-APIKEY", apiKey)
 
+	// 请求执行
+	client = &http.Client{Timeout: 10 * time.Second}
+	resp, err = client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	// 结果
 	defer func(Body io.ReadCloser) {
 		err = Body.Close()
 		if err != nil {
 
 		}
 	}(resp.Body)
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	fmt.Println(string(b))
 
-	var i [][]interface{}
+	var i Order
 	err = json.Unmarshal(b, &i)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, err
+	fmt.Println(i)
+	return &biz.Order{
+		ID:            0,
+		OrderId:       "",
+		ClientOrderId: "",
+		Symbol:        "",
+		Status:        "",
+		OrigQty:       "",
+		Side:          "",
+		PositionSide:  "",
+		OrderType:     "",
+		OrderOrigType: "",
+	}, err
 }
 
 // GetKLineMOneOrderByEndTimeLast .
