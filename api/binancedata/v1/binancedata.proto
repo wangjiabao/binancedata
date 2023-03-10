@@ -53,6 +53,18 @@ service BinanceData {
 			get: "/api/binancedata/area_point_interval_m_avg_end_price_data"
 		};
 	};
+
+	rpc IntervalMAvgEndPriceMacdAndAtrData (IntervalMAvgEndPriceMacdAndAtrDataRequest) returns (IntervalMAvgEndPriceMacdAndAtrDataReply) {
+		option (google.api.http) = {
+			get: "/api/binancedata/interval_m_avg_end_price_macd_and_atr_data"
+		};
+	};
+
+	rpc Order (OrderRequest) returns (OrderReply) {
+		option (google.api.http) = {
+			get: "/api/binancedata/order"
+		};
+	};
 }
 
 message PullBinanceDataRequest {
@@ -61,6 +73,10 @@ message PullBinanceDataRequest {
 }
 
 message PullBinanceDataReply {}
+
+message OrderRequest {}
+
+message OrderReply {}
 
 message XNIntervalMAvgEndPriceDataRequest {
 	message SendBody{
@@ -240,6 +256,68 @@ message AreaPointIntervalMAvgEndPriceDataReply {
 		string status = 8;
 		double rate = 9;
 		string action = 10;
+	}
+
+	int64 operationOrderTotal = 3;
+	string operationWinRate = 4;
+	string operationWinAmount = 5;
+}
+
+
+message IntervalMAvgEndPriceMacdAndAtrDataRequest {
+	string start = 1;
+	string end = 2;
+	int32 m = 3;
+	double max1 = 5;
+	double max2 = 6;
+	double low1 = 7;
+	double low2 = 8;
+	int32 atr1N = 9;
+	int32 atr2N = 10;
+	string coin_type = 11;
+}
+
+message IntervalMAvgEndPriceMacdAndAtrDataReply {
+	repeated List_k dataListK = 1;
+	message List_k {
+		double x1 = 1;
+		double x2 = 2;
+		double x3 = 3;
+		double x4 = 4;
+		int64 x5 = 5;
+		int64 x6 = 6;
+
+		double xc1 = 11;
+		double xc2 = 12;
+		double xc3 = 13;
+		int64 xc4 = 14;
+
+	}
+
+	repeated List2 operationData = 6;
+	message List2 {
+		double start_price = 1;
+		double end_price = 2;
+		int64 start_time = 3;
+		int64 end_time = 6;
+		string type = 7;
+		string status = 8;
+		double rate = 9;
+		int64 tag = 10;
+
+		double last_macd = 12;
+		double top_price = 13;
+		double low_price = 19;
+		double macd = 14;
+
+		double lowKLowPrice = 16;
+		double lowMacd = 15;
+		double maxKTopPrice = 17;
+		double maxMacd = 18;
+
+		string close_status = 20;
+		double close_price_win = 21;
+		double close_price_lost = 22;
 	}
 
 	int64 operationOrderTotal = 3;

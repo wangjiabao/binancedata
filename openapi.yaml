@@ -104,6 +104,72 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/binancedata/interval_m_avg_end_price_macd_and_atr_data:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_IntervalMAvgEndPriceMacdAndAtrData
+            parameters:
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+                - name: end
+                  in: query
+                  schema:
+                    type: string
+                - name: m
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: max1
+                  in: query
+                  schema:
+                    type: number
+                    format: double
+                - name: max2
+                  in: query
+                  schema:
+                    type: number
+                    format: double
+                - name: low1
+                  in: query
+                  schema:
+                    type: number
+                    format: double
+                - name: low2
+                  in: query
+                  schema:
+                    type: number
+                    format: double
+                - name: atr1N
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: atr2N
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: coinType
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IntervalMAvgEndPriceMacdAndAtrDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/binancedata/interval_m_k_and_macd_data:
         get:
             tags:
@@ -206,6 +272,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/KAnd2NIntervalMAvgEndPriceDataReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /api/binancedata/order:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_Order
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/OrderReply'
                 default:
                     description: Default error response
                     content:
@@ -426,6 +510,114 @@ components:
                 x1:
                     type: number
                     format: double
+        IntervalMAvgEndPriceMacdAndAtrDataReply:
+            type: object
+            properties:
+                dataListK:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMAvgEndPriceMacdAndAtrDataReply_List_k'
+                operationData:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IntervalMAvgEndPriceMacdAndAtrDataReply_List2'
+                operationOrderTotal:
+                    type: integer
+                    format: int64
+                operationWinRate:
+                    type: string
+                operationWinAmount:
+                    type: string
+        IntervalMAvgEndPriceMacdAndAtrDataReply_List2:
+            type: object
+            properties:
+                startPrice:
+                    type: number
+                    format: double
+                endPrice:
+                    type: number
+                    format: double
+                startTime:
+                    type: integer
+                    format: int64
+                endTime:
+                    type: integer
+                    format: int64
+                type:
+                    type: string
+                status:
+                    type: string
+                rate:
+                    type: number
+                    format: double
+                tag:
+                    type: integer
+                    format: int64
+                lastMacd:
+                    type: number
+                    format: double
+                topPrice:
+                    type: number
+                    format: double
+                lowPrice:
+                    type: number
+                    format: double
+                macd:
+                    type: number
+                    format: double
+                lowKLowPrice:
+                    type: number
+                    format: double
+                lowMacd:
+                    type: number
+                    format: double
+                maxKTopPrice:
+                    type: number
+                    format: double
+                maxMacd:
+                    type: number
+                    format: double
+                closeStatus:
+                    type: string
+                closePriceWin:
+                    type: number
+                    format: double
+                closePriceLost:
+                    type: number
+                    format: double
+        IntervalMAvgEndPriceMacdAndAtrDataReply_List_k:
+            type: object
+            properties:
+                x1:
+                    type: number
+                    format: double
+                x2:
+                    type: number
+                    format: double
+                x3:
+                    type: number
+                    format: double
+                x4:
+                    type: number
+                    format: double
+                x5:
+                    type: integer
+                    format: int64
+                x6:
+                    type: integer
+                    format: int64
+                xc1:
+                    type: number
+                    format: double
+                xc2:
+                    type: number
+                    format: double
+                xc3:
+                    type: number
+                    format: double
+                xc4:
+                    type: integer
+                    format: int64
         IntervalMKAndMACDDataReply:
             type: object
             properties:
@@ -837,6 +1029,9 @@ components:
                 x34:
                     type: integer
                     format: int64
+        OrderReply:
+            type: object
+            properties: {}
         PullBinanceDataReply:
             type: object
             properties: {}

@@ -3,6 +3,9 @@ package data
 import (
 	"binancedata/internal/biz"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
@@ -13,6 +16,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -127,6 +131,50 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 	}
 
 	return res, err
+}
+
+func (k *KLineMOneRepo) RequestBinanceOrder() ([]*biz.KLineMOne, error) {
+	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 64)
+
+	apiUrl := "https://fapi.binance.com/fapi/v1/order"
+	apiKey := "o2PiuMTJbfK7D5xG3hS82ij6AL16Qc5c06llDgj2uN6LgXajEZODji5uV3gMwpjr"
+	secretKey := "U87ly7gyxnfA49UHg2YWvytOsouFNQeZI0tT0kLsG3d9ZtEZxAP3uimVTjtVRDt0"
+	data := "symbol=BTCUSDT&side=BUY&type=MARKET&positionSide=LONG&quantity=0.01&timestamp=" + now
+
+	h := hmac.New(sha256.New, []byte(secretKey))
+	h.Write([]byte(data))
+	signature := hex.EncodeToString(h.Sum(nil))
+
+	req, _ := http.NewRequest("POST", apiUrl, strings.NewReader(data+"&signature="+signature))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("X-MBX-APIKEY", apiKey)
+
+	resp, err := (&http.Client{}).Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(string(b))
+
+	var i [][]interface{}
+	err = json.Unmarshal(b, &i)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, err
 }
 
 // GetKLineMOneOrderByEndTimeLast .
