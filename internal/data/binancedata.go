@@ -137,8 +137,8 @@ func (k *KLineMOneRepo) RequestBinanceOrder() ([]*biz.KLineMOne, error) {
 	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 10)
 
 	apiUrl := "https://fapi.binance.com/fapi/v1/order"
-	apiKey := "o2PiuMTJbfK7D5xG3hS82ij6AL16Qc5c06llDgj2uN6LgXajEZODji5uV3gMwpjr"
-	secretKey := "U87ly7gyxnfA49UHg2YWvytOsouFNQeZI0tT0kLsG3d9ZtEZxAP3uimVTjtVRDt0"
+	apiKey := "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
+	secretKey := "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	data := "symbol=BTCUSDT&side=BUY&type=MARKET&positionSide=LONG&quantity=0.01&timestamp=" + now
 
 	h := hmac.New(sha256.New, []byte(secretKey))
