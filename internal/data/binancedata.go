@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -37,9 +36,26 @@ type KLineMOne struct {
 	UpdatedAt           time.Time `gorm:"type:datetime;not null"`
 }
 
+type OrderPolicyPointCompare struct {
+	ID        int64     `gorm:"primarykey;type:int"`
+	InfoId    int64     `gorm:"type:int;not null"`
+	Type      string    `gorm:"type:varchar(100)"`
+	Value     int64     `gorm:"type:int;not null"`
+	CreatedAt time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt time.Time `gorm:"type:datetime;not null"`
+}
+
+type OrderPolicyPointCompareInfo struct {
+	ID        int64     `gorm:"primarykey;type:int"`
+	OrderId   int64     `gorm:"type:bigint;not null"`
+	Type      string    `gorm:"type:varchar(100)"`
+	Num       float64   `gorm:"type:decimal(65,20);not null"`
+	CreatedAt time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt time.Time `gorm:"type:datetime;not null"`
+}
+
 type Order struct {
-	ID            int64
-	OrderId       string
+	OrderId       int64
 	ClientOrderId string
 	Symbol        string
 	Status        string
@@ -60,6 +76,11 @@ type KLineMOneRepo struct {
 	log  *log.Helper
 }
 
+type OrderPolicyPointCompareRepo struct {
+	data *Data
+	log  *log.Helper
+}
+
 func NewBinanceDataRepo(data *Data, logger log.Logger) biz.BinanceDataRepo {
 	return &BinanceDataRepo{
 		data: data,
@@ -69,6 +90,13 @@ func NewBinanceDataRepo(data *Data, logger log.Logger) biz.BinanceDataRepo {
 
 func NewKLineMOneRepo(data *Data, logger log.Logger) biz.KLineMOneRepo {
 	return &KLineMOneRepo{
+		data: data,
+		log:  log.NewHelper(logger),
+	}
+}
+
+func NewOrderPolicyPointCompareRepoRepo(data *Data, logger log.Logger) biz.OrderPolicyPointCompareRepo {
+	return &OrderPolicyPointCompareRepo{
 		data: data,
 		log:  log.NewHelper(logger),
 	}
@@ -93,7 +121,7 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 		Timeout: 30 * time.Second,
 	}
 
-	fmt.Println(u.String())
+	//fmt.Println(u.String())
 	resp, err := client.Get(u.String())
 	if err != nil {
 		return nil, err
@@ -146,21 +174,24 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 	return res, err
 }
 
-func (k *KLineMOneRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string) (*biz.Order, error) {
+func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string) (*biz.Order, error) {
 	var (
 		client    *http.Client
 		req       *http.Request
 		resp      *http.Response
+		res       *biz.Order
+		data      string
 		b         []byte
 		err       error
-		apiUrl    = "https://fapi.binance.com//fapi/v1/order/test"
+		apiUrl    = "https://fapi.binance.com/fapi/v1/order"
 		apiKey    = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
 		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	)
 	// 时间
 	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 10)
 	// 拼请求数据
-	data := "symbol=" + symbol + "&side=" + side + "&type=" + orderType + "&positionSide=" + positionSide + "&quantity=" + quantity + "&timestamp=" + now
+	data = "symbol=" + symbol + "&side=" + side + "&type=" + orderType + "&positionSide=" + positionSide + "&quantity=" + quantity + "&timestamp=" + now
+
 	// 加密
 	h := hmac.New(sha256.New, []byte(secretKey))
 	h.Write([]byte(data))
@@ -190,30 +221,37 @@ func (k *KLineMOneRepo) RequestBinanceOrder(symbol string, side string, orderTyp
 	}(resp.Body)
 	b, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
+		o.log.Error(err)
 		return nil, err
 	}
-
-	fmt.Println(string(b))
 
 	var i Order
 	err = json.Unmarshal(b, &i)
 	if err != nil {
+		o.log.Error(err)
 		return nil, err
 	}
 
-	fmt.Println(i)
-	return &biz.Order{
+	res = &biz.Order{
 		ID:            0,
-		OrderId:       "",
-		ClientOrderId: "",
-		Symbol:        "",
-		Status:        "",
-		OrigQty:       "",
-		Side:          "",
-		PositionSide:  "",
-		OrderType:     "",
-		OrderOrigType: "",
-	}, err
+		OrderId:       i.OrderId,
+		ClientOrderId: i.ClientOrderId,
+		Symbol:        i.Symbol,
+		Status:        i.Status,
+		OrigQty:       i.OrigQty,
+		Side:          i.Side,
+		PositionSide:  i.PositionSide,
+		OrderType:     i.OrderType,
+		OrderOrigType: i.OrderOrigType,
+	}
+
+	o.log.Info(res)
+	return res, nil
+}
+
+func (o *OrderPolicyPointCompareRepo) RequestBinanceGetOrder(symbol string) (*biz.Order, error) {
+
+	return &biz.Order{}, nil
 }
 
 // GetKLineMOneOrderByEndTimeLast .
@@ -486,4 +524,94 @@ func (k *KLineMOneRepo) NewMACDData(list []*biz.KLineMOne) ([]*biz.MACDPoint, er
 		})
 	}
 	return NewMACD(points).Calculation().GetPoints(), nil
+}
+
+// GetLastOrderPolicyPointCompareByInfoIdAndType .
+func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareByInfoIdAndType(infoId int64, policyPointType string, user int64) (*biz.OrderPolicyPointCompare, error) {
+	var orderPolicyPointCompare *OrderPolicyPointCompare
+
+	db := o.data.db.Where("info_id=? and type=?", infoId, policyPointType).Order("created_at desc")
+	if 1 == user {
+		db = db.Table("order_policy_point_compare_1")
+	} else {
+		db = db.Table("order_policy_point_compare")
+	}
+	if err := db.First(&orderPolicyPointCompare).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, errors.New(500, "ORDER POLICY POINT COMPARE ERROR", err.Error())
+	}
+
+	return &biz.OrderPolicyPointCompare{
+		ID:     orderPolicyPointCompare.ID,
+		InfoId: orderPolicyPointCompare.InfoId,
+		Type:   orderPolicyPointCompare.Type,
+		Value:  orderPolicyPointCompare.Value,
+	}, nil
+}
+
+// GetLastOrderPolicyPointCompareInfo .
+func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareInfo(user int64) (*biz.OrderPolicyPointCompareInfo, error) {
+	var orderPolicyPointCompareInfo *OrderPolicyPointCompareInfo
+	db := o.data.db.Order("created_at desc").Table("order_policy_point_compare_info")
+	
+	if 1 == user {
+		db = db.Table("order_policy_point_compare_info_1")
+	} else {
+		db = db.Table("order_policy_point_compare_info")
+	}
+
+	if err := db.First(&orderPolicyPointCompareInfo).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, errors.New(500, "ORDER POLICY POINT COMPARE INFO ERROR", err.Error())
+	}
+
+	return &biz.OrderPolicyPointCompareInfo{
+		ID:      orderPolicyPointCompareInfo.ID,
+		Type:    orderPolicyPointCompareInfo.Type,
+		Num:     orderPolicyPointCompareInfo.Num,
+		OrderId: orderPolicyPointCompareInfo.OrderId,
+	}, nil
+}
+
+// InsertOrderPolicyPointCompareInfo .
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompareInfo(ctx context.Context, orderPolicyPointCompareInfoData *biz.OrderPolicyPointCompareInfo) (*biz.OrderPolicyPointCompareInfo, error) {
+	orderPolicyPointCompareInfo := &OrderPolicyPointCompareInfo{
+		OrderId: orderPolicyPointCompareInfoData.OrderId,
+		Type:    orderPolicyPointCompareInfoData.Type,
+		Num:     orderPolicyPointCompareInfoData.Num,
+	}
+
+	res := o.data.DB(ctx).Table("order_policy_point_compare_info").Create(&orderPolicyPointCompareInfo)
+	if res.Error != nil {
+		return nil, errors.New(500, "CREATE_ORDER_POLICY_POINT_COMPARE_INFO_ERROR", "创建数据失败")
+	}
+
+	return &biz.OrderPolicyPointCompareInfo{
+		ID:      orderPolicyPointCompareInfo.ID,
+		OrderId: orderPolicyPointCompareInfo.OrderId,
+		Type:    orderPolicyPointCompareInfo.Type,
+		Num:     orderPolicyPointCompareInfo.Num,
+	}, nil
+}
+
+// InsertOrderPolicyPointCompare .
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompare(ctx context.Context, orderPolicyPointCompareData *biz.OrderPolicyPointCompare) (bool, error) {
+	orderPolicyPointCompare := &OrderPolicyPointCompare{
+		InfoId: orderPolicyPointCompareData.InfoId,
+		Type:   orderPolicyPointCompareData.Type,
+		Value:  orderPolicyPointCompareData.Value,
+	}
+
+	res := o.data.DB(ctx).Table("order_policy_point_compare").Create(&orderPolicyPointCompare)
+	if res.Error != nil {
+		return false, errors.New(500, "CREATE_ORDER_POLICY_POINT_COMPARE_ERROR", "创建数据失败")
+	}
+
+	return true, nil
 }

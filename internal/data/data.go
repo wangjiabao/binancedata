@@ -17,7 +17,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTransaction, NewBinanceDataRepo, NewKLineMOneRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTransaction, NewBinanceDataRepo, NewKLineMOneRepo, NewOrderPolicyPointCompareRepoRepo)
 
 type Data struct {
 	db  *gorm.DB
@@ -62,9 +62,15 @@ func (d *Data) DB(ctx context.Context) *gorm.DB {
 
 // NewDB .
 func NewDB(c *conf.Data) *gorm.DB {
+	f, err := os.OpenFile("../../log/sql.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Errorf("failed opening sql.log", err)
+		panic("failed opening sql.log")
+	}
+
 	// 终端打印输入 sql 执行记录
 	newLogger := logger.New(
-		slog.New(os.Stdout, "\r\n", slog.LstdFlags), // io writer
+		slog.New(f, "\r\n", slog.LstdFlags), // io writer
 		logger.Config{
 			SlowThreshold: time.Second, // 慢查询 SQL 阈值
 			Colorful:      true,        // 禁用彩色打印

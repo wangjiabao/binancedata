@@ -32,8 +32,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	}
 	binanceDataRepo := data.NewBinanceDataRepo(dataData, logger)
 	kLineMOneRepo := data.NewKLineMOneRepo(dataData, logger)
+	orderPolicyPointCompareRepo := data.NewOrderPolicyPointCompareRepoRepo(dataData, logger)
 	transaction := data.NewTransaction(dataData)
-	binanceDataUsecase := biz.NewBinanceDataUsecase(binanceDataRepo, kLineMOneRepo, transaction, logger)
+	binanceDataUsecase := biz.NewBinanceDataUsecase(binanceDataRepo, kLineMOneRepo, orderPolicyPointCompareRepo, transaction, logger)
 	binanceDataService := service.NewBinanceDataService(binanceDataUsecase)
 	httpServer := server.NewHTTPServer(confServer, binanceDataService, logger)
 	app := newApp(logger, httpServer)

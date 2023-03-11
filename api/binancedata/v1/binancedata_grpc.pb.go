@@ -30,7 +30,7 @@ type BinanceDataClient interface {
 	IntervalMKAndMACDData(ctx context.Context, in *IntervalMKAndMACDDataRequest, opts ...grpc.CallOption) (*IntervalMKAndMACDDataReply, error)
 	AreaPointIntervalMAvgEndPriceData(ctx context.Context, in *AreaPointIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*AreaPointIntervalMAvgEndPriceDataReply, error)
 	IntervalMAvgEndPriceMacdAndAtrData(ctx context.Context, in *IntervalMAvgEndPriceMacdAndAtrDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceMacdAndAtrDataReply, error)
-	Order(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderReply, error)
+	OrderAreaPoint(ctx context.Context, in *OrderAreaPointRequest, opts ...grpc.CallOption) (*OrderAreaPointReply, error)
 }
 
 type binanceDataClient struct {
@@ -113,9 +113,9 @@ func (c *binanceDataClient) IntervalMAvgEndPriceMacdAndAtrData(ctx context.Conte
 	return out, nil
 }
 
-func (c *binanceDataClient) Order(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderReply, error) {
-	out := new(OrderReply)
-	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/Order", in, out, opts...)
+func (c *binanceDataClient) OrderAreaPoint(ctx context.Context, in *OrderAreaPointRequest, opts ...grpc.CallOption) (*OrderAreaPointReply, error) {
+	out := new(OrderAreaPointReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/OrderAreaPoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ type BinanceDataServer interface {
 	IntervalMKAndMACDData(context.Context, *IntervalMKAndMACDDataRequest) (*IntervalMKAndMACDDataReply, error)
 	AreaPointIntervalMAvgEndPriceData(context.Context, *AreaPointIntervalMAvgEndPriceDataRequest) (*AreaPointIntervalMAvgEndPriceDataReply, error)
 	IntervalMAvgEndPriceMacdAndAtrData(context.Context, *IntervalMAvgEndPriceMacdAndAtrDataRequest) (*IntervalMAvgEndPriceMacdAndAtrDataReply, error)
-	Order(context.Context, *OrderRequest) (*OrderReply, error)
+	OrderAreaPoint(context.Context, *OrderAreaPointRequest) (*OrderAreaPointReply, error)
 	mustEmbedUnimplementedBinanceDataServer()
 }
 
@@ -166,8 +166,8 @@ func (UnimplementedBinanceDataServer) AreaPointIntervalMAvgEndPriceData(context.
 func (UnimplementedBinanceDataServer) IntervalMAvgEndPriceMacdAndAtrData(context.Context, *IntervalMAvgEndPriceMacdAndAtrDataRequest) (*IntervalMAvgEndPriceMacdAndAtrDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IntervalMAvgEndPriceMacdAndAtrData not implemented")
 }
-func (UnimplementedBinanceDataServer) Order(context.Context, *OrderRequest) (*OrderReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Order not implemented")
+func (UnimplementedBinanceDataServer) OrderAreaPoint(context.Context, *OrderAreaPointRequest) (*OrderAreaPointReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrderAreaPoint not implemented")
 }
 func (UnimplementedBinanceDataServer) mustEmbedUnimplementedBinanceDataServer() {}
 
@@ -326,20 +326,20 @@ func _BinanceData_IntervalMAvgEndPriceMacdAndAtrData_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BinanceData_Order_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderRequest)
+func _BinanceData_OrderAreaPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderAreaPointRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BinanceDataServer).Order(ctx, in)
+		return srv.(BinanceDataServer).OrderAreaPoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.binancedata.v1.BinanceData/Order",
+		FullMethod: "/api.binancedata.v1.BinanceData/OrderAreaPoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BinanceDataServer).Order(ctx, req.(*OrderRequest))
+		return srv.(BinanceDataServer).OrderAreaPoint(ctx, req.(*OrderAreaPointRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -384,8 +384,8 @@ var BinanceData_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BinanceData_IntervalMAvgEndPriceMacdAndAtrData_Handler,
 		},
 		{
-			MethodName: "Order",
-			Handler:    _BinanceData_Order_Handler,
+			MethodName: "OrderAreaPoint",
+			Handler:    _BinanceData_OrderAreaPoint_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

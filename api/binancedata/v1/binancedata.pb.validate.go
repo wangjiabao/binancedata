@@ -243,204 +243,6 @@ var _ interface {
 	ErrorName() string
 } = PullBinanceDataReplyValidationError{}
 
-// Validate checks the field values on OrderRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *OrderRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OrderRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in OrderRequestMultiError, or
-// nil if none found.
-func (m *OrderRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OrderRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return OrderRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// OrderRequestMultiError is an error wrapping multiple validation errors
-// returned by OrderRequest.ValidateAll() if the designated constraints aren't met.
-type OrderRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OrderRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OrderRequestMultiError) AllErrors() []error { return m }
-
-// OrderRequestValidationError is the validation error returned by
-// OrderRequest.Validate if the designated constraints aren't met.
-type OrderRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OrderRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OrderRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OrderRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OrderRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OrderRequestValidationError) ErrorName() string { return "OrderRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e OrderRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOrderRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OrderRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OrderRequestValidationError{}
-
-// Validate checks the field values on OrderReply with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *OrderReply) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OrderReply with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in OrderReplyMultiError, or
-// nil if none found.
-func (m *OrderReply) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OrderReply) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return OrderReplyMultiError(errors)
-	}
-
-	return nil
-}
-
-// OrderReplyMultiError is an error wrapping multiple validation errors
-// returned by OrderReply.ValidateAll() if the designated constraints aren't met.
-type OrderReplyMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OrderReplyMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OrderReplyMultiError) AllErrors() []error { return m }
-
-// OrderReplyValidationError is the validation error returned by
-// OrderReply.Validate if the designated constraints aren't met.
-type OrderReplyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OrderReplyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OrderReplyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OrderReplyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OrderReplyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OrderReplyValidationError) ErrorName() string { return "OrderReplyValidationError" }
-
-// Error satisfies the builtin error interface
-func (e OrderReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOrderReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OrderReplyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OrderReplyValidationError{}
-
 // Validate checks the field values on XNIntervalMAvgEndPriceDataRequest with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the first error encountered is returned, or nil if there are
@@ -1370,6 +1172,216 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = KAnd2NIntervalMAvgEndPriceDataReplyValidationError{}
+
+// Validate checks the field values on OrderAreaPointRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderAreaPointRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderAreaPointRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderAreaPointRequestMultiError, or nil if none found.
+func (m *OrderAreaPointRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderAreaPointRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Test
+
+	// no validation rules for Start
+
+	// no validation rules for User
+
+	if len(errors) > 0 {
+		return OrderAreaPointRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderAreaPointRequestMultiError is an error wrapping multiple validation
+// errors returned by OrderAreaPointRequest.ValidateAll() if the designated
+// constraints aren't met.
+type OrderAreaPointRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderAreaPointRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderAreaPointRequestMultiError) AllErrors() []error { return m }
+
+// OrderAreaPointRequestValidationError is the validation error returned by
+// OrderAreaPointRequest.Validate if the designated constraints aren't met.
+type OrderAreaPointRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderAreaPointRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderAreaPointRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderAreaPointRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderAreaPointRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderAreaPointRequestValidationError) ErrorName() string {
+	return "OrderAreaPointRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderAreaPointRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderAreaPointRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderAreaPointRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderAreaPointRequestValidationError{}
+
+// Validate checks the field values on OrderAreaPointReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderAreaPointReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderAreaPointReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderAreaPointReplyMultiError, or nil if none found.
+func (m *OrderAreaPointReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderAreaPointReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return OrderAreaPointReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderAreaPointReplyMultiError is an error wrapping multiple validation
+// errors returned by OrderAreaPointReply.ValidateAll() if the designated
+// constraints aren't met.
+type OrderAreaPointReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderAreaPointReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderAreaPointReplyMultiError) AllErrors() []error { return m }
+
+// OrderAreaPointReplyValidationError is the validation error returned by
+// OrderAreaPointReply.Validate if the designated constraints aren't met.
+type OrderAreaPointReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderAreaPointReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderAreaPointReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderAreaPointReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderAreaPointReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderAreaPointReplyValidationError) ErrorName() string {
+	return "OrderAreaPointReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderAreaPointReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderAreaPointReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderAreaPointReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderAreaPointReplyValidationError{}
 
 // Validate checks the field values on AreaPointIntervalMAvgEndPriceDataRequest
 // with the rules defined in the proto definition for this message. If any

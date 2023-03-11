@@ -278,18 +278,32 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /api/binancedata/order:
+    /api/binancedata/order_area_point:
         get:
             tags:
                 - BinanceData
-            operationId: BinanceData_Order
+            operationId: BinanceData_OrderAreaPoint
+            parameters:
+                - name: test
+                  in: query
+                  schema:
+                    type: string
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+                - name: user
+                  in: query
+                  schema:
+                    type: integer
+                    format: int64
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/OrderReply'
+                                $ref: '#/components/schemas/OrderAreaPointReply'
                 default:
                     description: Default error response
                     content:
@@ -1029,7 +1043,7 @@ components:
                 x34:
                     type: integer
                     format: int64
-        OrderReply:
+        OrderAreaPointReply:
             type: object
             properties: {}
         PullBinanceDataReply:

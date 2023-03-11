@@ -4,6 +4,7 @@ import (
 	v1 "binancedata/api/binancedata/v1"
 	"binancedata/internal/biz"
 	"context"
+	"time"
 )
 
 // BinanceDataService is a BinanceData service .
@@ -51,6 +52,36 @@ func (b *BinanceDataService) PullBinanceData(ctx context.Context, req *v1.PullBi
 	return b.uc.PullBinanceData(ctx, req)
 }
 
-func (b *BinanceDataService) Order(ctx context.Context, req *v1.OrderRequest) (*v1.OrderReply, error) {
-	return b.uc.Order(ctx, req)
+func (b *BinanceDataService) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPointRequest) (*v1.OrderAreaPointReply, error) {
+
+	if "test" == req.Test {
+		var (
+			reqStart time.Time
+			current  time.Time
+			err      error
+		)
+
+		reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
+		if nil != err {
+			return nil, err
+		}
+
+		endNow := time.Now().UTC().Add(8 * time.Hour)
+		endM := endNow.Minute() / 15 * 15
+		end := time.Date(endNow.Year(), endNow.Month(), endNow.Day(), endNow.Hour(), endM, 59, 0, time.UTC).Add(-1 * time.Minute)
+
+		current = reqStart
+		for {
+			_, _ = b.uc.OrderAreaPoint(ctx, req, "test", current)
+			current = current.Add(15 * time.Minute)
+			if current.After(end) {
+				break
+			}
+		}
+
+		return &v1.OrderAreaPointReply{}, nil
+	} else {
+		return b.uc.OrderAreaPoint(ctx, req, "", time.Now())
+	}
+
 }

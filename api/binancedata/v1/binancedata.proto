@@ -60,9 +60,9 @@ service BinanceData {
 		};
 	};
 
-	rpc Order (OrderRequest) returns (OrderReply) {
+	rpc OrderAreaPoint (OrderAreaPointRequest) returns (OrderAreaPointReply) {
 		option (google.api.http) = {
-			get: "/api/binancedata/order"
+			get: "/api/binancedata/order_area_point"
 		};
 	};
 }
@@ -73,10 +73,6 @@ message PullBinanceDataRequest {
 }
 
 message PullBinanceDataReply {}
-
-message OrderRequest {}
-
-message OrderReply {}
 
 message XNIntervalMAvgEndPriceDataRequest {
 	message SendBody{
@@ -214,6 +210,14 @@ message KAnd2NIntervalMAvgEndPriceDataReply {
 	string operationWinRate = 8;
 	string operationWinAmount = 9;
 }
+
+message OrderAreaPointRequest {
+	string test = 1;
+	string start = 2;
+	int64 user = 3;
+}
+
+message OrderAreaPointReply {}
 
 message AreaPointIntervalMAvgEndPriceDataRequest {
 	string start = 1;
