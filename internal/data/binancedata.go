@@ -174,19 +174,26 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 	return res, err
 }
 
-func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string) (*biz.Order, error) {
+func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, user int64) (*biz.Order, error) {
 	var (
-		client    *http.Client
-		req       *http.Request
-		resp      *http.Response
-		res       *biz.Order
-		data      string
-		b         []byte
-		err       error
-		apiUrl    = "https://fapi.binance.com/fapi/v1/order"
+		client *http.Client
+		req    *http.Request
+		resp   *http.Response
+		res    *biz.Order
+		data   string
+		b      []byte
+		err    error
+		apiUrl = "https://fapi.binance.com/fapi/v1/order"
+
 		apiKey    = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
 		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	)
+
+	if 1 == user {
+		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+	}
+
 	// 时间
 	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 10)
 	// 拼请求数据
@@ -532,10 +539,11 @@ func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareByInfoIdAndT
 
 	db := o.data.db.Where("info_id=? and type=?", infoId, policyPointType).Order("created_at desc")
 	if 1 == user {
-		db = db.Table("order_policy_point_compare_1")
+		db = db.Table("order_policy_point_compare_one")
 	} else {
 		db = db.Table("order_policy_point_compare")
 	}
+
 	if err := db.First(&orderPolicyPointCompare).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -555,10 +563,10 @@ func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareByInfoIdAndT
 // GetLastOrderPolicyPointCompareInfo .
 func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareInfo(user int64) (*biz.OrderPolicyPointCompareInfo, error) {
 	var orderPolicyPointCompareInfo *OrderPolicyPointCompareInfo
-	db := o.data.db.Order("created_at desc").Table("order_policy_point_compare_info")
-	
+	db := o.data.db.Order("created_at desc")
+
 	if 1 == user {
-		db = db.Table("order_policy_point_compare_info_1")
+		db = db.Table("order_policy_point_compare_info_one")
 	} else {
 		db = db.Table("order_policy_point_compare_info")
 	}
@@ -580,14 +588,21 @@ func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareInfo(user in
 }
 
 // InsertOrderPolicyPointCompareInfo .
-func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompareInfo(ctx context.Context, orderPolicyPointCompareInfoData *biz.OrderPolicyPointCompareInfo) (*biz.OrderPolicyPointCompareInfo, error) {
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompareInfo(ctx context.Context, orderPolicyPointCompareInfoData *biz.OrderPolicyPointCompareInfo, user int64) (*biz.OrderPolicyPointCompareInfo, error) {
 	orderPolicyPointCompareInfo := &OrderPolicyPointCompareInfo{
 		OrderId: orderPolicyPointCompareInfoData.OrderId,
 		Type:    orderPolicyPointCompareInfoData.Type,
 		Num:     orderPolicyPointCompareInfoData.Num,
 	}
 
-	res := o.data.DB(ctx).Table("order_policy_point_compare_info").Create(&orderPolicyPointCompareInfo)
+	db := o.data.DB(ctx)
+	if 1 == user {
+		db = db.Table("order_policy_point_compare_info_one")
+	} else {
+		db = db.Table("order_policy_point_compare_info")
+	}
+
+	res := db.Create(&orderPolicyPointCompareInfo)
 	if res.Error != nil {
 		return nil, errors.New(500, "CREATE_ORDER_POLICY_POINT_COMPARE_INFO_ERROR", "创建数据失败")
 	}
@@ -601,14 +616,21 @@ func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompareInfo(ctx cont
 }
 
 // InsertOrderPolicyPointCompare .
-func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompare(ctx context.Context, orderPolicyPointCompareData *biz.OrderPolicyPointCompare) (bool, error) {
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompare(ctx context.Context, orderPolicyPointCompareData *biz.OrderPolicyPointCompare, user int64) (bool, error) {
 	orderPolicyPointCompare := &OrderPolicyPointCompare{
 		InfoId: orderPolicyPointCompareData.InfoId,
 		Type:   orderPolicyPointCompareData.Type,
 		Value:  orderPolicyPointCompareData.Value,
 	}
 
-	res := o.data.DB(ctx).Table("order_policy_point_compare").Create(&orderPolicyPointCompare)
+	db := o.data.DB(ctx)
+	if 1 == user {
+		db = db.Table("order_policy_point_compare_one")
+	} else {
+		db = db.Table("order_policy_point_compare")
+	}
+
+	res := db.Create(&orderPolicyPointCompare)
 	if res.Error != nil {
 		return false, errors.New(500, "CREATE_ORDER_POLICY_POINT_COMPARE_ERROR", "创建数据失败")
 	}

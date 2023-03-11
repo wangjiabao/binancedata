@@ -150,11 +150,11 @@ type BinanceDataRepo interface {
 
 type OrderPolicyPointCompareRepo interface {
 	RequestBinanceGetOrder(symbol string) (*Order, error)
-	RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string) (*Order, error)
+	RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, user int64) (*Order, error)
 	GetLastOrderPolicyPointCompareByInfoIdAndType(infoId int64, policyPointType string, user int64) (*OrderPolicyPointCompare, error)
 	GetLastOrderPolicyPointCompareInfo(user int64) (*OrderPolicyPointCompareInfo, error)
-	InsertOrderPolicyPointCompareInfo(ctx context.Context, orderPolicyPointCompareInfoData *OrderPolicyPointCompareInfo) (*OrderPolicyPointCompareInfo, error)
-	InsertOrderPolicyPointCompare(ctx context.Context, orderPolicyPointCompareData *OrderPolicyPointCompare) (bool, error)
+	InsertOrderPolicyPointCompareInfo(ctx context.Context, orderPolicyPointCompareInfoData *OrderPolicyPointCompareInfo, user int64) (*OrderPolicyPointCompareInfo, error)
+	InsertOrderPolicyPointCompare(ctx context.Context, orderPolicyPointCompareData *OrderPolicyPointCompare, user int64) (bool, error)
 }
 
 type KLineMOneRepo interface {
@@ -4049,6 +4049,7 @@ func (b *BinanceDataUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 		err           error
 	)
 
+	// 使用用户， todo 目前非常简单的给不同的表数据
 	if 0 < req.User {
 		user = req.User
 	}
@@ -4202,13 +4203,19 @@ func (b *BinanceDataUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 
 		} else {
 			// 开空
+			tmpAmount := 0.01
+			tmpAmountStr := "0.01"
+			if 1 == user {
+				tmpAmount = 0.1
+				tmpAmountStr = "0.1"
+			}
 			order = append(order, &OrderData{
 				Symbol:          "ETHUSDT",
 				Side:            "SELL",
 				OrderType:       "MARKET",
 				PositionSide:    "SHORT",
-				Quantity:        "0.01",
-				QuantityFloat64: 0.01,
+				Quantity:        tmpAmountStr,
+				QuantityFloat64: tmpAmount,
 			})
 		}
 	}
@@ -4272,13 +4279,19 @@ func (b *BinanceDataUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 
 		} else {
 			// 开多
+			tmpAmount := 0.01
+			tmpAmountStr := "0.01"
+			if 1 == user {
+				tmpAmount = 0.1
+				tmpAmountStr = "0.1"
+			}
 			order = append(order, &OrderData{
 				Symbol:          "ETHUSDT",
 				Side:            "BUY",
 				OrderType:       "MARKET",
 				PositionSide:    "LONG",
-				Quantity:        "0.01",
-				QuantityFloat64: 0.01,
+				Quantity:        tmpAmountStr,
+				QuantityFloat64: tmpAmount,
 			})
 		}
 	}
@@ -4513,10 +4526,12 @@ func (b *BinanceDataUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 		for _, vMaPoint := range maPoint {
 			fmt.Println(vMaPoint, 233235)
 		}
-		//_, err = b.orderPolicyPointCompareRepo.RequestBinanceOrder(v.Symbol, v.Side, v.OrderType, v.PositionSide, v.Quantity)
-		//if nil != err {
-		//	return nil, err
-		//}
+		_, err = b.orderPolicyPointCompareRepo.RequestBinanceOrder(v.Symbol, v.Side, v.OrderType, v.PositionSide, v.Quantity, user)
+		if nil != err {
+			b.log.Error(err)
+			return nil, err
+		}
+
 		orderData = &OrderPolicyPointCompareInfo{
 			OrderId: 0, // todo 换真实的
 			Type:    "",
@@ -4543,7 +4558,7 @@ func (b *BinanceDataUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 	if err = b.tx.ExecTx(ctx, func(ctx context.Context) error { // 事务
 		// 新增订单信息
 		if nil != orderData {
-			newOrderData, err = b.orderPolicyPointCompareRepo.InsertOrderPolicyPointCompareInfo(ctx, orderData)
+			newOrderData, err = b.orderPolicyPointCompareRepo.InsertOrderPolicyPointCompareInfo(ctx, orderData, user)
 			if nil != err {
 				return err
 			}
@@ -4567,7 +4582,7 @@ func (b *BinanceDataUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 				}
 
 				//fmt.Println(tmpOrderPolicyPointCompare, 44)
-				_, err = b.orderPolicyPointCompareRepo.InsertOrderPolicyPointCompare(ctx, tmpOrderPolicyPointCompare)
+				_, err = b.orderPolicyPointCompareRepo.InsertOrderPolicyPointCompare(ctx, tmpOrderPolicyPointCompare, user)
 				if nil != err {
 					return err
 				}
