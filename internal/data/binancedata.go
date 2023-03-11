@@ -398,7 +398,6 @@ func (k *KLineMOneRepo) InsertFilKLineMOne(ctx context.Context, kLineMOne []*biz
 func (k *KLineMOneRepo) InsertEthKLineMOne(ctx context.Context, kLineMOne []*biz.KLineMOne) (bool, error) {
 	var insertKLineMOne []*KLineMOne
 	for _, v := range kLineMOne {
-		println(v)
 		insertKLineMOne = append(insertKLineMOne, &KLineMOne{
 			StartTime:           v.StartTime,
 			EndTime:             v.EndTime,
