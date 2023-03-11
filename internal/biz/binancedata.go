@@ -4616,7 +4616,6 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 	if nil != err {
 		return nil, err
 	}
-	fmt.Println(start, end)
 
 	// 获取数据库最后一条数据的时间
 	if "BTCUSDT" == req.Coin {
@@ -4677,7 +4676,6 @@ func (b *BinanceDataUsecase) PullBinanceData(ctx context.Context, req *v1.PullBi
 		}
 
 		tmpStart = tmpStart.Add(time.Duration(m*limit) * time.Minute)
-		fmt.Println(tmpStart, tmpEnd)
 		if end.Before(tmpStart) {
 			break
 		}
