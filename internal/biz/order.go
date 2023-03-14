@@ -865,6 +865,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		}
 
 		if tmpClose {
+			fmt.Println(66666, closeOrder)
 			closeOrder = append(closeOrder, &OrderPolicyMacdCompareInfo{
 				ID:                  vOrdersOpen.ID,
 				OrderId:             vOrdersOpen.OrderId,
@@ -889,6 +890,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 
 	// 停掉所有反向单
 	if nil != newOrderLock {
+		fmt.Println(5555)
 		for _, vOrdersOpen := range ordersOpen {
 			if newOrderLock.Type == vOrdersOpen.Type {
 				closeOrder = append(closeOrder, &OrderPolicyMacdCompareInfo{
@@ -915,6 +917,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 
 	// 超过2个亏损订单，开个反向单
 	if tmpEmptyCloseLostNum >= 2 {
+		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println("lost more open empty more", tmpEmptyCloseLostNum)
 		newOrder = append(newOrder, &OrderPolicyMacdCompareInfo{
 			Type:           "more",
@@ -927,6 +930,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	}
 
 	if tmpMoreCloseLostNum >= 2 {
+		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println("lost more open empty", tmpEmptyCloseLostNum)
 		newOrder = append(newOrder, &OrderPolicyMacdCompareInfo{
 			Type:           "empty",
@@ -939,7 +943,6 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	}
 
 	// 计算 初始化
-	fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 	if macdData[199].MACD > 0 && max1 < macdData[199].MACD { // 正的&大于设定值
 		if nil == maxMacd || (maxMacd.Value < macdData[199].MACD && lastMacdData[199].MACD < macdData[199].MACD) { // 空的或者，值>原值，实心柱，替换
 			maxMacd = &OrderPolicyMacdCompare{
@@ -973,7 +976,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		nil != maxMacd &&
 		macdData[199].MACD < maxMacd.Value && kLineMOne[lastKeyMLive].TopPrice > maxMacd.KTopPrice && // 当前小于最大实心柱 且最高价格大于实心柱最高价
 		!(yesterdayMacdData[199].MACD > 0 && beforeYesterdayMacdData[199].MACD < yesterdayMacdData[199].MACD) { // 绿色实心不开，所以取反
-
+		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println(3333, maxMacd, macdData[199].MACD, lastMacdData[199].MACD, kLineMOne[lastKeyMLive].TopPrice, yesterdayMacdData[199].MACD, beforeYesterdayMacdData[199].MACD)
 
 		if nil == lock || "empty" != lock.Type { // 无锁定
@@ -1002,7 +1005,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		nil != minMacd &&
 		macdData[199].MACD > minMacd.Value && kLineMOne[lastKeyMLive].LowPrice < minMacd.KLowPrice && // 当前大于最大实心柱 且最低价格小于实心柱低高价
 		!(yesterdayMacdData[199].MACD < 0 && beforeYesterdayMacdData[199].MACD > yesterdayMacdData[199].MACD) { // 绿色实心不开，所以取反
-
+		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println(4444, minMacd, macdData[199].MACD, lastMacdData[199].MACD, kLineMOne[lastKeyMLive].TopPrice, yesterdayMacdData[199].MACD, beforeYesterdayMacdData[199].MACD)
 
 		// 开多
