@@ -31,6 +31,7 @@ type BinanceDataClient interface {
 	AreaPointIntervalMAvgEndPriceData(ctx context.Context, in *AreaPointIntervalMAvgEndPriceDataRequest, opts ...grpc.CallOption) (*AreaPointIntervalMAvgEndPriceDataReply, error)
 	IntervalMAvgEndPriceMacdAndAtrData(ctx context.Context, in *IntervalMAvgEndPriceMacdAndAtrDataRequest, opts ...grpc.CallOption) (*IntervalMAvgEndPriceMacdAndAtrDataReply, error)
 	OrderAreaPoint(ctx context.Context, in *OrderAreaPointRequest, opts ...grpc.CallOption) (*OrderAreaPointReply, error)
+	OrderMacdAndKPrice(ctx context.Context, in *OrderMacdAndKPriceRequest, opts ...grpc.CallOption) (*OrderMacdAndKPriceReply, error)
 }
 
 type binanceDataClient struct {
@@ -122,6 +123,15 @@ func (c *binanceDataClient) OrderAreaPoint(ctx context.Context, in *OrderAreaPoi
 	return out, nil
 }
 
+func (c *binanceDataClient) OrderMacdAndKPrice(ctx context.Context, in *OrderMacdAndKPriceRequest, opts ...grpc.CallOption) (*OrderMacdAndKPriceReply, error) {
+	out := new(OrderMacdAndKPriceReply)
+	err := c.cc.Invoke(ctx, "/api.binancedata.v1.BinanceData/OrderMacdAndKPrice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BinanceDataServer is the server API for BinanceData service.
 // All implementations must embed UnimplementedBinanceDataServer
 // for forward compatibility
@@ -135,6 +145,7 @@ type BinanceDataServer interface {
 	AreaPointIntervalMAvgEndPriceData(context.Context, *AreaPointIntervalMAvgEndPriceDataRequest) (*AreaPointIntervalMAvgEndPriceDataReply, error)
 	IntervalMAvgEndPriceMacdAndAtrData(context.Context, *IntervalMAvgEndPriceMacdAndAtrDataRequest) (*IntervalMAvgEndPriceMacdAndAtrDataReply, error)
 	OrderAreaPoint(context.Context, *OrderAreaPointRequest) (*OrderAreaPointReply, error)
+	OrderMacdAndKPrice(context.Context, *OrderMacdAndKPriceRequest) (*OrderMacdAndKPriceReply, error)
 	mustEmbedUnimplementedBinanceDataServer()
 }
 
@@ -168,6 +179,9 @@ func (UnimplementedBinanceDataServer) IntervalMAvgEndPriceMacdAndAtrData(context
 }
 func (UnimplementedBinanceDataServer) OrderAreaPoint(context.Context, *OrderAreaPointRequest) (*OrderAreaPointReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrderAreaPoint not implemented")
+}
+func (UnimplementedBinanceDataServer) OrderMacdAndKPrice(context.Context, *OrderMacdAndKPriceRequest) (*OrderMacdAndKPriceReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrderMacdAndKPrice not implemented")
 }
 func (UnimplementedBinanceDataServer) mustEmbedUnimplementedBinanceDataServer() {}
 
@@ -344,6 +358,24 @@ func _BinanceData_OrderAreaPoint_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BinanceData_OrderMacdAndKPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderMacdAndKPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinanceDataServer).OrderMacdAndKPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.binancedata.v1.BinanceData/OrderMacdAndKPrice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinanceDataServer).OrderMacdAndKPrice(ctx, req.(*OrderMacdAndKPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BinanceData_ServiceDesc is the grpc.ServiceDesc for BinanceData service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -386,6 +418,10 @@ var BinanceData_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OrderAreaPoint",
 			Handler:    _BinanceData_OrderAreaPoint_Handler,
+		},
+		{
+			MethodName: "OrderMacdAndKPrice",
+			Handler:    _BinanceData_OrderMacdAndKPrice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -26,6 +26,7 @@ const OperationBinanceDataIntervalMKAndMACDData = "/api.binancedata.v1.BinanceDa
 const OperationBinanceDataIntervalMMACDData = "/api.binancedata.v1.BinanceData/IntervalMMACDData"
 const OperationBinanceDataKAnd2NIntervalMAvgEndPriceData = "/api.binancedata.v1.BinanceData/KAnd2NIntervalMAvgEndPriceData"
 const OperationBinanceDataOrderAreaPoint = "/api.binancedata.v1.BinanceData/OrderAreaPoint"
+const OperationBinanceDataOrderMacdAndKPrice = "/api.binancedata.v1.BinanceData/OrderMacdAndKPrice"
 const OperationBinanceDataPullBinanceData = "/api.binancedata.v1.BinanceData/PullBinanceData"
 const OperationBinanceDataXNIntervalMAvgEndPriceData = "/api.binancedata.v1.BinanceData/XNIntervalMAvgEndPriceData"
 
@@ -37,6 +38,7 @@ type BinanceDataHTTPServer interface {
 	IntervalMMACDData(context.Context, *IntervalMMACDDataRequest) (*IntervalMMACDDataReply, error)
 	KAnd2NIntervalMAvgEndPriceData(context.Context, *KAnd2NIntervalMAvgEndPriceDataRequest) (*KAnd2NIntervalMAvgEndPriceDataReply, error)
 	OrderAreaPoint(context.Context, *OrderAreaPointRequest) (*OrderAreaPointReply, error)
+	OrderMacdAndKPrice(context.Context, *OrderMacdAndKPriceRequest) (*OrderMacdAndKPriceReply, error)
 	PullBinanceData(context.Context, *PullBinanceDataRequest) (*PullBinanceDataReply, error)
 	XNIntervalMAvgEndPriceData(context.Context, *XNIntervalMAvgEndPriceDataRequest) (*XNIntervalMAvgEndPriceDataReply, error)
 }
@@ -52,6 +54,7 @@ func RegisterBinanceDataHTTPServer(s *http.Server, srv BinanceDataHTTPServer) {
 	r.GET("/api/binancedata/area_point_interval_m_avg_end_price_data", _BinanceData_AreaPointIntervalMAvgEndPriceData0_HTTP_Handler(srv))
 	r.GET("/api/binancedata/interval_m_avg_end_price_macd_and_atr_data", _BinanceData_IntervalMAvgEndPriceMacdAndAtrData0_HTTP_Handler(srv))
 	r.GET("/api/binancedata/order_area_point", _BinanceData_OrderAreaPoint0_HTTP_Handler(srv))
+	r.GET("/api/binancedata/order_macd_k_and_price", _BinanceData_OrderMacdAndKPrice0_HTTP_Handler(srv))
 }
 
 func _BinanceData_XNIntervalMAvgEndPriceData0_HTTP_Handler(srv BinanceDataHTTPServer) func(ctx http.Context) error {
@@ -231,6 +234,25 @@ func _BinanceData_OrderAreaPoint0_HTTP_Handler(srv BinanceDataHTTPServer) func(c
 	}
 }
 
+func _BinanceData_OrderMacdAndKPrice0_HTTP_Handler(srv BinanceDataHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in OrderMacdAndKPriceRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationBinanceDataOrderMacdAndKPrice)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.OrderMacdAndKPrice(ctx, req.(*OrderMacdAndKPriceRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*OrderMacdAndKPriceReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type BinanceDataHTTPClient interface {
 	AreaPointIntervalMAvgEndPriceData(ctx context.Context, req *AreaPointIntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (rsp *AreaPointIntervalMAvgEndPriceDataReply, err error)
 	IntervalMAvgEndPriceData(ctx context.Context, req *IntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (rsp *IntervalMAvgEndPriceDataReply, err error)
@@ -239,6 +261,7 @@ type BinanceDataHTTPClient interface {
 	IntervalMMACDData(ctx context.Context, req *IntervalMMACDDataRequest, opts ...http.CallOption) (rsp *IntervalMMACDDataReply, err error)
 	KAnd2NIntervalMAvgEndPriceData(ctx context.Context, req *KAnd2NIntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (rsp *KAnd2NIntervalMAvgEndPriceDataReply, err error)
 	OrderAreaPoint(ctx context.Context, req *OrderAreaPointRequest, opts ...http.CallOption) (rsp *OrderAreaPointReply, err error)
+	OrderMacdAndKPrice(ctx context.Context, req *OrderMacdAndKPriceRequest, opts ...http.CallOption) (rsp *OrderMacdAndKPriceReply, err error)
 	PullBinanceData(ctx context.Context, req *PullBinanceDataRequest, opts ...http.CallOption) (rsp *PullBinanceDataReply, err error)
 	XNIntervalMAvgEndPriceData(ctx context.Context, req *XNIntervalMAvgEndPriceDataRequest, opts ...http.CallOption) (rsp *XNIntervalMAvgEndPriceDataReply, err error)
 }
@@ -334,6 +357,19 @@ func (c *BinanceDataHTTPClientImpl) OrderAreaPoint(ctx context.Context, in *Orde
 	pattern := "/api/binancedata/order_area_point"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBinanceDataOrderAreaPoint))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *BinanceDataHTTPClientImpl) OrderMacdAndKPrice(ctx context.Context, in *OrderMacdAndKPriceRequest, opts ...http.CallOption) (*OrderMacdAndKPriceReply, error) {
+	var out OrderMacdAndKPriceReply
+	pattern := "/api/binancedata/order_macd_k_and_price"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationBinanceDataOrderMacdAndKPrice))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

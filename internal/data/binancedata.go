@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -54,6 +55,43 @@ type OrderPolicyPointCompareInfo struct {
 	UpdatedAt time.Time `gorm:"type:datetime;not null"`
 }
 
+type OrderPolicyMacdCompare struct {
+	ID        int64     `gorm:"primarykey;type:int"`
+	Type      string    `gorm:"type:varchar(100)"`
+	MacdType  string    `gorm:"type:varchar(100)"`
+	Value     float64   `gorm:"type:decimal(65,20);not null"`
+	KTopPrice float64   `gorm:"type:decimal(65,20);not null"`
+	KLowPrice float64   `gorm:"type:decimal(65,20);not null"`
+	CreatedAt time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt time.Time `gorm:"type:datetime;not null"`
+}
+
+type OrderPolicyMacdCompareInfo struct {
+	ID                  int64     `gorm:"primarykey;type:int"`
+	OrderId             int64     `gorm:"type:bigint;not null"`
+	Num                 float64   `gorm:"type:decimal(65,20);not null"`
+	Type                string    `gorm:"type:varchar(100)"`
+	Status              string    `gorm:"type:varchar(100)"`
+	OpenEndPrice        float64   `gorm:"type:decimal(65,20);not null"`
+	ClosePriceWin       float64   `gorm:"type:decimal(65,20);not null"`
+	ClosePriceLost      float64   `gorm:"type:decimal(65,20);not null"`
+	MacdNow             float64   `gorm:"type:decimal(65,20);not null"`
+	KPriceNow           float64   `gorm:"type:decimal(65,20);not null"`
+	MacdCompare         float64   `gorm:"type:decimal(65,20);not null"`
+	KPriceCompare       float64   `gorm:"type:decimal(65,20);not null"`
+	MacdYesterday       float64   `gorm:"type:decimal(65,20);not null"`
+	MacdBeforeYesterday float64   `gorm:"type:decimal(65,20);not null"`
+	CreatedAt           time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt           time.Time `gorm:"type:datetime;not null"`
+}
+
+type OrderPolicyMacdLock struct {
+	ID        int64     `gorm:"primarykey;type:int"`
+	Type      string    `gorm:"type:varchar(100)"`
+	CreatedAt time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt time.Time `gorm:"type:datetime;not null"`
+}
+
 type Order struct {
 	OrderId       int64
 	ClientOrderId string
@@ -95,7 +133,7 @@ func NewKLineMOneRepo(data *Data, logger log.Logger) biz.KLineMOneRepo {
 	}
 }
 
-func NewOrderPolicyPointCompareRepoRepo(data *Data, logger log.Logger) biz.OrderPolicyPointCompareRepo {
+func NewOrderPolicyPointCompareRepo(data *Data, logger log.Logger) biz.OrderPolicyPointCompareRepo {
 	return &OrderPolicyPointCompareRepo{
 		data: data,
 		log:  log.NewHelper(logger),
@@ -231,6 +269,8 @@ func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side st
 		o.log.Error(err)
 		return nil, err
 	}
+
+	fmt.Println(resp.Header)
 
 	var i Order
 	err = json.Unmarshal(b, &i)
@@ -632,6 +672,231 @@ func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompare(ctx context.
 	res := db.Create(&orderPolicyPointCompare)
 	if res.Error != nil {
 		return false, errors.New(500, "CREATE_ORDER_POLICY_POINT_COMPARE_ERROR", "创建数据失败")
+	}
+
+	return true, nil
+}
+
+// GetLastOrderPolicyMacdCompareByCreatedAtAndType .
+func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyMacdCompareByCreatedAtAndType(policyType string, user int64) (*biz.OrderPolicyMacdCompare, error) {
+	var orderPolicyMacdCompare *OrderPolicyMacdCompare
+
+	db := o.data.db.Where("type=?", policyType).Order("created_at desc")
+	if 1 == user {
+		db = db.Table("order_policy_macd_compare_one")
+	} else {
+		db = db.Table("order_policy_macd_compare")
+	}
+
+	if err := db.First(&orderPolicyMacdCompare).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, errors.New(500, "ORDER POLICY MACD COMPARE ERROR", err.Error())
+	}
+
+	return &biz.OrderPolicyMacdCompare{
+		ID:        orderPolicyMacdCompare.ID,
+		Type:      orderPolicyMacdCompare.Type,
+		MacdType:  orderPolicyMacdCompare.MacdType,
+		KTopPrice: orderPolicyMacdCompare.KTopPrice,
+		KLowPrice: orderPolicyMacdCompare.KLowPrice,
+		Value:     orderPolicyMacdCompare.Value,
+	}, nil
+}
+
+// GetOrdersPolicyMacdCompareOpen .
+func (o *OrderPolicyPointCompareRepo) GetOrdersPolicyMacdCompareOpen(user int64) ([]*biz.OrderPolicyMacdCompareInfo, error) {
+	var orderPolicyMacdCompareInfo []*OrderPolicyMacdCompareInfo
+
+	db := o.data.db.Where("status=?", "open").Order("created_at desc")
+	if 1 == user {
+		db = db.Table("order_policy_macd_compare_info_one")
+	} else {
+		db = db.Table("order_policy_macd_compare_info")
+	}
+
+	if err := db.Find(&orderPolicyMacdCompareInfo).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, errors.New(500, "ORDER POLICY MACD COMPARE INFO ERROR", err.Error())
+	}
+
+	res := make([]*biz.OrderPolicyMacdCompareInfo, 0)
+	for _, v := range orderPolicyMacdCompareInfo {
+		res = append(res, &biz.OrderPolicyMacdCompareInfo{
+			ID:                  v.ID,
+			OrderId:             v.OrderId,
+			Type:                v.Type,
+			Status:              v.Status,
+			Num:                 v.Num,
+			OpenEndPrice:        v.OpenEndPrice,
+			ClosePriceWin:       v.ClosePriceWin,
+			ClosePriceLost:      v.ClosePriceLost,
+			MacdNow:             v.MacdNow,
+			KPriceNow:           v.KPriceNow,
+			MacdCompare:         v.MacdCompare,
+			KPriceCompare:       v.KPriceCompare,
+			MacdYesterday:       v.MacdYesterday,
+			MacdBeforeYesterday: v.MacdBeforeYesterday,
+		})
+	}
+
+	return res, nil
+}
+
+// GetLastOrderPolicyMacdLockByCreatedAt .
+func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyMacdLockByCreatedAt(user int64) (*biz.OrderPolicyMacdLock, error) {
+	var orderPolicyMacdLock *OrderPolicyMacdLock
+
+	db := o.data.db.Where("created_at>=?", time.Now().UTC().Add(-24*time.Hour)).Order("created_at desc")
+	if 1 == user {
+		db = db.Table("order_policy_macd_lock_one")
+	} else {
+		db = db.Table("order_policy_macd_lock")
+	}
+
+	if err := db.First(&orderPolicyMacdLock).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, errors.New(500, "ORDER POLICY MACD LOCK ERROR", err.Error())
+	}
+
+	return &biz.OrderPolicyMacdLock{
+		ID:        orderPolicyMacdLock.ID,
+		Type:      orderPolicyMacdLock.Type,
+		CreatedAt: orderPolicyMacdLock.CreatedAt,
+	}, nil
+}
+
+// InsertOrderPolicyMacdCompareInfo .
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyMacdCompareInfo(ctx context.Context, orderPolicyMacdCompareInfoDataSlice []*biz.OrderPolicyMacdCompareInfo, user int64) ([]*biz.OrderPolicyMacdCompareInfo, error) {
+	var orderPolicyPointCompareInfoSlice []*OrderPolicyMacdCompareInfo
+	for _, orderPolicyMacdCompareInfoData := range orderPolicyMacdCompareInfoDataSlice {
+		orderPolicyPointCompareInfoSlice = append(orderPolicyPointCompareInfoSlice, &OrderPolicyMacdCompareInfo{
+			OrderId:             orderPolicyMacdCompareInfoData.OrderId,
+			Num:                 orderPolicyMacdCompareInfoData.Num,
+			Type:                orderPolicyMacdCompareInfoData.Type,
+			Status:              orderPolicyMacdCompareInfoData.Status,
+			OpenEndPrice:        orderPolicyMacdCompareInfoData.OpenEndPrice,
+			ClosePriceWin:       orderPolicyMacdCompareInfoData.ClosePriceWin,
+			ClosePriceLost:      orderPolicyMacdCompareInfoData.ClosePriceLost,
+			MacdNow:             orderPolicyMacdCompareInfoData.MacdNow,
+			KPriceNow:           orderPolicyMacdCompareInfoData.KPriceNow,
+			MacdCompare:         orderPolicyMacdCompareInfoData.MacdCompare,
+			KPriceCompare:       orderPolicyMacdCompareInfoData.KPriceCompare,
+			MacdYesterday:       orderPolicyMacdCompareInfoData.MacdYesterday,
+			MacdBeforeYesterday: orderPolicyMacdCompareInfoData.MacdBeforeYesterday,
+		})
+	}
+
+	db := o.data.DB(ctx)
+	if 1 == user {
+		db = db.Table("order_policy_macd_compare_info_one")
+	} else {
+		db = db.Table("order_policy_macd_compare_info")
+	}
+
+	resData := make([]*biz.OrderPolicyMacdCompareInfo, 0)
+	res := db.Create(&orderPolicyPointCompareInfoSlice)
+	if res.Error != nil {
+		return resData, errors.New(500, "CREATE_ORDER_POLICY_MACD_COMPARE_INFO_ERROR", "创建订单macd数据失败")
+	}
+
+	for _, orderPolicyPointCompareInfo := range orderPolicyPointCompareInfoSlice {
+		resData = append(resData, &biz.OrderPolicyMacdCompareInfo{
+			ID:                  orderPolicyPointCompareInfo.ID,
+			OrderId:             orderPolicyPointCompareInfo.OrderId,
+			Num:                 orderPolicyPointCompareInfo.Num,
+			Type:                orderPolicyPointCompareInfo.Type,
+			Status:              orderPolicyPointCompareInfo.Status,
+			OpenEndPrice:        orderPolicyPointCompareInfo.OpenEndPrice,
+			ClosePriceWin:       orderPolicyPointCompareInfo.ClosePriceWin,
+			ClosePriceLost:      orderPolicyPointCompareInfo.ClosePriceLost,
+			MacdNow:             orderPolicyPointCompareInfo.MacdNow,
+			KPriceNow:           orderPolicyPointCompareInfo.KPriceNow,
+			MacdCompare:         orderPolicyPointCompareInfo.MacdCompare,
+			KPriceCompare:       orderPolicyPointCompareInfo.KPriceCompare,
+			MacdYesterday:       orderPolicyPointCompareInfo.MacdYesterday,
+			MacdBeforeYesterday: orderPolicyPointCompareInfo.MacdBeforeYesterday,
+			CreatedAt:           orderPolicyPointCompareInfo.CreatedAt,
+			UpdatedAt:           orderPolicyPointCompareInfo.UpdatedAt,
+		})
+	}
+
+	return resData, nil
+}
+
+// CloseOrderPolicyMacdCompareInfo .
+func (o *OrderPolicyPointCompareRepo) CloseOrderPolicyMacdCompareInfo(ctx context.Context, id int64, user int64) (bool, error) {
+	var err error
+
+	db := o.data.DB(ctx)
+	if 1 == user {
+		db = db.Table("order_policy_macd_compare_info_one")
+	} else {
+		db = db.Table("order_policy_macd_compare_info")
+	}
+
+	if err = db.
+		Where("id=?", id).
+		Updates(map[string]interface{}{"status": "close"}).Error; nil != err {
+		return false, errors.NotFound("CLOSE_ORDER_POLICY_MACD_COMPARE_INFO_ERROR", "CLOSE_ORDER_POLICY_MACD_COMPARE_INFO_ERROR")
+	}
+
+	return true, nil
+}
+
+// InsertOrderPolicyMacdCompare .
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyMacdCompare(ctx context.Context, orderPolicyMacdCompareDataSlice []*biz.OrderPolicyMacdCompare, user int64) (bool, error) {
+	var orderPolicyMacdCompareDataInfoSlice []*OrderPolicyMacdCompare
+
+	for _, vOrderPolicyMacdCompareDataSlice := range orderPolicyMacdCompareDataSlice {
+		orderPolicyMacdCompareDataInfoSlice = append(orderPolicyMacdCompareDataInfoSlice, &OrderPolicyMacdCompare{
+			Type:      vOrderPolicyMacdCompareDataSlice.Type,
+			MacdType:  vOrderPolicyMacdCompareDataSlice.MacdType,
+			Value:     vOrderPolicyMacdCompareDataSlice.Value,
+			KTopPrice: vOrderPolicyMacdCompareDataSlice.KTopPrice,
+			KLowPrice: vOrderPolicyMacdCompareDataSlice.KLowPrice,
+		})
+	}
+
+	db := o.data.DB(ctx)
+	if 1 == user {
+		db = db.Table("order_policy_macd_compare_one")
+	} else {
+		db = db.Table("order_policy_macd_compare")
+	}
+
+	res := db.Create(&orderPolicyMacdCompareDataInfoSlice)
+	if res.Error != nil {
+		return false, errors.New(500, "CREATE_ORDER_POLICY_MACD_COMPARE_ERROR", "创建数据失败")
+	}
+
+	return true, nil
+}
+
+// InsertOrderPolicyMacdLock .
+func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyMacdLock(ctx context.Context, orderPolicyMacdLockInfo *biz.OrderPolicyMacdLock, user int64) (bool, error) {
+	orderPolicyMacdLock := &OrderPolicyMacdLock{
+		Type: orderPolicyMacdLockInfo.Type,
+	}
+
+	db := o.data.DB(ctx)
+	if 1 == user {
+		db = db.Table("order_policy_macd_lock_one")
+	} else {
+		db = db.Table("order_policy_macd_lock")
+	}
+
+	res := db.Create(&orderPolicyMacdLock)
+	if res.Error != nil {
+		return false, errors.New(500, "CREATE_ORDER_POLICY_MACD_LOCK__ERROR", "创建数据失败")
 	}
 
 	return true, nil

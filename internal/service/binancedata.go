@@ -11,12 +11,13 @@ import (
 type BinanceDataService struct {
 	v1.UnimplementedBinanceDataServer
 
-	uc *biz.BinanceDataUsecase
+	uc  *biz.BinanceDataUsecase
+	ouc *biz.OrderUsecase
 }
 
 // NewBinanceDataService new a BinanceData service.
-func NewBinanceDataService(uc *biz.BinanceDataUsecase) *BinanceDataService {
-	return &BinanceDataService{uc: uc}
+func NewBinanceDataService(uc *biz.BinanceDataUsecase, ouc *biz.OrderUsecase) *BinanceDataService {
+	return &BinanceDataService{uc: uc, ouc: ouc}
 }
 
 func (b *BinanceDataService) XNIntervalMAvgEndPriceData(ctx context.Context, req *v1.XNIntervalMAvgEndPriceDataRequest) (*v1.XNIntervalMAvgEndPriceDataReply, error) {
@@ -71,7 +72,7 @@ func (b *BinanceDataService) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 
 		current = reqStart
 		for {
-			_, _ = b.uc.OrderAreaPoint(ctx, req, "test", current)
+			_, _ = b.ouc.OrderAreaPoint(ctx, req, "test", current)
 			current = current.Add(15 * time.Minute)
 			if current.After(end) {
 				break
@@ -80,7 +81,41 @@ func (b *BinanceDataService) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 
 		return &v1.OrderAreaPointReply{}, nil
 	} else {
-		return b.uc.OrderAreaPoint(ctx, req, "", time.Now())
+		return b.ouc.OrderAreaPoint(ctx, req, "", time.Now())
+	}
+
+}
+
+func (b *BinanceDataService) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacdAndKPriceRequest) (*v1.OrderMacdAndKPriceReply, error) {
+
+	if "test" == req.Test {
+		var (
+			reqStart time.Time
+			current  time.Time
+			err      error
+		)
+
+		reqStart, err = time.Parse("2006-01-02 15:04:05", req.Start) // 时间进行格式校验
+		if nil != err {
+			return nil, err
+		}
+
+		endNow := time.Now().UTC().Add(8 * time.Hour)
+		endM := endNow.Minute() / 15 * 15
+		end := time.Date(endNow.Year(), endNow.Month(), endNow.Day(), endNow.Hour(), endM, 59, 0, time.UTC).Add(-1 * time.Minute)
+
+		current = reqStart
+		for {
+			_, _ = b.ouc.OrderMacdAndKPrice(ctx, req, "test", current)
+			current = current.Add(15 * time.Minute)
+			if current.After(end) {
+				break
+			}
+		}
+
+		return &v1.OrderMacdAndKPriceReply{}, nil
+	} else {
+		return b.ouc.OrderMacdAndKPrice(ctx, req, "", time.Now())
 	}
 
 }

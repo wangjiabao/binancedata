@@ -65,6 +65,12 @@ service BinanceData {
 			get: "/api/binancedata/order_area_point"
 		};
 	};
+
+	rpc OrderMacdAndKPrice (OrderMacdAndKPriceRequest) returns (OrderMacdAndKPriceReply) {
+		option (google.api.http) = {
+			get: "/api/binancedata/order_macd_k_and_price"
+		};
+	};
 }
 
 message PullBinanceDataRequest {
@@ -218,6 +224,14 @@ message OrderAreaPointRequest {
 }
 
 message OrderAreaPointReply {}
+
+message OrderMacdAndKPriceRequest {
+	string test = 1;
+	string start = 2;
+	int64 user = 3;
+}
+
+message OrderMacdAndKPriceReply {}
 
 message AreaPointIntervalMAvgEndPriceDataRequest {
 	string start = 1;

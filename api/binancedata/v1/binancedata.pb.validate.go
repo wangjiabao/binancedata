@@ -1383,6 +1383,216 @@ var _ interface {
 	ErrorName() string
 } = OrderAreaPointReplyValidationError{}
 
+// Validate checks the field values on OrderMacdAndKPriceRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderMacdAndKPriceRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderMacdAndKPriceRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderMacdAndKPriceRequestMultiError, or nil if none found.
+func (m *OrderMacdAndKPriceRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderMacdAndKPriceRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Test
+
+	// no validation rules for Start
+
+	// no validation rules for User
+
+	if len(errors) > 0 {
+		return OrderMacdAndKPriceRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderMacdAndKPriceRequestMultiError is an error wrapping multiple validation
+// errors returned by OrderMacdAndKPriceRequest.ValidateAll() if the
+// designated constraints aren't met.
+type OrderMacdAndKPriceRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderMacdAndKPriceRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderMacdAndKPriceRequestMultiError) AllErrors() []error { return m }
+
+// OrderMacdAndKPriceRequestValidationError is the validation error returned by
+// OrderMacdAndKPriceRequest.Validate if the designated constraints aren't met.
+type OrderMacdAndKPriceRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderMacdAndKPriceRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderMacdAndKPriceRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderMacdAndKPriceRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderMacdAndKPriceRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderMacdAndKPriceRequestValidationError) ErrorName() string {
+	return "OrderMacdAndKPriceRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderMacdAndKPriceRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderMacdAndKPriceRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderMacdAndKPriceRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderMacdAndKPriceRequestValidationError{}
+
+// Validate checks the field values on OrderMacdAndKPriceReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderMacdAndKPriceReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderMacdAndKPriceReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderMacdAndKPriceReplyMultiError, or nil if none found.
+func (m *OrderMacdAndKPriceReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderMacdAndKPriceReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return OrderMacdAndKPriceReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderMacdAndKPriceReplyMultiError is an error wrapping multiple validation
+// errors returned by OrderMacdAndKPriceReply.ValidateAll() if the designated
+// constraints aren't met.
+type OrderMacdAndKPriceReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderMacdAndKPriceReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderMacdAndKPriceReplyMultiError) AllErrors() []error { return m }
+
+// OrderMacdAndKPriceReplyValidationError is the validation error returned by
+// OrderMacdAndKPriceReply.Validate if the designated constraints aren't met.
+type OrderMacdAndKPriceReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderMacdAndKPriceReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderMacdAndKPriceReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderMacdAndKPriceReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderMacdAndKPriceReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderMacdAndKPriceReplyValidationError) ErrorName() string {
+	return "OrderMacdAndKPriceReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderMacdAndKPriceReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderMacdAndKPriceReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderMacdAndKPriceReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderMacdAndKPriceReplyValidationError{}
+
 // Validate checks the field values on AreaPointIntervalMAvgEndPriceDataRequest
 // with the rules defined in the proto definition for this message. If any
 // rules are violated, the first error encountered is returned, or nil if

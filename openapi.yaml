@@ -310,6 +310,38 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/binancedata/order_macd_k_and_price:
+        get:
+            tags:
+                - BinanceData
+            operationId: BinanceData_OrderMacdAndKPrice
+            parameters:
+                - name: test
+                  in: query
+                  schema:
+                    type: string
+                - name: start
+                  in: query
+                  schema:
+                    type: string
+                - name: user
+                  in: query
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/OrderMacdAndKPriceReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/binancedata/pull:
         get:
             tags:
@@ -1044,6 +1076,9 @@ components:
                     type: integer
                     format: int64
         OrderAreaPointReply:
+            type: object
+            properties: {}
+        OrderMacdAndKPriceReply:
             type: object
             properties: {}
         PullBinanceDataReply:
