@@ -212,7 +212,7 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 	return res, err
 }
 
-func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, user int64) (*biz.Order, error) {
+func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, apiKey string, secretKey string) (*biz.Order, error) {
 	var (
 		client *http.Client
 		req    *http.Request
@@ -222,18 +222,7 @@ func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side st
 		b      []byte
 		err    error
 		apiUrl = "https://fapi.binance.com/fapi/v1/order"
-
-		apiKey    = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
-		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	)
-
-	if 1 == user {
-		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
-		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
-	} else if 2 == user {
-		apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
-		secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
-	}
 
 	// 时间
 	now := strconv.FormatInt(time.Now().UTC().UnixMilli(), 10)

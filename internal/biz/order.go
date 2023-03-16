@@ -82,7 +82,7 @@ type OrderData struct {
 
 type OrderPolicyPointCompareRepo interface {
 	RequestBinanceGetOrder(symbol string) (*Order, error)
-	RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, user int64) (*Order, error)
+	RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, apiKey string, secretKey string) (*Order, error)
 
 	GetLastOrderPolicyPointCompareByInfoIdAndType(infoId int64, policyPointType string, user int64) (*OrderPolicyPointCompare, error)
 	GetLastOrderPolicyPointCompareInfo(user int64) (*OrderPolicyPointCompareInfo, error)
@@ -600,7 +600,20 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 		for _, vMaPoint := range maPoint {
 			fmt.Println(vMaPoint, 233235)
 		}
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder(v.Symbol, v.Side, v.OrderType, v.PositionSide, v.Quantity, user)
+
+		var (
+			apiKey    string
+			secretKey string
+		)
+		if 1 == user {
+			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+		} else {
+			apiKey = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
+			secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
+		}
+
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder(v.Symbol, v.Side, v.OrderType, v.PositionSide, v.Quantity, apiKey, secretKey)
 		if nil != err {
 			o.log.Error(err)
 			return nil, err
@@ -1041,7 +1054,19 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 			tmpPositionSide = "LONG"
 		}
 
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), user)
+		var (
+			apiKey    string
+			secretKey string
+		)
+		if 1 == user {
+			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+		} else {
+			apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
+		}
+
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), apiKey, secretKey)
 		if nil != err {
 			o.log.Error(err)
 			return nil, err
@@ -1064,7 +1089,19 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 			tmpPositionSide = "LONG"
 		}
 
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), user)
+		var (
+			apiKey    string
+			secretKey string
+		)
+		if 1 == user {
+			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+		} else {
+			apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
+		}
+
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), apiKey, secretKey)
 		if nil != err {
 			o.log.Error(err)
 			return nil, err
