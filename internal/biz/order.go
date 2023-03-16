@@ -803,17 +803,17 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	var (
 		max1 = 3.0
 		low1 = -3.0
-		max2 = 2.0
-		low2 = -2.0
+		max2 = 1.0
+		low2 = -1.0
 
-		closeRateWin  = 0.02
-		closeRateLost = 0.02
+		closeRateWin  = 0.03
+		closeRateLost = 0.03
 
 		tmpEmptyCloseLostNum int
 		tmpMoreCloseLostNum  int
 
-		closeRateWin2  = 0.02
-		closeRateLost2 = 0.02
+		closeRateWin2  = 0.05
+		closeRateLost2 = 0.01
 	)
 
 	// 平单，数据正常时，结果一定指向一个方向
@@ -824,7 +824,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		if "empty" == vOrdersOpen.Type {
 			if vOrdersOpen.ClosePriceWin >= kLineMOne[lastKeyMLive].EndPrice { // 止盈
 				tmpRate := (kLineMOne[lastKeyMLive].EndPrice - vOrdersOpen.OpenEndPrice) / vOrdersOpen.OpenEndPrice
-				if 0 < -tmpRate-0.0003 { // 盈利
+				if 0 < -tmpRate { // 盈利
 					tmpLock = "more"
 				} else {
 					// 关同向单
@@ -842,7 +842,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		} else if "more" == vOrdersOpen.Type {
 			if vOrdersOpen.ClosePriceWin <= kLineMOne[lastKeyMLive].EndPrice { // 止盈
 				tmpRate := (kLineMOne[lastKeyMLive].EndPrice - vOrdersOpen.OpenEndPrice) / vOrdersOpen.OpenEndPrice
-				if 0 < tmpRate-0.0003 { // 盈利
+				if 0 < tmpRate { // 盈利
 					tmpLock = "empty"
 				} else {
 					// 关同向单

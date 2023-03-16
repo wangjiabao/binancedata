@@ -230,6 +230,9 @@ func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side st
 	if 1 == user {
 		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
 		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+	} else if 2 == user {
+		apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+		secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
 	}
 
 	// 时间
