@@ -104,6 +104,11 @@ type Order struct {
 	OrderOrigType string
 }
 
+type Price struct {
+	Symbol string
+	Price  string
+}
+
 type BinanceDataRepo struct {
 	data *Data
 	log  *log.Helper
@@ -210,6 +215,61 @@ func (k *KLineMOneRepo) RequestBinanceMinuteKLinesData(symbol string, startTime 
 	}
 
 	return res, err
+}
+
+func (o *OrderPolicyPointCompareRepo) RequestBinancePrice(symbol string) (*biz.Price, error) {
+	apiUrl := "https://fapi.binance.com/fapi/v1/ticker/price"
+	// URL param
+	data := url.Values{}
+	data.Set("symbol", symbol)
+
+	u, err := url.ParseRequestURI(apiUrl)
+	if err != nil {
+		return nil, err
+	}
+	u.RawQuery = data.Encode() // URL encode
+	client := http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	//fmt.Println(u.String())
+	resp, err := client.Get(u.String())
+	if err != nil {
+		return nil, err
+	}
+
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+	var b []byte
+	b, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err != nil {
+		o.log.Error(err)
+		return nil, err
+	}
+
+	//fmt.Println(resp.Header)
+
+	var i Price
+	err = json.Unmarshal(b, &i)
+	if err != nil {
+		o.log.Error(err)
+		return nil, err
+	}
+
+	res := &biz.Price{
+		Symbol: i.Symbol,
+		Price:  i.Price,
+	}
+
+	o.log.Info(res)
+	return res, nil
 }
 
 func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, apiKey string, secretKey string) (*biz.Order, error) {

@@ -80,8 +80,14 @@ type OrderData struct {
 	QuantityFloat64 float64
 }
 
+type Price struct {
+	Symbol string
+	Price  string
+}
+
 type OrderPolicyPointCompareRepo interface {
 	RequestBinanceGetOrder(symbol string) (*Order, error)
+	RequestBinancePrice(symbol string) (*Price, error)
 	RequestBinanceOrder(symbol string, side string, orderType string, positionSide string, quantity string, apiKey string, secretKey string) (*Order, error)
 
 	GetLastOrderPolicyPointCompareByInfoIdAndType(infoId int64, policyPointType string, user int64) (*OrderPolicyPointCompare, error)
@@ -757,6 +763,9 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		closeOrder      []*OrderPolicyMacdCompareInfo
 		newOrder        []*OrderPolicyMacdCompareInfo
 		newOrderLock    *OrderPolicyMacdLock
+
+		price    *Price
+		EthPrice float64
 	)
 
 	// macd数据，取200条k线数据计算，当前
@@ -813,13 +822,23 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		return nil, err
 	}
 
+	// 获取最新价格
+	price, err = o.orderPolicyPointCompareRepo.RequestBinancePrice("ETHUSDT")
+	if nil != err {
+		return nil, err
+	}
+	EthPrice, err = strconv.ParseFloat(price.Price, 64)
+	if nil != err {
+		return nil, err
+	}
+
 	var (
 		max1 = 3.0
 		low1 = -3.0
 		max2 = 1.0
 		low2 = -1.0
 
-		closeRateWin  = 0.03
+		closeRateWin  = 0.01
 		closeRateLost = 0.03
 
 		tmpEmptyCloseLostNum int
@@ -932,10 +951,16 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	if tmpEmptyCloseLostNum >= 2 {
 		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println("lost more open empty more", tmpEmptyCloseLostNum)
+		var tmpNum float64
+		tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+		if nil != err {
+			return nil, err
+		}
+
 		newOrder = append(newOrder, &OrderPolicyMacdCompareInfo{
 			Type:           "more",
 			Status:         "open",
-			Num:            0.01,
+			Num:            tmpNum,
 			OpenEndPrice:   kLineMOne[lastKeyMLive].EndPrice,
 			ClosePriceWin:  kLineMOne[lastKeyMLive].EndPrice + kLineMOne[lastKeyMLive].EndPrice*closeRateWin2,  // 关仓止盈
 			ClosePriceLost: kLineMOne[lastKeyMLive].EndPrice - kLineMOne[lastKeyMLive].EndPrice*closeRateLost2, // 关仓止损
@@ -945,10 +970,16 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	if tmpMoreCloseLostNum >= 2 {
 		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println("lost more open empty", tmpEmptyCloseLostNum)
+		var tmpNum float64
+		tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+		if nil != err {
+			return nil, err
+		}
+
 		newOrder = append(newOrder, &OrderPolicyMacdCompareInfo{
 			Type:           "empty",
 			Status:         "open",
-			Num:            0.01,
+			Num:            tmpNum,
 			OpenEndPrice:   kLineMOne[lastKeyMLive].EndPrice,
 			ClosePriceWin:  kLineMOne[lastKeyMLive].EndPrice - kLineMOne[lastKeyMLive].EndPrice*closeRateWin2,  // 关仓止盈
 			ClosePriceLost: kLineMOne[lastKeyMLive].EndPrice + kLineMOne[lastKeyMLive].EndPrice*closeRateLost2, // 关仓止损
@@ -994,10 +1025,16 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 
 		if nil == lock || "empty" != lock.Type { // 无锁定
 			// 开空
+			var tmpNum float64
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+			if nil != err {
+				return nil, err
+			}
+
 			newOrder = append(newOrder, &OrderPolicyMacdCompareInfo{
 				Type:                "empty",
 				Status:              "open",
-				Num:                 0.01,
+				Num:                 tmpNum,
 				OpenEndPrice:        kLineMOne[lastKeyMLive].EndPrice,
 				ClosePriceWin:       kLineMOne[lastKeyMLive].EndPrice - kLineMOne[lastKeyMLive].EndPrice*closeRateWin,  // 关仓止盈
 				ClosePriceLost:      kLineMOne[lastKeyMLive].EndPrice + kLineMOne[lastKeyMLive].EndPrice*closeRateLost, // 关仓止损
@@ -1023,10 +1060,16 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 
 		// 开多
 		if nil == lock || "more" != lock.Type { // 无锁定
+			var tmpNum float64
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+			if nil != err {
+				return nil, err
+			}
+
 			newOrder = append(newOrder, &OrderPolicyMacdCompareInfo{
 				Type:                "more",
 				Status:              "open",
-				Num:                 0.01,
+				Num:                 tmpNum,
 				OpenEndPrice:        kLineMOne[lastKeyMLive].EndPrice,
 				ClosePriceWin:       kLineMOne[lastKeyMLive].EndPrice + kLineMOne[lastKeyMLive].EndPrice*closeRateWin,  // 关仓止盈
 				ClosePriceLost:      kLineMOne[lastKeyMLive].EndPrice - kLineMOne[lastKeyMLive].EndPrice*closeRateLost, // 关仓止损
@@ -1041,75 +1084,75 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	}
 
 	// 新增
-	for kCloseOrder, vCloseOrder := range closeOrder {
-		var orderBinance *Order
+	//for kCloseOrder, vCloseOrder := range closeOrder {
+	//	var orderBinance *Order
+	//
+	//	tmpSide := ""
+	//	tmpPositionSide := ""
+	//	if "empty" == vCloseOrder.Type && "close" == vCloseOrder.Status {
+	//		tmpSide = "BUY"
+	//		tmpPositionSide = "SHORT"
+	//	} else if "more" == vCloseOrder.Type && "close" == vCloseOrder.Status {
+	//		tmpSide = "SELL"
+	//		tmpPositionSide = "LONG"
+	//	}
+	//
+	//	var (
+	//		apiKey    string
+	//		secretKey string
+	//	)
+	//	if 1 == user {
+	//		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+	//		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+	//	} else {
+	//		apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+	//		secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
+	//	}
+	//
+	//	orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), apiKey, secretKey)
+	//	if nil != err {
+	//		o.log.Error(err)
+	//		return nil, err
+	//	}
+	//	fmt.Println(orderBinance)
+	//
+	//	closeOrder[kCloseOrder].OrderId = orderBinance.OrderId
+	//}
 
-		tmpSide := ""
-		tmpPositionSide := ""
-		if "empty" == vCloseOrder.Type && "close" == vCloseOrder.Status {
-			tmpSide = "BUY"
-			tmpPositionSide = "SHORT"
-		} else if "more" == vCloseOrder.Type && "close" == vCloseOrder.Status {
-			tmpSide = "SELL"
-			tmpPositionSide = "LONG"
-		}
-
-		var (
-			apiKey    string
-			secretKey string
-		)
-		if 1 == user {
-			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
-			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
-		} else {
-			apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
-			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
-		}
-
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), apiKey, secretKey)
-		if nil != err {
-			o.log.Error(err)
-			return nil, err
-		}
-		fmt.Println(orderBinance)
-
-		closeOrder[kCloseOrder].OrderId = orderBinance.OrderId
-	}
-
-	for kNewOrder, vNewOrder := range newOrder {
-		var orderBinance *Order
-
-		tmpSide := ""
-		tmpPositionSide := ""
-		if "empty" == vNewOrder.Type && "open" == vNewOrder.Status {
-			tmpSide = "SELL"
-			tmpPositionSide = "SHORT"
-		} else if "more" == vNewOrder.Type && "open" == vNewOrder.Status {
-			tmpSide = "BUY"
-			tmpPositionSide = "LONG"
-		}
-
-		var (
-			apiKey    string
-			secretKey string
-		)
-		if 1 == user {
-			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
-			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
-		} else {
-			apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
-			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
-		}
-
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), apiKey, secretKey)
-		if nil != err {
-			o.log.Error(err)
-			return nil, err
-		}
-		fmt.Println(orderBinance)
-
-		newOrder[kNewOrder].OrderId = orderBinance.OrderId
-	}
+	//for kNewOrder, vNewOrder := range newOrder {
+	//	var orderBinance *Order
+	//
+	//	tmpSide := ""
+	//	tmpPositionSide := ""
+	//	if "empty" == vNewOrder.Type && "open" == vNewOrder.Status {
+	//		tmpSide = "SELL"
+	//		tmpPositionSide = "SHORT"
+	//	} else if "more" == vNewOrder.Type && "open" == vNewOrder.Status {
+	//		tmpSide = "BUY"
+	//		tmpPositionSide = "LONG"
+	//	}
+	//
+	//	var (
+	//		apiKey    string
+	//		secretKey string
+	//	)
+	//	if 1 == user {
+	//		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+	//		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+	//	} else {
+	//		apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+	//		secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
+	//	}
+	//
+	//	orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), apiKey, secretKey)
+	//	if nil != err {
+	//		o.log.Error(err)
+	//		return nil, err
+	//	}
+	//	fmt.Println(orderBinance)
+	//
+	//	newOrder[kNewOrder].OrderId = orderBinance.OrderId
+	//}
 
 	if err = o.tx.ExecTx(ctx, func(ctx context.Context) error { // 事务
 		// 修改订单信息
