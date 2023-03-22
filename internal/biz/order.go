@@ -1084,75 +1084,75 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 	}
 
 	// 新增
-	//for kCloseOrder, vCloseOrder := range closeOrder {
-	//	var orderBinance *Order
-	//
-	//	tmpSide := ""
-	//	tmpPositionSide := ""
-	//	if "empty" == vCloseOrder.Type && "close" == vCloseOrder.Status {
-	//		tmpSide = "BUY"
-	//		tmpPositionSide = "SHORT"
-	//	} else if "more" == vCloseOrder.Type && "close" == vCloseOrder.Status {
-	//		tmpSide = "SELL"
-	//		tmpPositionSide = "LONG"
-	//	}
-	//
-	//	var (
-	//		apiKey    string
-	//		secretKey string
-	//	)
-	//	if 1 == user {
-	//		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
-	//		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
-	//	} else {
-	//		apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
-	//		secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
-	//	}
-	//
-	//	orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), apiKey, secretKey)
-	//	if nil != err {
-	//		o.log.Error(err)
-	//		return nil, err
-	//	}
-	//	fmt.Println(orderBinance)
-	//
-	//	closeOrder[kCloseOrder].OrderId = orderBinance.OrderId
-	//}
+	for kCloseOrder, vCloseOrder := range closeOrder {
+		var orderBinance *Order
 
-	//for kNewOrder, vNewOrder := range newOrder {
-	//	var orderBinance *Order
-	//
-	//	tmpSide := ""
-	//	tmpPositionSide := ""
-	//	if "empty" == vNewOrder.Type && "open" == vNewOrder.Status {
-	//		tmpSide = "SELL"
-	//		tmpPositionSide = "SHORT"
-	//	} else if "more" == vNewOrder.Type && "open" == vNewOrder.Status {
-	//		tmpSide = "BUY"
-	//		tmpPositionSide = "LONG"
-	//	}
-	//
-	//	var (
-	//		apiKey    string
-	//		secretKey string
-	//	)
-	//	if 1 == user {
-	//		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
-	//		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
-	//	} else {
-	//		apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
-	//		secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
-	//	}
-	//
-	//	orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), apiKey, secretKey)
-	//	if nil != err {
-	//		o.log.Error(err)
-	//		return nil, err
-	//	}
-	//	fmt.Println(orderBinance)
-	//
-	//	newOrder[kNewOrder].OrderId = orderBinance.OrderId
-	//}
+		tmpSide := ""
+		tmpPositionSide := ""
+		if "empty" == vCloseOrder.Type && "close" == vCloseOrder.Status {
+			tmpSide = "BUY"
+			tmpPositionSide = "SHORT"
+		} else if "more" == vCloseOrder.Type && "close" == vCloseOrder.Status {
+			tmpSide = "SELL"
+			tmpPositionSide = "LONG"
+		}
+
+		var (
+			apiKey    string
+			secretKey string
+		)
+		if 1 == user {
+			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+		} else {
+			apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
+		}
+
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), apiKey, secretKey)
+		if nil != err {
+			o.log.Error(err)
+			return nil, err
+		}
+		fmt.Println(orderBinance)
+
+		closeOrder[kCloseOrder].OrderId = orderBinance.OrderId
+	}
+
+	for kNewOrder, vNewOrder := range newOrder {
+		var orderBinance *Order
+
+		tmpSide := ""
+		tmpPositionSide := ""
+		if "empty" == vNewOrder.Type && "open" == vNewOrder.Status {
+			tmpSide = "SELL"
+			tmpPositionSide = "SHORT"
+		} else if "more" == vNewOrder.Type && "open" == vNewOrder.Status {
+			tmpSide = "BUY"
+			tmpPositionSide = "LONG"
+		}
+
+		var (
+			apiKey    string
+			secretKey string
+		)
+		if 1 == user {
+			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+		} else {
+			apiKey = "pswGalfy8OvPgL4vdgjzCNbL4XFnlif3OjsA9vymiDoZD4MC2gO4QGTmGLj0mnqP"
+			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
+		}
+
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), apiKey, secretKey)
+		if nil != err {
+			o.log.Error(err)
+			return nil, err
+		}
+		fmt.Println(orderBinance)
+
+		newOrder[kNewOrder].OrderId = orderBinance.OrderId
+	}
 
 	if err = o.tx.ExecTx(ctx, func(ctx context.Context) error { // 事务
 		// 修改订单信息
