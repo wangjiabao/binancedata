@@ -282,11 +282,31 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 
 		} else {
 			// 开空
+			// 获取最新价格
+			var (
+				price    *Price
+				EthPrice float64
+			)
+			price, err = o.orderPolicyPointCompareRepo.RequestBinancePrice("ETHUSDT")
+			if nil != err {
+				return nil, err
+			}
+			EthPrice, err = strconv.ParseFloat(price.Price, 64)
+			if nil != err {
+				return nil, err
+			}
+
+			var tmpNum float64
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(100)/EthPrice), 64)
+			if nil != err {
+				return nil, err
+			}
+
 			tmpAmount := 0.01
 			tmpAmountStr := "0.01"
 			if 1 == user {
-				tmpAmount = 0.1
-				tmpAmountStr = "0.1"
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.10f", float64(100)/EthPrice)
 			}
 			order = append(order, &OrderData{
 				Symbol:          "ETHUSDT",
@@ -358,11 +378,31 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 
 		} else {
 			// 开多
+			// 获取最新价格
+			var (
+				price    *Price
+				EthPrice float64
+			)
+			price, err = o.orderPolicyPointCompareRepo.RequestBinancePrice("ETHUSDT")
+			if nil != err {
+				return nil, err
+			}
+			EthPrice, err = strconv.ParseFloat(price.Price, 64)
+			if nil != err {
+				return nil, err
+			}
+
+			var tmpNum float64
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(100)/EthPrice), 64)
+			if nil != err {
+				return nil, err
+			}
+
 			tmpAmount := 0.01
 			tmpAmountStr := "0.01"
 			if 1 == user {
-				tmpAmount = 0.1
-				tmpAmountStr = "0.1"
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.10f", float64(100)/EthPrice)
 			}
 			order = append(order, &OrderData{
 				Symbol:          "ETHUSDT",
