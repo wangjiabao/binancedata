@@ -117,17 +117,16 @@ func NewOrderUsecase(kLineMOneRepo KLineMOneRepo, orderPolicyPointCompareRepo Or
 	return &OrderUsecase{klineMOneRepo: kLineMOneRepo, orderPolicyPointCompareRepo: orderPolicyPointCompareRepo, tx: tx, log: log.NewHelper(logger)}
 }
 
-func (o *OrderUsecase) TestOrder() (*v1.OrderAreaPointReply, error) {
+func (o *OrderUsecase) TestOrder(req *v1.OrderAreaPointRequest) (*v1.OrderAreaPointReply, error) {
 	var (
-		user int64
-		err  error
+		err error
 	)
 
 	var (
 		apiKey    string
 		secretKey string
 	)
-	if 1 == user {
+	if 1 == req.User {
 		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
 		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
 	} else {

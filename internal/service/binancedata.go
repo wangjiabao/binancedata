@@ -81,7 +81,7 @@ func (b *BinanceDataService) OrderAreaPoint(ctx context.Context, req *v1.OrderAr
 
 		return &v1.OrderAreaPointReply{}, nil
 	} else if "test_order" == req.Test {
-		return b.ouc.TestOrder()
+		return b.ouc.TestOrder(req)
 	} else {
 		return b.ouc.OrderAreaPoint(ctx, req, "", time.Now())
 	}
