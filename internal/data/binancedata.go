@@ -322,7 +322,7 @@ func (o *OrderPolicyPointCompareRepo) RequestBinanceOrder(symbol string, side st
 		return nil, err
 	}
 
-	fmt.Println(resp.Header)
+	fmt.Println(resp.Header, string(b))
 
 	var i Order
 	err = json.Unmarshal(b, &i)

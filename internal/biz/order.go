@@ -117,6 +117,33 @@ func NewOrderUsecase(kLineMOneRepo KLineMOneRepo, orderPolicyPointCompareRepo Or
 	return &OrderUsecase{klineMOneRepo: kLineMOneRepo, orderPolicyPointCompareRepo: orderPolicyPointCompareRepo, tx: tx, log: log.NewHelper(logger)}
 }
 
+func (o *OrderUsecase) TestOrder() (*v1.OrderAreaPointReply, error) {
+	var (
+		user int64
+		err  error
+	)
+
+	var (
+		apiKey    string
+		secretKey string
+	)
+	if 1 == user {
+		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
+		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+	} else {
+		apiKey = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
+		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
+	}
+
+	_, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", "BUY", "MARKET", "LONG", "0.0575139040", apiKey, secretKey)
+	if nil != err {
+		o.log.Error(err)
+		return nil, err
+	}
+
+	return nil, nil
+}
+
 func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPointRequest, test string, endTime time.Time) (*v1.OrderAreaPointReply, error) {
 	var (
 		start         time.Time
