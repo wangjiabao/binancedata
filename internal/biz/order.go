@@ -324,7 +324,7 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 			}
 
 			var tmpNum float64
-			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(100)/EthPrice), 64)
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.5f", float64(100)/EthPrice), 64)
 			if nil != err {
 				return nil, err
 			}
@@ -420,7 +420,7 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 			}
 
 			var tmpNum float64
-			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(100)/EthPrice), 64)
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.5f", float64(100)/EthPrice), 64)
 			if nil != err {
 				return nil, err
 			}
@@ -1019,7 +1019,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println("lost more open empty more", tmpEmptyCloseLostNum)
 		var tmpNum float64
-		tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+		tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.5f", float64(15)/EthPrice), 64)
 		if nil != err {
 			return nil, err
 		}
@@ -1038,7 +1038,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		fmt.Println(time.UnixMilli(kLineMOne[lastKeyMLive].StartTime).UTC().Add(8 * time.Hour))
 		fmt.Println("lost more open empty", tmpEmptyCloseLostNum)
 		var tmpNum float64
-		tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+		tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.5f", float64(15)/EthPrice), 64)
 		if nil != err {
 			return nil, err
 		}
@@ -1093,7 +1093,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		if nil == lock || "empty" != lock.Type { // 无锁定
 			// 开空
 			var tmpNum float64
-			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.5f", float64(15)/EthPrice), 64)
 			if nil != err {
 				return nil, err
 			}
@@ -1128,7 +1128,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 		// 开多
 		if nil == lock || "more" != lock.Type { // 无锁定
 			var tmpNum float64
-			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.10f", float64(15)/EthPrice), 64)
+			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.5f", float64(15)/EthPrice), 64)
 			if nil != err {
 				return nil, err
 			}
