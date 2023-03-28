@@ -147,8 +147,8 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 	var (
 		start         time.Time
 		end           time.Time
-		pointFirst    = 0.3
-		pointInterval = 0.1
+		pointFirst    = 0.00015
+		pointInterval = 0.00005
 		kLineMOne     []*KLineMOne
 		user          int64
 		err           error
@@ -240,8 +240,8 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 	}
 
 	// 业务逻辑下单
-	tmpPointFirstSub := maPoint[2].AvgEndPrice - maPoint[1].AvgEndPrice
-	tmpPointSecondSub := maPoint[1].AvgEndPrice - maPoint[0].AvgEndPrice
+	tmpPointFirstSub := (maPoint[2].AvgEndPrice - maPoint[1].AvgEndPrice) / maPoint[2].AvgEndPrice
+	tmpPointSecondSub := (maPoint[1].AvgEndPrice - maPoint[0].AvgEndPrice) / maPoint[1].AvgEndPrice
 
 	// 开单数据
 	var (
@@ -322,18 +322,41 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 				return nil, err
 			}
 
-			var tmpNum float64
-			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice), 64)
-			if nil != err {
-				return nil, err
+			var (
+				tmpNum       float64
+				tmpAmount    float64
+				tmpAmountStr string
+			)
+			if 1 == user { // 轮
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.3f", float64(100)/EthPrice*30)
+			} else if 2 == user { // 华
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(15)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.3f", float64(15)/EthPrice*30)
+			} else if 3 == user { // 爽
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(20)/EthPrice*20), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%3f", float64(20)/EthPrice*20)
+			} else {
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.3f", float64(100)/EthPrice*30)
 			}
 
-			tmpAmount := 0.01
-			tmpAmountStr := "0.01"
-			if 1 == user {
-				tmpAmount = tmpNum
-				tmpAmountStr = fmt.Sprintf("%.10f", float64(100)/EthPrice)
-			}
 			order = append(order, &OrderData{
 				Symbol:          "ETHUSDT",
 				Side:            "SELL",
@@ -418,18 +441,41 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 				return nil, err
 			}
 
-			var tmpNum float64
-			tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice), 64)
-			if nil != err {
-				return nil, err
+			var (
+				tmpNum       float64
+				tmpAmount    float64
+				tmpAmountStr string
+			)
+			if 1 == user { // 轮
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.3f", float64(100)/EthPrice*30)
+			} else if 2 == user { // 华
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(15)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.3f", float64(15)/EthPrice*30)
+			} else if 3 == user { // 爽
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(20)/EthPrice*20), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%3f", float64(20)/EthPrice*20)
+			} else {
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%.3f", float64(100)/EthPrice*30)
 			}
 
-			tmpAmount := 0.01
-			tmpAmountStr := "0.01"
-			if 1 == user {
-				tmpAmount = tmpNum
-				tmpAmountStr = fmt.Sprintf("%.10f", float64(100)/EthPrice)
-			}
 			order = append(order, &OrderData{
 				Symbol:          "ETHUSDT",
 				Side:            "BUY",
@@ -680,6 +726,12 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 		if 1 == user {
 			apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
 			secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+		} else if 2 == user {
+			apiKey = "85t15fBK2HegV8YLG3NdPMAPI1QxfknTbqofHJyeerKuyf1lSKynrHqViflxCImv"
+			secretKey = "GrgQTOnoKJaitiijUtRnVep5Wv4ax7ZMPPXc3zJlxQnccImDDIotMV7DLPrLigJr"
+		} else if 3 == user {
+			apiKey = "TRc3qBsdCgs21xg1hPqd7lmviW54cT9pe4kBOSlvXPpwoY7IsUUSv2uRUvUE1iq6"
+			secretKey = "xfMR9uAbg0CUIcbOmcXCP282bU2UoZxK6K0jzx7VKPUuIog533exy84z8vhWFJqz"
 		} else {
 			apiKey = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
 			secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
