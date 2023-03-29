@@ -737,7 +737,13 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 			secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 		}
 
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder(v.Symbol, v.Side, v.OrderType, v.PositionSide, v.Quantity, apiKey, secretKey)
+		var tmpQuantity float64
+		tmpQuantity, err = strconv.ParseFloat(v.Quantity, 64)
+		if nil != err {
+			return nil, err
+		}
+
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder(v.Symbol, v.Side, v.OrderType, v.PositionSide, fmt.Sprintf("%.3f", tmpQuantity), apiKey, secretKey)
 		if nil != err {
 			o.log.Error(err)
 			return nil, err
@@ -1227,7 +1233,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
 		}
 
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vCloseOrder.Num, 'f', -1, 64), apiKey, secretKey)
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, fmt.Sprintf("%.3f", vCloseOrder.Num), apiKey, secretKey)
 		if nil != err {
 			o.log.Error(err)
 			return nil, err
@@ -1262,7 +1268,7 @@ func (o *OrderUsecase) OrderMacdAndKPrice(ctx context.Context, req *v1.OrderMacd
 			secretKey = "gcT4X2AcWr8dRag3t0CWg8Dfip9sjOSYmNpEx6bxnkNfTc2StICEoqtNGnkQQzwe"
 		}
 
-		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, strconv.FormatFloat(vNewOrder.Num, 'f', -1, 64), apiKey, secretKey)
+		orderBinance, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", tmpSide, "MARKET", tmpPositionSide, fmt.Sprintf("%.3f", vNewOrder.Num), apiKey, secretKey)
 		if nil != err {
 			o.log.Error(err)
 			return nil, err
