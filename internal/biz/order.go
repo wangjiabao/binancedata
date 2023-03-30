@@ -711,7 +711,11 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 		orderBinance *Order
 		newOrderData *OrderPolicyPointCompareInfo
 	)
-	for _, v := range order {
+	for k, v := range order {
+		if k > 1 { // 该策略至多一平一开两单，每次操作
+			break
+		}
+
 		fmt.Println(start, end)
 		fmt.Println(v, 22)
 		fmt.Println(tmpPointSecondSub, tmpPointFirstSub, 23323)
