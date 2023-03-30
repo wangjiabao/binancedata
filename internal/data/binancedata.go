@@ -635,6 +635,10 @@ func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareByInfoIdAndT
 		db = db.Table("order_policy_point_compare_two")
 	} else if 3 == user {
 		db = db.Table("order_policy_point_compare_three")
+	} else if 4 == user {
+		db = db.Table("order_policy_point_compare_four")
+	} else if 5 == user {
+		db = db.Table("order_policy_point_compare_five")
 	} else {
 		db = db.Table("order_policy_point_compare")
 	}
@@ -666,6 +670,10 @@ func (o *OrderPolicyPointCompareRepo) GetLastOrderPolicyPointCompareInfo(user in
 		db = db.Table("order_policy_point_compare_info_two")
 	} else if 3 == user {
 		db = db.Table("order_policy_point_compare_info_three")
+	} else if 4 == user {
+		db = db.Table("order_policy_point_compare_info_four")
+	} else if 5 == user {
+		db = db.Table("order_policy_point_compare_info_five")
 	} else {
 		db = db.Table("order_policy_point_compare_info")
 	}
@@ -701,6 +709,10 @@ func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompareInfo(ctx cont
 		db = db.Table("order_policy_point_compare_info_two")
 	} else if 3 == user {
 		db = db.Table("order_policy_point_compare_info_three")
+	} else if 4 == user {
+		db = db.Table("order_policy_point_compare_info_four")
+	} else if 5 == user {
+		db = db.Table("order_policy_point_compare_info_five")
 	} else {
 		db = db.Table("order_policy_point_compare_info")
 	}
@@ -733,6 +745,10 @@ func (o *OrderPolicyPointCompareRepo) InsertOrderPolicyPointCompare(ctx context.
 		db = db.Table("order_policy_point_compare_two")
 	} else if 3 == user {
 		db = db.Table("order_policy_point_compare_three")
+	} else if 4 == user {
+		db = db.Table("order_policy_point_compare_four")
+	} else if 5 == user {
+		db = db.Table("order_policy_point_compare_five")
 	} else {
 		db = db.Table("order_policy_point_compare")
 	}

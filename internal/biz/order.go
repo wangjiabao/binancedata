@@ -348,6 +348,20 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 				}
 				tmpAmount = tmpNum
 				tmpAmountStr = fmt.Sprintf("%3f", float64(20)/EthPrice*20)
+			} else if 4 == user { // 朱
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(50)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%3f", float64(50)/EthPrice*30)
+			} else if 5 == user { // 国朋友
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(300)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%3f", float64(300)/EthPrice*30)
 			} else {
 				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice*30), 64)
 				if nil != err {
@@ -467,6 +481,20 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 				}
 				tmpAmount = tmpNum
 				tmpAmountStr = fmt.Sprintf("%3f", float64(20)/EthPrice*20)
+			} else if 4 == user { // 朱
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(50)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%3f", float64(50)/EthPrice*30)
+			} else if 5 == user { // 国朋友
+				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(300)/EthPrice*30), 64)
+				if nil != err {
+					return nil, err
+				}
+				tmpAmount = tmpNum
+				tmpAmountStr = fmt.Sprintf("%3f", float64(300)/EthPrice*30)
 			} else {
 				tmpNum, err = strconv.ParseFloat(fmt.Sprintf("%.3f", float64(100)/EthPrice*30), 64)
 				if nil != err {
@@ -736,6 +764,12 @@ func (o *OrderUsecase) OrderAreaPoint(ctx context.Context, req *v1.OrderAreaPoin
 		} else if 3 == user {
 			apiKey = "TRc3qBsdCgs21xg1hPqd7lmviW54cT9pe4kBOSlvXPpwoY7IsUUSv2uRUvUE1iq6"
 			secretKey = "xfMR9uAbg0CUIcbOmcXCP282bU2UoZxK6K0jzx7VKPUuIog533exy84z8vhWFJqz"
+		} else if 4 == user {
+			apiKey = "2WxyBRAuF8Yd14Pk6Nb56p5qW4bXUeey7W3WFdR85lPUSaInnUT1eMV1eHssLtVO"
+			secretKey = "Wzl8HxSIdxKwVwxpsx6LBJgYNZmPlmTIRw7k4EPyePifbVR4YkpeZN7dL4wyQaMJ"
+		} else if 5 == user {
+			apiKey = "O8rxX13YNwLjPrSV7wF66pXpX8v1gJQ29tNxw68wzXTHwpBlzsA0IGpu0WuFvx7p"
+			secretKey = "UUdzglfe6FD03EbiXkSSSkn25IcOHaYmKyetXKMCqx15WeRItcdSc61wcSsNmwID"
 		} else {
 			apiKey = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
 			secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
