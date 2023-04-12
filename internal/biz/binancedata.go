@@ -2723,8 +2723,8 @@ func (b *BinanceDataUsecase) AreaPointIntervalMAvgEndPriceData(ctx context.Conte
 		}
 
 		// 比较入单
-		tmpPointFirstSub := maNDataMLiveMap[kLineDataMLive[lastKeyMLive].StartTime].AvgEndPrice - maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice
-		tmpPointSecondSub := maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice - maNDataMLiveMap[kLineDataMLive[lastKeyMLive-2].StartTime].AvgEndPrice
+		tmpPointFirstSub := (maNDataMLiveMap[kLineDataMLive[lastKeyMLive].StartTime].AvgEndPrice - maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice) / maNDataMLiveMap[kLineDataMLive[lastKeyMLive].StartTime].AvgEndPrice
+		tmpPointSecondSub := (maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice - maNDataMLiveMap[kLineDataMLive[lastKeyMLive-2].StartTime].AvgEndPrice) / maNDataMLiveMap[kLineDataMLive[lastKeyMLive-1].StartTime].AvgEndPrice
 
 		tmpResDataListMaNMFirst := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListMaNMFirst{X1: tmpAvgEndPrice}
 		tmpResDataListSubPoint := &v1.AreaPointIntervalMAvgEndPriceDataReply_ListSubPoint{X1: tmpPointFirstSub}
