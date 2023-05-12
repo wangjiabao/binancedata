@@ -129,12 +129,15 @@ func (o *OrderUsecase) TestOrder(req *v1.OrderAreaPointRequest) (*v1.OrderAreaPo
 	if 1 == req.User {
 		apiKey = "MvzfRAnEeU46efaLYeaRms0r92d2g20iXVDQoJ8Ma5UvqH1zkJDMGB1WbSZ30P0W"
 		secretKey = "bjGtZYExnHEcNBivXmJ8dLzGfMzr8SkW4ATmxLC1ZCrszbb5YJDulaiJLAgZ7L7h"
+	} else if 5 == req.User {
+		apiKey = "O8rxX13YNwLjPrSV7wF66pXpX8v1gJQ29tNxw68wzXTHwpBlzsA0IGpu0WuFvx7p"
+		secretKey = "UUdzglfe6FD03EbiXkSSSkn25IcOHaYmKyetXKMCqx15WeRItcdSc61wcSsNmwID"
 	} else {
 		apiKey = "2eNaMVDIN4kdBVmSdZDkXyeucfwLBteLRwFSmUNHVuGhFs18AeVGDRZvfpTGDToX"
 		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	}
 
-	_, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", "BUY", "MARKET", "LONG", "0.057", apiKey, secretKey)
+	_, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", "BUY", "MARKET", "SHORT", "0.835", apiKey, secretKey)
 	if nil != err {
 		o.log.Error(err)
 		return nil, err
