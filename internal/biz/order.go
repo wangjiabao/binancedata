@@ -137,7 +137,7 @@ func (o *OrderUsecase) TestOrder(req *v1.OrderAreaPointRequest) (*v1.OrderAreaPo
 		secretKey = "w2xOINea6jMBJOqq9kWAvB0TWsKRWJdrM70wPbYeCMn2C1W89GxyBigbg1JSVojw"
 	}
 
-	_, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", "BUY", "MARKET", "SHORT", "0.835", apiKey, secretKey)
+	_, err = o.orderPolicyPointCompareRepo.RequestBinanceOrder("ETHUSDT", "BUY", "MARKET", "SHORT", "5.008", apiKey, secretKey)
 	if nil != err {
 		o.log.Error(err)
 		return nil, err
